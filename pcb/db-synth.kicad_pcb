@@ -6,9 +6,9 @@
 
   (paper "A4")
   (title_block
-    (title "1.0")
+    (title "db-synth")
     (date "2022-06-29")
-    (rev "db-synth")
+    (rev "1.0")
   )
 
   (layers
