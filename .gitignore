@@ -1,3 +1,5 @@
+# CMake
+build/
 CMakeLists.txt.user
 CMakeCache.txt
 CMakeFiles
@@ -9,3 +11,33 @@ install_manifest.txt
 compile_commands.json
 CTestTestfile.cmake
 _deps
+
+# KiCad
+*-backups/
+*.000
+*.bak
+*.bck
+*.kicad_pcb-bak
+*~
+\#auto_saved_files\#
+_autosave-*
+*.tmp
+*.dsn
+*.ses
+*.kicad_sch-bak
+*.kicad_prl
+*-cache.lib
+fp-info-cache
+
+# Gerber
+*.drl
+*.gbl
+*.gbo
+*.gbp
+*.gbr
+*.gbs
+*.gm1
+*.gtl
+*.gto
+*.gtp
+*.gts

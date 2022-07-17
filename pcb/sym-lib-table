@@ -1,0 +1,4 @@
+(sym_lib_table
+  (lib (name "AVR128DB28")(type "KiCad")(uri "${KIPRJMOD}/lib/AVR128DB28.kicad_sym")(options "")(descr ""))
+  (lib (name "MCP1702-3302E")(type "KiCad")(uri "${KIPRJMOD}/lib/MCP1702-3302E.kicad_sym")(options "")(descr ""))
+)
