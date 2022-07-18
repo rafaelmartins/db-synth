@@ -11,24 +11,16 @@
 #include <string.h>
 #include <avr/io.h>
 #include "oled.h"
+#include "oled-data.h"
 
 #define I2C_ADDRESS 0x3c
-#define FONT_WIDTH 5
-#define FONT_HEIGHT 7
-#define SCREEN_WIDTH 128
-#define SCREEN_HEIGHT 64
-#define MAX_CHARS_PER_LINE ((uint8_t) (SCREEN_WIDTH / (FONT_WIDTH + 1)))
-#define RAM_PAGES          ((uint8_t) (SCREEN_HEIGHT / (FONT_HEIGHT + 1)))
-// we abuse the fact that our rendered lines match nicely with the ram pages
-#define MAX_LINES RAM_PAGES
-
-extern const uint8_t font_bitmaps[];
-extern const uint16_t font_descriptors[];
 
 static volatile struct {
-    uint8_t data[128];
+    uint8_t data[oled_chars_per_line + 1];
+    uint8_t start;
+    bool end;
     bool rendered;
-} ram_pages[8];
+} lines[8];
 
 static volatile enum {
     STATE_ADDR1,
@@ -49,17 +41,19 @@ static volatile bool waiting = false;
 static volatile bool stop = false;
 static volatile uint8_t current_page = 0;
 static volatile uint8_t current_data = 0;
+static volatile uint8_t current_char = 0;
 
 
 bool
 oled_clear_line(uint8_t line)
 {
-    if (line >= MAX_LINES)
+    if (line >= oled_lines)
         return false;
 
-    memset((void*) ram_pages[line].data + 1, 0, sizeof(ram_pages[line].data) - 1);
-    ram_pages[line].rendered = false;
-
+    lines[line].data[0] = 0;
+    lines[line].start = 0;
+    lines[line].end = false;
+    lines[line].rendered = false;
     return true;
 }
 
@@ -67,7 +61,7 @@ oled_clear_line(uint8_t line)
 bool
 oled_clear(void)
 {
-    for (uint8_t i = 0; i < RAM_PAGES; i++) {
+    for (uint8_t i = 0; i < oled_lines; i++) {
         if (!oled_clear_line(i)) {
             return false;
         }
@@ -144,52 +138,28 @@ oled_line(uint8_t line, const char *str, oled_halign_t align)
     if (str == NULL)
         return false;
 
-    if (line >= MAX_LINES)
+    if (line >= oled_lines)
         return false;
 
-    uint8_t slen = 0;
-    for (uint8_t i = 0; str[i] != '\0' && i < MAX_CHARS_PER_LINE;) {
-        slen += FONT_WIDTH;
-        if (str[++i] != '\0')
-            slen++;
-    }
+    strncpy((char*) lines[line].data, str, sizeof(lines[line].data));
+    lines[line].end = false;
+    lines[line].rendered = false;
 
-    if (slen > SCREEN_WIDTH)
-        return false;
+    size_t len = strlen(str) * (oled_font_width + 1);
 
-    uint8_t x = 0;
     switch (align) {
-        case OLED_HALIGN_LEFT:
-            break;
-        case OLED_HALIGN_RIGHT:
-            x = SCREEN_WIDTH - slen;
-            break;
-        case OLED_HALIGN_CENTER:
-            x = (SCREEN_WIDTH - slen) / 2;
-            break;
+    case OLED_HALIGN_LEFT:
+        lines[line].start = 0;
+        break;
+
+    case OLED_HALIGN_RIGHT:
+        lines[line].start = oled_screen_width - len;
+        break;
+
+    case OLED_HALIGN_CENTER:
+        lines[line].start = (oled_screen_width - len) >> 1;
+        break;
     }
-
-    memset((void*) ram_pages[line].data, 0, sizeof(ram_pages[line].data));
-
-    for (uint8_t i = 0; str[i] != '\0' && i < MAX_CHARS_PER_LINE;) {
-        uint16_t offset = *(font_descriptors + str[i]);
-        const uint8_t *bm = font_bitmaps + offset;
-
-        for (uint8_t j = 0; j < FONT_HEIGHT; ++j) {
-            for (uint8_t k = 0; k < FONT_WIDTH; ++k) {
-                if ((bm[j] << k) & (1 << 7))
-                    ram_pages[line].data[x + k] |= (1 << j);
-                else
-                    ram_pages[line].data[x + k] &= ~(1 << j);
-            }
-        }
-
-        x += FONT_WIDTH;
-        if (str[++i] != '\0')
-            x++;
-    }
-
-    ram_pages[line].rendered = false;
 
     return true;
 }
@@ -205,7 +175,12 @@ oled_task(void)
         if (stop || (TWI0.MSTATUS & TWI_WIF_bm && !(TWI0.MSTATUS & TWI_RXACK_bm))) {
             stop = false;
             if (task_state == STATE_DATAN) {
-                if (current_data < sizeof(ram_pages[current_page].data)) {
+                if (current_data++ >= lines[current_page].start) {
+                    if ((current_data - lines[current_page].start) % (oled_font_width + 1) == 0) {
+                        current_char++;
+                    }
+                }
+                if (current_data < oled_screen_width) {
                     waiting = false;
                     return true;
                 }
@@ -213,9 +188,10 @@ oled_task(void)
             task_state++;
             if (task_state == STATE_END) {
                 task_state = STATE_ADDR1;
-                ram_pages[current_page++].rendered = true;
+                lines[current_page++].rendered = true;
                 current_data = 0;
-                if (current_page >= RAM_PAGES)
+                current_char = 0;
+                if (current_page >= oled_lines)
                     current_page = 0;
             }
             waiting = false;
@@ -230,9 +206,9 @@ oled_task(void)
 
     switch (task_state) {
     case STATE_ADDR1:
-        if (ram_pages[current_page].rendered) {
+        if (lines[current_page].rendered) {
             current_page++;
-            if (current_page >= RAM_PAGES) {
+            if (current_page >= oled_lines) {
                 current_page = 0;
             }
             return true;
@@ -282,7 +258,19 @@ oled_task(void)
         break;
 
     case STATE_DATAN:
-        TWI0.MDATA = ram_pages[current_page].data[current_data++];
+        if (current_data < lines[current_page].start) {
+            TWI0.MDATA = 0;
+        }
+        else {
+            char c = lines[current_page].data[current_char];
+            if (c == 0)
+                lines[current_page].end = true;
+            uint8_t i = (current_data - lines[current_page].start) % (oled_font_width + 1);
+            if (lines[current_page].end || i == oled_font_width)
+                TWI0.MDATA = 0;
+            else
+                TWI0.MDATA = pgm_read_byte(&(oled_font[(uint8_t) c][i]));
+        }
         waiting = true;
         break;
 
