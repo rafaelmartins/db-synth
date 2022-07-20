@@ -41,3 +41,7 @@ fp-info-cache
 *.gto
 *.gtp
 *.gts
+
+# Python
+*.pyc
+*.pyo
