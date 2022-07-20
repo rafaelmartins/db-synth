@@ -1,0 +1,3 @@
+(fp_lib_table
+  (lib (name "Connector_JST_with_PinSocket")(type "KiCad")(uri "${KIPRJMOD}/lib/Connector_JST_with_PinSocket.pretty")(options "")(descr "JST-XH connectors with pin socket silkscreen"))
+)
