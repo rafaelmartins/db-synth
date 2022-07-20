@@ -79,10 +79,10 @@ opamp_init(void)
 static inline void
 dac_init(void)
 {
-    // DAC Vref = 2.048V
-    VREF_DAC0REF = VREF_ALWAYSON_bm | VREF_REFSEL_2V048_gc;
+    // DAC Vref = 2.5V
+    VREF_DAC0REF = VREF_ALWAYSON_bm | VREF_REFSEL_2V500_gc;
 
-    // enable DAC and output buffer
+    // enable DAC and output buffer (required by opamp)
     DAC0.CTRLA = DAC_RUNSTDBY_bm | DAC_ENABLE_bm | DAC_OUTEN_bm;
 }
 

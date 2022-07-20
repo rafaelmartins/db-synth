@@ -149,7 +149,7 @@ adsr_sample(int16_t in)
 
     uint8_t balance = table != NULL ? pgm_read_byte(&(table[phase.pint])) : adsr_amplitude;
 
-    uint16_t rv;
+    int16_t rv;
     asm volatile (
         "mul %4, %5"     "\n\t"  // $result = range_end * balance (unsigned multiplication)
         "movw %A0, r0"   "\n\t"  // rv = $result
