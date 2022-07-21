@@ -11,7 +11,6 @@
 #include <string.h>
 #include <avr/io.h>
 #include "oled.h"
-#include "oled-data.h"
 
 #define I2C_ADDRESS 0x3c
 

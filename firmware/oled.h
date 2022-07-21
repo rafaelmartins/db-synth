@@ -11,6 +11,13 @@
 #include <stdbool.h>
 #include <stdint.h>
 
+#include "oled-font.h"
+
+#define oled_screen_width 128
+#define oled_screen_height 68
+#define oled_chars_per_line (oled_screen_width / (oled_font_width + 1))
+#define oled_lines (oled_screen_height / 8)  // info from ssd1306 datasheet
+
 typedef enum {
     OLED_HALIGN_LEFT = 1,
     OLED_HALIGN_RIGHT,
