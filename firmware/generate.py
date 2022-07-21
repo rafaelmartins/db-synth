@@ -11,16 +11,11 @@ import itertools
 import math
 import os
 
-waveform_amplitude = 0x1ff
-waveform_samples_per_cycle = 0x200
-
-a4_midi_number = 69
-a4_frequency = 440.0
-
+'''
+Global Settings
+'''
+cpu_frequency = 24000000
 audio_sample_rate = 48000
-
-note_frequencies = [a4_frequency * 2 ** ((i - a4_midi_number) / 12)
-                    for i in range(128)]
 
 
 '''
@@ -30,6 +25,14 @@ References:
     - Tim Stilson and Julius Smith. 1996. Alias-Free Digital Synthesis of Classic
       Analog Waveforms (https://ccrma.stanford.edu/~stilti/papers/blit.pdf)
 '''
+waveform_amplitude = 0x1ff
+waveform_samples_per_cycle = 0x200
+
+a4_midi_number = 69
+a4_frequency = 440.0
+
+note_frequencies = [a4_frequency * 2 ** ((i - a4_midi_number) / 12)
+                    for i in range(128)]
 
 # the octave closer to the nyquist frequency is usually a sine, then we reuse
 # the existing sine wavetable.
@@ -140,6 +143,22 @@ adsr_times_end = adsr_times_max_ms - adsr_times_min_ms
 adsr_times = [-1 + math.exp(6 * i / (adsr_times_len - 1)) for i in range(adsr_times_len)]
 adsr_times = [adsr_times_min_ms + int(adsr_times_end * i / adsr_times[-1]) for i in adsr_times]
 
+
+'''
+MIDI (AVR USART)
+'''
+midi_usart_baudrate = 31250
+
+midi_usart_baud = (64 * cpu_frequency) // (16 * midi_usart_baudrate)
+
+# control flags that affect the baud formula
+midi_usart_rxmode = 'USART_RXMODE_NORMAL_gc'
+midi_usart_cmode = 'USART_CMODE_ASYNCHRONOUS_gc'
+
+
+'''
+Helpers and renderers
+'''
 
 def format_hex(v, zero_padding=4):
     return '%s0x%0*x' % (int(v) < 0 and '-' or '', zero_padding, abs(int(v)))
@@ -258,6 +277,15 @@ generators = {
         }),
         dump_adsr_curves(),
         dump_adsr_times(),
+    ),
+    'midi-data.h': itertools.chain(
+        header(),
+        dump_headers(['avr/io.h']),
+        dump_macros({
+            'midi_usart_baud': midi_usart_baud,
+            'midi_usart_rxmode': midi_usart_rxmode,
+            'midi_usart_cmode': midi_usart_cmode,
+        }),
     ),
     'oscillator-data.h': itertools.chain(
         header(),

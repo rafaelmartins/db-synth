@@ -13,14 +13,15 @@
 #include "oled.h"
 #include "oscillator.h"
 #include "midi.h"
+#include "midi-data.h"
 
 
 void
 midi_init(void)
 {
-    USART1.BAUD = 0x0c00; // 32150 bps;
-    USART1.CTRLC = USART_CMODE_ASYNCHRONOUS_gc | USART_PMODE_DISABLED_gc | USART_SBMODE_1BIT_gc | USART_CHSIZE_8BIT_gc;
-    USART1.CTRLB = USART_RXEN_bm | USART_RXMODE_NORMAL_gc;
+    USART1.BAUD = midi_usart_baud;
+    USART1.CTRLC = midi_usart_cmode | USART_PMODE_DISABLED_gc | USART_SBMODE_1BIT_gc | USART_CHSIZE_8BIT_gc;
+    USART1.CTRLB = USART_RXEN_bm | midi_usart_rxmode;
 }
 
 
