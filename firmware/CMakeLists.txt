@@ -21,6 +21,7 @@ add_executable(db-synth
 
     oled.c
     oled.h
+    oled-data.h
     oled-font.h
 
     oscillator.c

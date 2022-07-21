@@ -157,6 +157,15 @@ midi_usart_cmode = 'USART_CMODE_ASYNCHRONOUS_gc'
 
 
 '''
+OLED (AVR TWI)
+'''
+oled_twi_baudrate = 400000
+
+# rise time = 0
+oled_twi_mbaud = (cpu_frequency / (2 * oled_twi_baudrate)) - 5
+
+
+'''
 Helpers and renderers
 '''
 
@@ -285,6 +294,12 @@ generators = {
             'midi_usart_baud': midi_usart_baud,
             'midi_usart_rxmode': midi_usart_rxmode,
             'midi_usart_cmode': midi_usart_cmode,
+        }),
+    ),
+    'oled-data.h': itertools.chain(
+        header(),
+        dump_macros({
+            'oled_twi_mbaud': oled_twi_mbaud,
         }),
     ),
     'oscillator-data.h': itertools.chain(
