@@ -10,4 +10,10 @@
 
 #pragma once
 
+#include <avr/io.h>
+
+#define cpu_frqsel CLKCTRL_FRQSEL_24M_gc
+#define opamp_timebase 23
+#define timer_tcb_ccmp 500
+#define timer_tcb_clksel TCB_CLKSEL_DIV1_gc
 #define waveform_amplitude 0x01ff

@@ -18,6 +18,12 @@ cpu_frequency = 24000000
 audio_sample_rate = 48000
 
 
+if cpu_frequency != 24000000:
+    raise RuntimeError('unsupported cpu frequency')
+
+cpu_frqsel = 'CLKCTRL_FRQSEL_24M_gc'
+
+
 '''
 Bandlimited wavetables
 
@@ -166,6 +172,21 @@ oled_twi_mbaud = (cpu_frequency / (2 * oled_twi_baudrate)) - 5
 
 
 '''
+OPAMPs
+'''
+opamp_timebase = int((cpu_frequency * 1e-6) - 1)
+
+
+'''
+TIMER (AVR TCB)
+'''
+timer_tcb_ccmp = cpu_frequency // audio_sample_rate
+
+# control flags that affect ccmp
+timer_tcb_clksel = 'TCB_CLKSEL_DIV1_gc'
+
+
+'''
 Helpers and renderers
 '''
 
@@ -272,7 +293,12 @@ def dump_adsr_times():
 generators = {
     'main-data.h': itertools.chain(
         header(),
+        dump_headers(['avr/io.h']),
         dump_macros({
+            'cpu_frqsel': cpu_frqsel,
+            'opamp_timebase': opamp_timebase,
+            'timer_tcb_ccmp': timer_tcb_ccmp,
+            'timer_tcb_clksel': timer_tcb_clksel,
             'waveform_amplitude': format_hex(waveform_amplitude),
         }),
     ),

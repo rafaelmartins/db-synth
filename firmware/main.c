@@ -41,8 +41,8 @@ ISR(TCB0_INT_vect)
 static inline void
 clock_init(void)
 {
-    // setup internal high frequency clock at 24MHz
-    _PROTECTED_WRITE(CLKCTRL.OSCHFCTRLA, CLKCTRL_RUNSTDBY_bm | CLKCTRL_FRQSEL_24M_gc | CLKCTRL_AUTOTUNE_bm);
+    // setup internal high frequency clock
+    _PROTECTED_WRITE(CLKCTRL.OSCHFCTRLA, CLKCTRL_RUNSTDBY_bm | cpu_frqsel | CLKCTRL_AUTOTUNE_bm);
     while (!(CLKCTRL.MCLKSTATUS & CLKCTRL_OSCHFS_bm));
 
     // use internal high frequency clock as main clock
@@ -59,17 +59,17 @@ opamp_init(void)
     PORTD.PIN4CTRL = PORT_ISC_INPUT_DISABLE_gc;
     PORTD.PIN5CTRL = PORT_ISC_INPUT_DISABLE_gc;
 
-    // 1us @ 24MHz = 24 cycles, minus 1
-    OPAMP.TIMEBASE = 23;
+    // 1us @ CLK_PER, minus 1
+    OPAMP.TIMEBASE = opamp_timebase;
 
     // OPAMP 0: unity gain for DAC
     OPAMP.OP0INMUX = OPAMP_OP0INMUX_MUXNEG_OUT_gc | OPAMP_OP0INMUX_MUXPOS_DAC_gc;
-    OPAMP.OP0CTRLA = OPAMP_OP0CTRLA_OUTMODE_NORMAL_gc | OPAMP_ALWAYSON_bm;
+    OPAMP.OP0CTRLA = OPAMP_RUNSTBY_bm | OPAMP_OP0CTRLA_OUTMODE_NORMAL_gc | OPAMP_ALWAYSON_bm;
 
     // OPAMP 1: 2nd order low pass filter
     OPAMP.OP1INMUX = OPAMP_OP1INMUX_MUXNEG_WIP_gc | OPAMP_OP1INMUX_MUXPOS_INP_gc;
     OPAMP.OP1RESMUX = OPAMP_OP1RESMUX_MUXWIP_WIP2_gc | OPAMP_OP1RESMUX_MUXBOT_GND_gc | OPAMP_OP1RESMUX_MUXTOP_OUT_gc;
-    OPAMP.OP1CTRLA = OPAMP_OP1CTRLA_OUTMODE_NORMAL_gc | OPAMP_ALWAYSON_bm;
+    OPAMP.OP1CTRLA = OPAMP_RUNSTBY_bm | OPAMP_OP1CTRLA_OUTMODE_NORMAL_gc | OPAMP_ALWAYSON_bm;
 
     // enable opamps
     OPAMP.CTRLA = OPAMP_ENABLE_bm;
@@ -80,7 +80,7 @@ static inline void
 dac_init(void)
 {
     // DAC Vref = 2.5V
-    VREF_DAC0REF = VREF_ALWAYSON_bm | VREF_REFSEL_2V500_gc;
+    VREF.DAC0REF = VREF_ALWAYSON_bm | VREF_REFSEL_2V500_gc;
 
     // enable DAC and output buffer (required by opamp)
     DAC0.CTRLA = DAC_RUNSTDBY_bm | DAC_ENABLE_bm | DAC_OUTEN_bm;
@@ -90,14 +90,14 @@ dac_init(void)
 static inline void
 timer_init(void)
 {
-    // 500 cycles at 24Mhz = 48000 audio sample rate
-    TCB0.CCMP = 500;
+    // number of cycles between each audio sample
+    TCB0.CCMP = timer_tcb_ccmp;
 
     // enable capture interrupt
     TCB0.INTCTRL = TCB_CAPT_bm;
 
     // enable timer without prescaler division
-    TCB0.CTRLA = TCB_RUNSTDBY_bm | TCB_ENABLE_bm | TCB_CLKSEL_DIV1_gc;
+    TCB0.CTRLA = TCB_RUNSTDBY_bm | timer_tcb_clksel | TCB_ENABLE_bm;
 }
 
 
