@@ -1,13 +1,14 @@
 thickness = 1.6;
 
-pcb_width = 42.799;
-pcb_length = 40.767;
+pcb_width = 41.402;
+pcb_length = 36.322;
 pcb_thickness = 1.6;
-pcb_screw_padding = 3.56;
+pcb_screw_padding = 3.556;
 pcb_base_d = 5;
 pcb_base_screw_d = 1.8;
+pcb_oled_pin_y = 2.54;
 
-width = 2 * (thickness + 2.4) + pcb_width;
+width = 2 * (thickness + 3) + pcb_width;
 length = 2 * thickness + pcb_length;
 height = 30;
 
@@ -21,7 +22,7 @@ oled_pcb_base_screw_d = 1.8;
 oled_pcb_base_spacing_x = 23.5;
 oled_pcb_base_spacing_y = 23.8;
 oled0_x = (width - oled_pcb_base_spacing_x) / 2;
-oled0_y = pcb0_y + 2.7;
+oled0_y = pcb0_y + pcb_oled_pin_y + 0.43;
 oled_screen_width = 25.5;
 oled_screen_height = 14.5;
 oled_screen_distance_x = (oled_pcb_base_spacing_x - oled_screen_width) / 2;
@@ -86,7 +87,7 @@ difference() {
     }
     
     rotate([0, 90, 0]) {
-        translate([-thickness - pcb_base_height / 2, pcb0_y + 2 * pcb_screw_padding + 5, width - thickness])
+        translate([-thickness - pcb_base_height / 2, pcb0_y + 2 * pcb_screw_padding + 4, width - thickness])
             cylinder(h=thickness, d=8.5, $fn=20);
         translate([-thickness - pcb_base_height / 2, pcb0_y + pcb_length - 2 * pcb_screw_padding - 5, 0])
             cylinder(h=width, d=6.5, $fn=20);
