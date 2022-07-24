@@ -19,6 +19,7 @@
 void
 midi_init(void)
 {
+    PORTC_PIN1CTRL = PORT_PULLUPEN_bm;
     USART1.BAUD = midi_usart_baud;
     USART1.CTRLC = midi_usart_cmode | USART_PMODE_DISABLED_gc | USART_SBMODE_1BIT_gc | USART_CHSIZE_8BIT_gc;
     USART1.CTRLB = USART_RXEN_bm | midi_usart_rxmode;

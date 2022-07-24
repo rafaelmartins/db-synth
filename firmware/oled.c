@@ -86,7 +86,6 @@ twi_wait(void)
 bool
 oled_init(void)
 {
-    PORTMUX.TWIROUTEA = PORTMUX_TWI0_ALT2_gc;
     TWI0.CTRLA = TWI_INPUTLVL_I2C_gc | TWI_SDASETUP_4CYC_gc | TWI_SDAHOLD_OFF_gc | TWI_FMPEN_OFF_gc;
     TWI0.MBAUD = oled_twi_mbaud;
     TWI0.MCTRLA = TWI_ENABLE_bm;
