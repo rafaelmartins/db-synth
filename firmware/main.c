@@ -26,12 +26,14 @@ FUSES =
     .BOOTSIZE = 0,
 };
 
+static volatile midi_t midi;
+
 
 ISR(TCB0_INT_vect)
 {
     TCB0.INTFLAGS = TCB_CAPT_bm;
 
-    midi_task();
+    midi_task(&midi);
     oled_task();
 
     DAC0.DATA = (adsr_sample(oscillator_get_sample()) + waveform_amplitude) << DAC_DATA_0_bp;
@@ -84,6 +86,50 @@ dac_init(void)
 
     // enable DAC and output buffer (required by opamp)
     DAC0.CTRLA = DAC_RUNSTDBY_bm | DAC_ENABLE_bm | DAC_OUTEN_bm;
+}
+
+
+static inline void
+midi_channel_cb(midi_command_t cmd, uint8_t ch, volatile uint8_t *buf, uint8_t len)
+{
+    if (ch != 0)
+        return;
+
+    switch (cmd) {
+    case MIDI_NOTE_ON:
+        if (len == 2 && buf[0] != 0) {
+            oscillator_set_note(buf[0]);
+            adsr_set_velocity(buf[1]);
+            adsr_set_gate();
+
+            // FIXME: test code, results in some audio clicks
+            // char b[5];
+            // b[0] = '0';
+            // b[1] = 'x';
+            // b[2] = (buf[0] >> 4) > 10 ? (buf[0] >> 4) - 10 + 'a' : (buf[0] >> 4) + '0';
+            // b[3] = (buf[0] & 0xf) > 10 ? (buf[0] & 0xf) - 10 + 'a' : (buf[0] & 0xf) + '0';
+            // b[4] = 0;
+            // oled_line(3, b, OLED_HALIGN_CENTER);
+
+            return;
+        }
+
+    // fall through
+    case MIDI_NOTE_OFF:
+        adsr_unset_gate();
+        return;
+
+    default:
+        break;
+    }
+}
+
+
+static inline void
+midi_init(void)
+{
+    midi_hw_init();
+    midi.channel_cb = midi_channel_cb;
 }
 
 
