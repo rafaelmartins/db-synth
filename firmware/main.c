@@ -27,6 +27,7 @@ FUSES =
 };
 
 static volatile midi_t midi;
+static volatile oled_t oled;
 
 
 ISR(TCB0_INT_vect)
@@ -34,7 +35,7 @@ ISR(TCB0_INT_vect)
     TCB0.INTFLAGS = TCB_CAPT_bm;
 
     midi_task(&midi);
-    oled_task();
+    oled_task(&oled);
 
     DAC0.DATA = (adsr_sample(oscillator_get_sample()) + waveform_amplitude) << DAC_DATA_0_bp;
 }
@@ -156,8 +157,8 @@ main(void)
     midi_init();
     timer_init();
 
-    oled_init();
-    oled_line(0, "db-synth", OLED_HALIGN_CENTER);
+    oled_init(&oled);
+    oled_line(&oled, 0, "db-synth", OLED_HALIGN_CENTER);
 
     // FIXME: test settings, remove
     oscillator_set_waveform(OSCILLATOR_WAVEFORM_SINE);

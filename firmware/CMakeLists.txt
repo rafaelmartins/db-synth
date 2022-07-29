@@ -18,7 +18,6 @@ add_executable(db-synth
     midi.h
     midi-data.h
 
-    oled.c
     oled.h
     oled-data.h
     oled-font.h
