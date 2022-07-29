@@ -11,7 +11,6 @@ add_executable(db-synth
     main.c
     main-data.h
 
-    adsr.c
     adsr.h
     adsr-data.h
 

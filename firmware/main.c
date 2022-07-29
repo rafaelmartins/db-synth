@@ -8,7 +8,6 @@
 
 #include <avr/interrupt.h>
 #include <avr/io.h>
-
 #include "adsr.h"
 #include "midi.h"
 #include "oled.h"
@@ -26,6 +25,7 @@ FUSES =
     .BOOTSIZE = 0,
 };
 
+static volatile adsr_t adsr;
 static volatile midi_t midi;
 static volatile oled_t oled;
 static volatile oscillator_t oscillator;
@@ -38,7 +38,7 @@ ISR(TCB0_INT_vect)
     midi_task(&midi);
     oled_task(&oled);
 
-    DAC0.DATA = (adsr_sample(oscillator_get_sample(&oscillator)) + waveform_amplitude) << DAC_DATA_0_bp;
+    DAC0.DATA = (adsr_sample(&adsr, oscillator_get_sample(&oscillator)) + waveform_amplitude) << DAC_DATA_0_bp;
 }
 
 
@@ -101,8 +101,8 @@ midi_channel_cb(midi_command_t cmd, uint8_t ch, volatile uint8_t *buf, uint8_t l
     case MIDI_NOTE_ON:
         if (len == 2 && buf[0] != 0) {
             oscillator_set_note(&oscillator, buf[0]);
-            adsr_set_velocity(buf[1]);
-            adsr_set_gate();
+            adsr_set_velocity(&adsr, buf[1]);
+            adsr_set_gate(&adsr);
 
             // FIXME: test code, results in some audio clicks
             // char b[5];
@@ -118,7 +118,7 @@ midi_channel_cb(midi_command_t cmd, uint8_t ch, volatile uint8_t *buf, uint8_t l
 
     // fall through
     case MIDI_NOTE_OFF:
-        adsr_unset_gate();
+        adsr_unset_gate(&adsr);
         return;
 
     default:
@@ -158,6 +158,7 @@ main(void)
     midi_init();
     timer_init();
 
+    adsr_init(&adsr);
     oscillator_init(&oscillator);
 
     oled_init(&oled);
@@ -165,10 +166,10 @@ main(void)
 
     // FIXME: test settings, remove
     oscillator_set_waveform(&oscillator, OSCILLATOR_WAVEFORM_SINE);
-    adsr_set_attack(10);
-    adsr_set_decay(20);
-    adsr_set_sustain(200);
-    adsr_set_release(10);
+    adsr_set_attack(&adsr, 10);
+    adsr_set_decay(&adsr, 20);
+    adsr_set_sustain(&adsr, 200);
+    adsr_set_release(&adsr, 10);
 
     sei();
 
