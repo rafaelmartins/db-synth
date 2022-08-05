@@ -66,35 +66,6 @@ typedef enum {
 } _twi_state_t;
 
 
-static inline bool
-oled_clear_line(volatile oled_t *o, uint8_t line)
-{
-    if (o == NULL || !o->_initialized)
-        return false;
-
-    if (line >= oled_lines || o->_lines[line].state == LINE_STATE_RENDERING)
-        return false;
-
-    memset((void*) o->_lines[line].data, ' ', sizeof(o->_lines[line].data));
-    o->_lines[line].state = LINE_STATE_PENDING;
-    return true;
-}
-
-
-static inline bool
-oled_clear(volatile oled_t *o)
-{
-    if (o == NULL || !o->_initialized)
-        return false;
-
-    for (uint8_t i = 0; i < oled_lines; i++) {
-        if (!oled_clear_line(o, i))
-            return false;
-    }
-    return true;
-}
-
-
 static inline _twi_state_t
 _twi_check_state(void)
 {
@@ -230,7 +201,7 @@ oled_init(volatile oled_t *o)
 }
 
 
-static inline bool
+static bool
 oled_line(volatile oled_t *o, uint8_t line, const char *str, oled_halign_t align)
 {
     if (o == NULL || !o->_initialized)
@@ -257,12 +228,10 @@ oled_line(volatile oled_t *o, uint8_t line, const char *str, oled_halign_t align
 
     memset((void*) o->_lines[line].data, ' ', sizeof(o->_lines[line].data));
 
+    const char *c = str;
     uint8_t i = start;
-    while (i < oled_chars_per_line) {
-        o->_lines[line].data[i] = str[i - start];
-        if (str[++i - start] == 0)
-            break;
-    }
+    while (i < oled_chars_per_line && *c != 0)
+        o->_lines[line].data[i++] = *c++;
 
     o->_lines[line].state = LINE_STATE_PENDING;
 
