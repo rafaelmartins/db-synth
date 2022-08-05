@@ -111,7 +111,7 @@ midi_channel_cb(midi_command_t cmd, uint8_t ch, volatile uint8_t *buf, uint8_t l
             // b[2] = (buf[0] >> 4) > 10 ? (buf[0] >> 4) - 10 + 'a' : (buf[0] >> 4) + '0';
             // b[3] = (buf[0] & 0xf) > 10 ? (buf[0] & 0xf) - 10 + 'a' : (buf[0] & 0xf) + '0';
             // b[4] = 0;
-            // oled_line(3, b, OLED_HALIGN_CENTER);
+            // oled_line(&oled, 3, b, OLED_HALIGN_CENTER);
 
             return;
         }

@@ -10,4 +10,4 @@
 
 #pragma once
 
-#define oled_twi_mbaud 25.0
+#define oled_twi_mbaud 20

@@ -166,9 +166,9 @@ midi_usart_cmode = 'USART_CMODE_ASYNCHRONOUS_gc'
 OLED (AVR TWI)
 '''
 oled_twi_baudrate = 400000
+oled_twi_rise_time = 400e-9
 
-# rise time = 0
-oled_twi_mbaud = (cpu_frequency / (2 * oled_twi_baudrate)) - 5
+oled_twi_mbaud = int((cpu_frequency / (2 * oled_twi_baudrate)) - (5 + ((cpu_frequency * oled_twi_rise_time) / 2)))
 
 
 '''
