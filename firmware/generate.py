@@ -274,18 +274,22 @@ def dump_adsr_curves():
 
 def dump_adsr_times():
     yield ''
-    yield 'static const struct {'
-    yield '    const char *description;'
-    yield '    phase_t step;'
-    yield '} times[] = {'
+    yield 'static const phase_t times[] = {'
 
     for t in adsr_times:
-        desc = ('%.2f s' % (t / 1000)) if t > 1000 else ('%d ms' % t)
         step = (adsr_samples_per_cycle * 1000) / (t * audio_sample_rate)
-        yield '    {'
-        yield '        .description = "%s",' % desc
-        yield '        .step        = {%s},' % format_hex(round(step * (1 << 16)), 8)
-        yield '    },'
+        yield '    {%s},' % format_hex(step * (1 << 16), 8)
+
+    yield '};'
+
+
+def dump_adsr_time_descriptions():
+    yield ''
+    yield 'static const char *time_descriptions[] = {'
+
+    for t in adsr_times:
+        desc = ('%.2fs' % (t / 1000)) if t > 1000 else ('%dms' % t)
+        yield '    "%-6s",' % desc
 
     yield '};'
 

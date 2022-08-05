@@ -152,20 +152,20 @@ adsr_sample(volatile adsr_t *a, int16_t in)
 
     switch (a->_state) {
     case ADSR_STATE_ATTACK:
-        if (phase_step(&a->_phase, &times[a->_attack].step, adsr_samples_per_cycle))
+        if (phase_step(&a->_phase, &times[a->_attack], adsr_samples_per_cycle))
             _set_state(a, ADSR_STATE_DECAY);
         table = attack_curve;
         break;
 
     case ADSR_STATE_DECAY:
-        if (phase_step(&a->_phase, &times[a->_decay].step, adsr_samples_per_cycle))
+        if (phase_step(&a->_phase, &times[a->_decay], adsr_samples_per_cycle))
             _set_state(a, ADSR_STATE_SUSTAIN);
         else
             table = decay_release_curve;
         break;
 
     case ADSR_STATE_RELEASE:
-        if (phase_step(&a->_phase, &times[a->_release].step, adsr_samples_per_cycle)) {
+        if (phase_step(&a->_phase, &times[a->_release], adsr_samples_per_cycle)) {
             _set_state(a, ADSR_STATE_OFF);
             return 0;
         }

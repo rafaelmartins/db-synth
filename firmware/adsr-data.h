@@ -152,1032 +152,261 @@ static const uint8_t decay_release_curve[] PROGMEM = {
     0xfe, 0xfe, 0xfe, 0xfe, 0xfe, 0xfe, 0xfe, 0xff,
 };
 
-static const struct {
-    const char *description;
-    phase_t step;
-} times[] = {
-    {
-        .description = "2 ms",
-        .step        = {0x00055555},
-    },
-    {
-        .description = "3 ms",
-        .step        = {0x00038e39},
-    },
-    {
-        .description = "4 ms",
-        .step        = {0x0002aaab},
-    },
-    {
-        .description = "5 ms",
-        .step        = {0x00022222},
-    },
-    {
-        .description = "6 ms",
-        .step        = {0x0001c71c},
-    },
-    {
-        .description = "8 ms",
-        .step        = {0x00015555},
-    },
-    {
-        .description = "9 ms",
-        .step        = {0x00012f68},
-    },
-    {
-        .description = "10 ms",
-        .step        = {0x00011111},
-    },
-    {
-        .description = "12 ms",
-        .step        = {0x0000e38e},
-    },
-    {
-        .description = "13 ms",
-        .step        = {0x0000d20d},
-    },
-    {
-        .description = "15 ms",
-        .step        = {0x0000b60b},
-    },
-    {
-        .description = "16 ms",
-        .step        = {0x0000aaab},
-    },
-    {
-        .description = "18 ms",
-        .step        = {0x000097b4},
-    },
-    {
-        .description = "19 ms",
-        .step        = {0x00008fb8},
-    },
-    {
-        .description = "21 ms",
-        .step        = {0x00008208},
-    },
-    {
-        .description = "23 ms",
-        .step        = {0x000076ba},
-    },
-    {
-        .description = "24 ms",
-        .step        = {0x000071c7},
-    },
-    {
-        .description = "26 ms",
-        .step        = {0x00006907},
-    },
-    {
-        .description = "28 ms",
-        .step        = {0x00006186},
-    },
-    {
-        .description = "30 ms",
-        .step        = {0x00005b06},
-    },
-    {
-        .description = "31 ms",
-        .step        = {0x00005816},
-    },
-    {
-        .description = "33 ms",
-        .step        = {0x000052bf},
-    },
-    {
-        .description = "35 ms",
-        .step        = {0x00004e05},
-    },
-    {
-        .description = "37 ms",
-        .step        = {0x000049cd},
-    },
-    {
-        .description = "39 ms",
-        .step        = {0x00004604},
-    },
-    {
-        .description = "41 ms",
-        .step        = {0x0000429a},
-    },
-    {
-        .description = "43 ms",
-        .step        = {0x00003f81},
-    },
-    {
-        .description = "46 ms",
-        .step        = {0x00003b5d},
-    },
-    {
-        .description = "48 ms",
-        .step        = {0x000038e4},
-    },
-    {
-        .description = "50 ms",
-        .step        = {0x0000369d},
-    },
-    {
-        .description = "52 ms",
-        .step        = {0x00003483},
-    },
-    {
-        .description = "55 ms",
-        .step        = {0x000031a6},
-    },
-    {
-        .description = "57 ms",
-        .step        = {0x00002fe8},
-    },
-    {
-        .description = "60 ms",
-        .step        = {0x00002d83},
-    },
-    {
-        .description = "62 ms",
-        .step        = {0x00002c0b},
-    },
-    {
-        .description = "65 ms",
-        .step        = {0x00002a03},
-    },
-    {
-        .description = "68 ms",
-        .step        = {0x00002828},
-    },
-    {
-        .description = "70 ms",
-        .step        = {0x00002702},
-    },
-    {
-        .description = "73 ms",
-        .step        = {0x00002568},
-    },
-    {
-        .description = "76 ms",
-        .step        = {0x000023ee},
-    },
-    {
-        .description = "79 ms",
-        .step        = {0x00002291},
-    },
-    {
-        .description = "82 ms",
-        .step        = {0x0000214d},
-    },
-    {
-        .description = "85 ms",
-        .step        = {0x00002020},
-    },
-    {
-        .description = "88 ms",
-        .step        = {0x00001f08},
-    },
-    {
-        .description = "92 ms",
-        .step        = {0x00001dae},
-    },
-    {
-        .description = "95 ms",
-        .step        = {0x00001cbe},
-    },
-    {
-        .description = "98 ms",
-        .step        = {0x00001bdd},
-    },
-    {
-        .description = "102 ms",
-        .step        = {0x00001ac5},
-    },
-    {
-        .description = "106 ms",
-        .step        = {0x000019c3},
-    },
-    {
-        .description = "109 ms",
-        .step        = {0x0000190d},
-    },
-    {
-        .description = "113 ms",
-        .step        = {0x0000182a},
-    },
-    {
-        .description = "117 ms",
-        .step        = {0x00001757},
-    },
-    {
-        .description = "121 ms",
-        .step        = {0x00001691},
-    },
-    {
-        .description = "125 ms",
-        .step        = {0x000015d8},
-    },
-    {
-        .description = "129 ms",
-        .step        = {0x0000152b},
-    },
-    {
-        .description = "133 ms",
-        .step        = {0x00001488},
-    },
-    {
-        .description = "137 ms",
-        .step        = {0x000013ef},
-    },
-    {
-        .description = "142 ms",
-        .step        = {0x0000133b},
-    },
-    {
-        .description = "146 ms",
-        .step        = {0x000012b4},
-    },
-    {
-        .description = "151 ms",
-        .step        = {0x00001215},
-    },
-    {
-        .description = "156 ms",
-        .step        = {0x00001181},
-    },
-    {
-        .description = "161 ms",
-        .step        = {0x000010f6},
-    },
-    {
-        .description = "166 ms",
-        .step        = {0x00001073},
-    },
-    {
-        .description = "171 ms",
-        .step        = {0x00000ff8},
-    },
-    {
-        .description = "176 ms",
-        .step        = {0x00000f84},
-    },
-    {
-        .description = "181 ms",
-        .step        = {0x00000f16},
-    },
-    {
-        .description = "187 ms",
-        .step        = {0x00000e9a},
-    },
-    {
-        .description = "192 ms",
-        .step        = {0x00000e39},
-    },
-    {
-        .description = "198 ms",
-        .step        = {0x00000dcb},
-    },
-    {
-        .description = "204 ms",
-        .step        = {0x00000d63},
-    },
-    {
-        .description = "210 ms",
-        .step        = {0x00000d01},
-    },
-    {
-        .description = "216 ms",
-        .step        = {0x00000ca4},
-    },
-    {
-        .description = "222 ms",
-        .step        = {0x00000c4d},
-    },
-    {
-        .description = "229 ms",
-        .step        = {0x00000bed},
-    },
-    {
-        .description = "235 ms",
-        .step        = {0x00000b9f},
-    },
-    {
-        .description = "242 ms",
-        .step        = {0x00000b49},
-    },
-    {
-        .description = "249 ms",
-        .step        = {0x00000af7},
-    },
-    {
-        .description = "256 ms",
-        .step        = {0x00000aab},
-    },
-    {
-        .description = "263 ms",
-        .step        = {0x00000a62},
-    },
-    {
-        .description = "271 ms",
-        .step        = {0x00000a14},
-    },
-    {
-        .description = "278 ms",
-        .step        = {0x000009d3},
-    },
-    {
-        .description = "286 ms",
-        .step        = {0x0000098c},
-    },
-    {
-        .description = "294 ms",
-        .step        = {0x0000094a},
-    },
-    {
-        .description = "302 ms",
-        .step        = {0x0000090b},
-    },
-    {
-        .description = "310 ms",
-        .step        = {0x000008cf},
-    },
-    {
-        .description = "319 ms",
-        .step        = {0x0000088f},
-    },
-    {
-        .description = "328 ms",
-        .step        = {0x00000853},
-    },
-    {
-        .description = "337 ms",
-        .step        = {0x0000081a},
-    },
-    {
-        .description = "346 ms",
-        .step        = {0x000007e4},
-    },
-    {
-        .description = "355 ms",
-        .step        = {0x000007b1},
-    },
-    {
-        .description = "365 ms",
-        .step        = {0x0000077b},
-    },
-    {
-        .description = "375 ms",
-        .step        = {0x00000748},
-    },
-    {
-        .description = "385 ms",
-        .step        = {0x00000718},
-    },
-    {
-        .description = "395 ms",
-        .step        = {0x000006ea},
-    },
-    {
-        .description = "406 ms",
-        .step        = {0x000006ba},
-    },
-    {
-        .description = "416 ms",
-        .step        = {0x00000690},
-    },
-    {
-        .description = "427 ms",
-        .step        = {0x00000665},
-    },
-    {
-        .description = "439 ms",
-        .step        = {0x00000638},
-    },
-    {
-        .description = "450 ms",
-        .step        = {0x00000611},
-    },
-    {
-        .description = "462 ms",
-        .step        = {0x000005e9},
-    },
-    {
-        .description = "474 ms",
-        .step        = {0x000005c3},
-    },
-    {
-        .description = "487 ms",
-        .step        = {0x0000059b},
-    },
-    {
-        .description = "500 ms",
-        .step        = {0x00000576},
-    },
-    {
-        .description = "513 ms",
-        .step        = {0x00000553},
-    },
-    {
-        .description = "526 ms",
-        .step        = {0x00000531},
-    },
-    {
-        .description = "540 ms",
-        .step        = {0x0000050f},
-    },
-    {
-        .description = "554 ms",
-        .step        = {0x000004ee},
-    },
-    {
-        .description = "568 ms",
-        .step        = {0x000004cf},
-    },
-    {
-        .description = "583 ms",
-        .step        = {0x000004af},
-    },
-    {
-        .description = "598 ms",
-        .step        = {0x00000491},
-    },
-    {
-        .description = "613 ms",
-        .step        = {0x00000474},
-    },
-    {
-        .description = "629 ms",
-        .step        = {0x00000457},
-    },
-    {
-        .description = "645 ms",
-        .step        = {0x0000043c},
-    },
-    {
-        .description = "661 ms",
-        .step        = {0x00000422},
-    },
-    {
-        .description = "678 ms",
-        .step        = {0x00000407},
-    },
-    {
-        .description = "696 ms",
-        .step        = {0x000003ec},
-    },
-    {
-        .description = "713 ms",
-        .step        = {0x000003d4},
-    },
-    {
-        .description = "731 ms",
-        .step        = {0x000003bc},
-    },
-    {
-        .description = "750 ms",
-        .step        = {0x000003a4},
-    },
-    {
-        .description = "769 ms",
-        .step        = {0x0000038d},
-    },
-    {
-        .description = "788 ms",
-        .step        = {0x00000377},
-    },
-    {
-        .description = "808 ms",
-        .step        = {0x00000361},
-    },
-    {
-        .description = "829 ms",
-        .step        = {0x0000034b},
-    },
-    {
-        .description = "850 ms",
-        .step        = {0x00000336},
-    },
-    {
-        .description = "871 ms",
-        .step        = {0x00000323},
-    },
-    {
-        .description = "893 ms",
-        .step        = {0x0000030f},
-    },
-    {
-        .description = "915 ms",
-        .step        = {0x000002fc},
-    },
-    {
-        .description = "938 ms",
-        .step        = {0x000002e9},
-    },
-    {
-        .description = "962 ms",
-        .step        = {0x000002d7},
-    },
-    {
-        .description = "986 ms",
-        .step        = {0x000002c5},
-    },
-    {
-        .description = "1.01 s",
-        .step        = {0x000002b4},
-    },
-    {
-        .description = "1.04 s",
-        .step        = {0x000002a3},
-    },
-    {
-        .description = "1.06 s",
-        .step        = {0x00000293},
-    },
-    {
-        .description = "1.09 s",
-        .step        = {0x00000283},
-    },
-    {
-        .description = "1.11 s",
-        .step        = {0x00000273},
-    },
-    {
-        .description = "1.14 s",
-        .step        = {0x00000264},
-    },
-    {
-        .description = "1.17 s",
-        .step        = {0x00000255},
-    },
-    {
-        .description = "1.20 s",
-        .step        = {0x00000247},
-    },
-    {
-        .description = "1.23 s",
-        .step        = {0x00000238},
-    },
-    {
-        .description = "1.26 s",
-        .step        = {0x0000022b},
-    },
-    {
-        .description = "1.29 s",
-        .step        = {0x0000021d},
-    },
-    {
-        .description = "1.32 s",
-        .step        = {0x00000210},
-    },
-    {
-        .description = "1.36 s",
-        .step        = {0x00000204},
-    },
-    {
-        .description = "1.39 s",
-        .step        = {0x000001f7},
-    },
-    {
-        .description = "1.42 s",
-        .step        = {0x000001eb},
-    },
-    {
-        .description = "1.46 s",
-        .step        = {0x000001df},
-    },
-    {
-        .description = "1.49 s",
-        .step        = {0x000001d4},
-    },
-    {
-        .description = "1.53 s",
-        .step        = {0x000001c9},
-    },
-    {
-        .description = "1.57 s",
-        .step        = {0x000001be},
-    },
-    {
-        .description = "1.61 s",
-        .step        = {0x000001b3},
-    },
-    {
-        .description = "1.65 s",
-        .step        = {0x000001a8},
-    },
-    {
-        .description = "1.69 s",
-        .step        = {0x0000019e},
-    },
-    {
-        .description = "1.73 s",
-        .step        = {0x00000195},
-    },
-    {
-        .description = "1.77 s",
-        .step        = {0x0000018b},
-    },
-    {
-        .description = "1.81 s",
-        .step        = {0x00000181},
-    },
-    {
-        .description = "1.86 s",
-        .step        = {0x00000178},
-    },
-    {
-        .description = "1.90 s",
-        .step        = {0x0000016f},
-    },
-    {
-        .description = "1.95 s",
-        .step        = {0x00000166},
-    },
-    {
-        .description = "2.00 s",
-        .step        = {0x0000015e},
-    },
-    {
-        .description = "2.05 s",
-        .step        = {0x00000156},
-    },
-    {
-        .description = "2.10 s",
-        .step        = {0x0000014e},
-    },
-    {
-        .description = "2.15 s",
-        .step        = {0x00000146},
-    },
-    {
-        .description = "2.20 s",
-        .step        = {0x0000013e},
-    },
-    {
-        .description = "2.25 s",
-        .step        = {0x00000136},
-    },
-    {
-        .description = "2.31 s",
-        .step        = {0x0000012f},
-    },
-    {
-        .description = "2.36 s",
-        .step        = {0x00000128},
-    },
-    {
-        .description = "2.42 s",
-        .step        = {0x00000121},
-    },
-    {
-        .description = "2.48 s",
-        .step        = {0x0000011a},
-    },
-    {
-        .description = "2.54 s",
-        .step        = {0x00000113},
-    },
-    {
-        .description = "2.60 s",
-        .step        = {0x0000010d},
-    },
-    {
-        .description = "2.67 s",
-        .step        = {0x00000106},
-    },
-    {
-        .description = "2.73 s",
-        .step        = {0x00000100},
-    },
-    {
-        .description = "2.80 s",
-        .step        = {0x000000fa},
-    },
-    {
-        .description = "2.86 s",
-        .step        = {0x000000f4},
-    },
-    {
-        .description = "2.93 s",
-        .step        = {0x000000ee},
-    },
-    {
-        .description = "3.00 s",
-        .step        = {0x000000e9},
-    },
-    {
-        .description = "3.08 s",
-        .step        = {0x000000e3},
-    },
-    {
-        .description = "3.15 s",
-        .step        = {0x000000de},
-    },
-    {
-        .description = "3.23 s",
-        .step        = {0x000000d9},
-    },
-    {
-        .description = "3.31 s",
-        .step        = {0x000000d4},
-    },
-    {
-        .description = "3.38 s",
-        .step        = {0x000000cf},
-    },
-    {
-        .description = "3.47 s",
-        .step        = {0x000000ca},
-    },
-    {
-        .description = "3.55 s",
-        .step        = {0x000000c5},
-    },
-    {
-        .description = "3.64 s",
-        .step        = {0x000000c0},
-    },
-    {
-        .description = "3.72 s",
-        .step        = {0x000000bc},
-    },
-    {
-        .description = "3.81 s",
-        .step        = {0x000000b7},
-    },
-    {
-        .description = "3.90 s",
-        .step        = {0x000000b3},
-    },
-    {
-        .description = "4.00 s",
-        .step        = {0x000000af},
-    },
-    {
-        .description = "4.10 s",
-        .step        = {0x000000ab},
-    },
-    {
-        .description = "4.19 s",
-        .step        = {0x000000a7},
-    },
-    {
-        .description = "4.29 s",
-        .step        = {0x000000a3},
-    },
-    {
-        .description = "4.40 s",
-        .step        = {0x0000009f},
-    },
-    {
-        .description = "4.50 s",
-        .step        = {0x0000009b},
-    },
-    {
-        .description = "4.61 s",
-        .step        = {0x00000098},
-    },
-    {
-        .description = "4.72 s",
-        .step        = {0x00000094},
-    },
-    {
-        .description = "4.84 s",
-        .step        = {0x00000090},
-    },
-    {
-        .description = "4.95 s",
-        .step        = {0x0000008d},
-    },
-    {
-        .description = "5.07 s",
-        .step        = {0x0000008a},
-    },
-    {
-        .description = "5.20 s",
-        .step        = {0x00000087},
-    },
-    {
-        .description = "5.32 s",
-        .step        = {0x00000083},
-    },
-    {
-        .description = "5.45 s",
-        .step        = {0x00000080},
-    },
-    {
-        .description = "5.58 s",
-        .step        = {0x0000007d},
-    },
-    {
-        .description = "5.71 s",
-        .step        = {0x0000007a},
-    },
-    {
-        .description = "5.85 s",
-        .step        = {0x00000077},
-    },
-    {
-        .description = "5.99 s",
-        .step        = {0x00000075},
-    },
-    {
-        .description = "6.13 s",
-        .step        = {0x00000072},
-    },
-    {
-        .description = "6.28 s",
-        .step        = {0x0000006f},
-    },
-    {
-        .description = "6.43 s",
-        .step        = {0x0000006d},
-    },
-    {
-        .description = "6.59 s",
-        .step        = {0x0000006a},
-    },
-    {
-        .description = "6.74 s",
-        .step        = {0x00000068},
-    },
-    {
-        .description = "6.91 s",
-        .step        = {0x00000065},
-    },
-    {
-        .description = "7.07 s",
-        .step        = {0x00000063},
-    },
-    {
-        .description = "7.24 s",
-        .step        = {0x00000061},
-    },
-    {
-        .description = "7.41 s",
-        .step        = {0x0000005e},
-    },
-    {
-        .description = "7.59 s",
-        .step        = {0x0000005c},
-    },
-    {
-        .description = "7.77 s",
-        .step        = {0x0000005a},
-    },
-    {
-        .description = "7.96 s",
-        .step        = {0x00000058},
-    },
-    {
-        .description = "8.15 s",
-        .step        = {0x00000056},
-    },
-    {
-        .description = "8.35 s",
-        .step        = {0x00000054},
-    },
-    {
-        .description = "8.55 s",
-        .step        = {0x00000052},
-    },
-    {
-        .description = "8.75 s",
-        .step        = {0x00000050},
-    },
-    {
-        .description = "8.96 s",
-        .step        = {0x0000004e},
-    },
-    {
-        .description = "9.17 s",
-        .step        = {0x0000004c},
-    },
-    {
-        .description = "9.39 s",
-        .step        = {0x0000004a},
-    },
-    {
-        .description = "9.62 s",
-        .step        = {0x00000049},
-    },
-    {
-        .description = "9.85 s",
-        .step        = {0x00000047},
-    },
-    {
-        .description = "10.08 s",
-        .step        = {0x00000045},
-    },
-    {
-        .description = "10.33 s",
-        .step        = {0x00000044},
-    },
-    {
-        .description = "10.57 s",
-        .step        = {0x00000042},
-    },
-    {
-        .description = "10.83 s",
-        .step        = {0x00000041},
-    },
-    {
-        .description = "11.08 s",
-        .step        = {0x0000003f},
-    },
-    {
-        .description = "11.35 s",
-        .step        = {0x0000003e},
-    },
-    {
-        .description = "11.62 s",
-        .step        = {0x0000003c},
-    },
-    {
-        .description = "11.90 s",
-        .step        = {0x0000003b},
-    },
-    {
-        .description = "12.18 s",
-        .step        = {0x00000039},
-    },
-    {
-        .description = "12.47 s",
-        .step        = {0x00000038},
-    },
-    {
-        .description = "12.77 s",
-        .step        = {0x00000037},
-    },
-    {
-        .description = "13.08 s",
-        .step        = {0x00000035},
-    },
-    {
-        .description = "13.39 s",
-        .step        = {0x00000034},
-    },
-    {
-        .description = "13.71 s",
-        .step        = {0x00000033},
-    },
-    {
-        .description = "14.04 s",
-        .step        = {0x00000032},
-    },
-    {
-        .description = "14.37 s",
-        .step        = {0x00000031},
-    },
-    {
-        .description = "14.72 s",
-        .step        = {0x00000030},
-    },
-    {
-        .description = "15.07 s",
-        .step        = {0x0000002e},
-    },
-    {
-        .description = "15.43 s",
-        .step        = {0x0000002d},
-    },
-    {
-        .description = "15.80 s",
-        .step        = {0x0000002c},
-    },
-    {
-        .description = "16.17 s",
-        .step        = {0x0000002b},
-    },
-    {
-        .description = "16.56 s",
-        .step        = {0x0000002a},
-    },
-    {
-        .description = "16.95 s",
-        .step        = {0x00000029},
-    },
-    {
-        .description = "17.36 s",
-        .step        = {0x00000028},
-    },
-    {
-        .description = "17.77 s",
-        .step        = {0x00000027},
-    },
-    {
-        .description = "18.20 s",
-        .step        = {0x00000026},
-    },
-    {
-        .description = "18.63 s",
-        .step        = {0x00000026},
-    },
-    {
-        .description = "19.08 s",
-        .step        = {0x00000025},
-    },
-    {
-        .description = "19.53 s",
-        .step        = {0x00000024},
-    },
-    {
-        .description = "20.00 s",
-        .step        = {0x00000023},
-    },
+static const phase_t times[] = {
+    {0x00055555},
+    {0x00038e38},
+    {0x0002aaaa},
+    {0x00022222},
+    {0x0001c71c},
+    {0x00015555},
+    {0x00012f68},
+    {0x00011111},
+    {0x0000e38e},
+    {0x0000d20d},
+    {0x0000b60b},
+    {0x0000aaaa},
+    {0x000097b4},
+    {0x00008fb8},
+    {0x00008208},
+    {0x000076b9},
+    {0x000071c7},
+    {0x00006906},
+    {0x00006186},
+    {0x00005b05},
+    {0x00005816},
+    {0x000052bf},
+    {0x00004e04},
+    {0x000049cd},
+    {0x00004604},
+    {0x0000429a},
+    {0x00003f80},
+    {0x00003b5c},
+    {0x000038e3},
+    {0x0000369d},
+    {0x00003483},
+    {0x000031a6},
+    {0x00002fe8},
+    {0x00002d82},
+    {0x00002c0b},
+    {0x00002a02},
+    {0x00002828},
+    {0x00002702},
+    {0x00002568},
+    {0x000023ee},
+    {0x00002290},
+    {0x0000214d},
+    {0x00002020},
+    {0x00001f07},
+    {0x00001dae},
+    {0x00001cbe},
+    {0x00001bdd},
+    {0x00001ac5},
+    {0x000019c2},
+    {0x0000190d},
+    {0x0000182a},
+    {0x00001756},
+    {0x00001691},
+    {0x000015d8},
+    {0x0000152a},
+    {0x00001488},
+    {0x000013ee},
+    {0x0000133a},
+    {0x000012b4},
+    {0x00001215},
+    {0x00001181},
+    {0x000010f5},
+    {0x00001073},
+    {0x00000ff8},
+    {0x00000f83},
+    {0x00000f16},
+    {0x00000e9a},
+    {0x00000e38},
+    {0x00000dca},
+    {0x00000d62},
+    {0x00000d00},
+    {0x00000ca4},
+    {0x00000c4c},
+    {0x00000bec},
+    {0x00000b9e},
+    {0x00000b48},
+    {0x00000af7},
+    {0x00000aaa},
+    {0x00000a61},
+    {0x00000a13},
+    {0x000009d2},
+    {0x0000098c},
+    {0x00000949},
+    {0x0000090a},
+    {0x000008cf},
+    {0x0000088f},
+    {0x00000853},
+    {0x0000081a},
+    {0x000007e4},
+    {0x000007b1},
+    {0x0000077b},
+    {0x00000748},
+    {0x00000717},
+    {0x000006e9},
+    {0x000006b9},
+    {0x00000690},
+    {0x00000665},
+    {0x00000638},
+    {0x00000611},
+    {0x000005e9},
+    {0x000005c2},
+    {0x0000059b},
+    {0x00000576},
+    {0x00000552},
+    {0x00000530},
+    {0x0000050e},
+    {0x000004ed},
+    {0x000004ce},
+    {0x000004af},
+    {0x00000490},
+    {0x00000474},
+    {0x00000457},
+    {0x0000043b},
+    {0x00000421},
+    {0x00000407},
+    {0x000003ec},
+    {0x000003d4},
+    {0x000003bc},
+    {0x000003a4},
+    {0x0000038d},
+    {0x00000377},
+    {0x00000361},
+    {0x0000034b},
+    {0x00000336},
+    {0x00000322},
+    {0x0000030e},
+    {0x000002fb},
+    {0x000002e9},
+    {0x000002d6},
+    {0x000002c4},
+    {0x000002b4},
+    {0x000002a2},
+    {0x00000292},
+    {0x00000282},
+    {0x00000272},
+    {0x00000263},
+    {0x00000254},
+    {0x00000246},
+    {0x00000238},
+    {0x0000022a},
+    {0x0000021d},
+    {0x00000210},
+    {0x00000203},
+    {0x000001f7},
+    {0x000001eb},
+    {0x000001df},
+    {0x000001d3},
+    {0x000001c8},
+    {0x000001bd},
+    {0x000001b3},
+    {0x000001a8},
+    {0x0000019e},
+    {0x00000194},
+    {0x0000018a},
+    {0x00000181},
+    {0x00000178},
+    {0x0000016f},
+    {0x00000166},
+    {0x0000015d},
+    {0x00000155},
+    {0x0000014d},
+    {0x00000145},
+    {0x0000013d},
+    {0x00000136},
+    {0x0000012e},
+    {0x00000127},
+    {0x00000120},
+    {0x00000119},
+    {0x00000113},
+    {0x0000010c},
+    {0x00000106},
+    {0x00000100},
+    {0x000000fa},
+    {0x000000f4},
+    {0x000000ee},
+    {0x000000e8},
+    {0x000000e3},
+    {0x000000dd},
+    {0x000000d8},
+    {0x000000d3},
+    {0x000000ce},
+    {0x000000c9},
+    {0x000000c4},
+    {0x000000c0},
+    {0x000000bb},
+    {0x000000b7},
+    {0x000000b3},
+    {0x000000ae},
+    {0x000000aa},
+    {0x000000a6},
+    {0x000000a2},
+    {0x0000009e},
+    {0x0000009b},
+    {0x00000097},
+    {0x00000093},
+    {0x00000090},
+    {0x0000008d},
+    {0x00000089},
+    {0x00000086},
+    {0x00000083},
+    {0x00000080},
+    {0x0000007d},
+    {0x0000007a},
+    {0x00000077},
+    {0x00000074},
+    {0x00000071},
+    {0x0000006f},
+    {0x0000006c},
+    {0x0000006a},
+    {0x00000067},
+    {0x00000065},
+    {0x00000062},
+    {0x00000060},
+    {0x0000005e},
+    {0x0000005c},
+    {0x00000059},
+    {0x00000057},
+    {0x00000055},
+    {0x00000053},
+    {0x00000051},
+    {0x0000004f},
+    {0x0000004e},
+    {0x0000004c},
+    {0x0000004a},
+    {0x00000048},
+    {0x00000046},
+    {0x00000045},
+    {0x00000043},
+    {0x00000042},
+    {0x00000040},
+    {0x0000003f},
+    {0x0000003d},
+    {0x0000003c},
+    {0x0000003a},
+    {0x00000039},
+    {0x00000038},
+    {0x00000036},
+    {0x00000035},
+    {0x00000034},
+    {0x00000032},
+    {0x00000031},
+    {0x00000030},
+    {0x0000002f},
+    {0x0000002e},
+    {0x0000002d},
+    {0x0000002c},
+    {0x0000002b},
+    {0x0000002a},
+    {0x00000029},
+    {0x00000028},
+    {0x00000027},
+    {0x00000026},
+    {0x00000025},
+    {0x00000024},
+    {0x00000023},
+    {0x00000022},
 };
