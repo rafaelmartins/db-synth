@@ -84,39 +84,51 @@ _set_state(volatile adsr_t *a, adsr_state_t s)
 }
 
 
-void
+static bool
 adsr_set_attack(volatile adsr_t *a, uint8_t attack)
 {
-    if (a != NULL && a->_initialized)
+    if (a != NULL && a->_initialized && a->_attack != attack) {
         a->_attack = attack;
+        return true;
+    }
+    return false;
 }
 
 
-void
+static bool
 adsr_set_decay(volatile adsr_t *a, uint8_t decay)
 {
-    if (a != NULL && a->_initialized)
+    if (a != NULL && a->_initialized && a->_decay != decay) {
         a->_decay = decay;
+        return true;
+    }
+    return false;
 }
 
 
-void
+static bool
 adsr_set_sustain(volatile adsr_t *a, uint8_t sustain)
 {
-    if (a != NULL && a->_initialized)
+    if (a != NULL && a->_initialized && a->_sustain != sustain) {
         a->_sustain = sustain;
+        return true;
+    }
+    return false;
 }
 
 
-void
+static bool
 adsr_set_release(volatile adsr_t *a, uint8_t release)
 {
-    if (a != NULL && a->_initialized)
+    if (a != NULL && a->_initialized && a->_release != release) {
         a->_release = release;
+        return true;
+    }
+    return false;
 }
 
 
-void
+static void
 adsr_set_velocity(volatile adsr_t *a, uint8_t v)
 {
     if (a == NULL || !a->_initialized)
@@ -128,21 +140,21 @@ adsr_set_velocity(volatile adsr_t *a, uint8_t v)
 }
 
 
-void
+static void
 adsr_set_gate(volatile adsr_t *a)
 {
     _set_state(a, ADSR_STATE_ATTACK);
 }
 
 
-void
+static void
 adsr_unset_gate(volatile adsr_t *a)
 {
     _set_state(a, ADSR_STATE_RELEASE);
 }
 
 
-int16_t
+static int16_t
 adsr_sample(volatile adsr_t *a, int16_t in)
 {
     if (a == NULL || !a->_initialized)

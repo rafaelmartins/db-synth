@@ -8,6 +8,7 @@
 
 #pragma once
 
+#include <stdbool.h>
 #include <stdint.h>
 #include <avr/pgmspace.h>
 #include "phase.h"
@@ -46,11 +47,14 @@ oscillator_init(volatile oscillator_t *o)
 }
 
 
-static inline void
+static inline bool
 oscillator_set_waveform(volatile oscillator_t *o, oscillator_waveform_t wf)
 {
-    if (o != NULL && o->_initialized)
+    if (o != NULL && o->_initialized && o->_waveform != wf) {
         o->_waveform_next = wf;
+        return true;
+    }
+    return false;
 }
 
 
