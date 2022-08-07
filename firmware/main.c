@@ -38,7 +38,7 @@ ISR(TCB0_INT_vect)
     midi_task(&midi);
     oled_task(&oled);
 
-    DAC0.DATA = (adsr_sample(&adsr, oscillator_get_sample(&oscillator)) + waveform_amplitude) << DAC_DATA_0_bp;
+    DAC0.DATA = (adsr_sample(&adsr, oscillator_get_sample(&oscillator)) + oscillator_waveform_amplitude) << DAC_DATA_0_bp;
 }
 
 

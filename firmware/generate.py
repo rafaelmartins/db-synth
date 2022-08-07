@@ -31,52 +31,53 @@ References:
     - Tim Stilson and Julius Smith. 1996. Alias-Free Digital Synthesis of Classic
       Analog Waveforms (https://ccrma.stanford.edu/~stilti/papers/blit.pdf)
 '''
-waveform_amplitude = 0x1ff
-waveform_samples_per_cycle = 0x200
-
 a4_midi_number = 69
 a4_frequency = 440.0
 
-note_frequencies = [a4_frequency * 2 ** ((i - a4_midi_number) / 12)
-                    for i in range(128)]
+oscillator_waveform_amplitude = 0x1ff
+oscillator_waveform_samples_per_cycle = 0x200
+oscillator_note_frequencies = [a4_frequency * 2 ** ((i - a4_midi_number) / 12)
+                               for i in range(128)]
+oscillator_note_steps = [(oscillator_waveform_samples_per_cycle / (audio_sample_rate / i)) * (1 << 16)
+                         for i in oscillator_note_frequencies]
 
 # the octave closer to the nyquist frequency is usually a sine, then we reuse
 # the existing sine wavetable.
-wavetable_octaves = math.ceil(len(note_frequencies) / 12) - 1
+oscillator_wavetable_octaves = math.ceil(len(oscillator_note_frequencies) / 12) - 1
 
 
-def fix_wavetable(array):
+def _fix_wavetable(array):
     mn = min(array)
     mx = max(array)
 
     for i in range(len(array)):
         array[i] -= mn
-        array[i] *= (2 * waveform_amplitude) / abs(mx - mn)
-        array[i] = int(array[i]) - waveform_amplitude
+        array[i] *= (2 * oscillator_waveform_amplitude) / abs(mx - mn)
+        array[i] = int(array[i]) - oscillator_waveform_amplitude
 
     return array[::-1]
 
 
-wavetables = {
-    'sine': [waveform_amplitude * math.sin(2 * math.pi * i / waveform_samples_per_cycle)
-             for i in range(waveform_samples_per_cycle)],
+oscillator_wavetables = {
+    'sine': [oscillator_waveform_amplitude * math.sin(2 * math.pi * i / oscillator_waveform_samples_per_cycle)
+             for i in range(oscillator_waveform_samples_per_cycle)],
     'sawtooth': [],
     'square': [],
     'triangle': [],
 }
 
-for i in range(wavetable_octaves):
+for i in range(oscillator_wavetable_octaves):
     idx = i * 12 + 11
-    f = note_frequencies[idx if idx < len(note_frequencies)
-                         else len(note_frequencies) - 1]
+    f = oscillator_note_frequencies[idx if idx < len(oscillator_note_frequencies)
+                                    else len(oscillator_note_frequencies) - 1]
 
     P = audio_sample_rate / f
     M = 2 * math.floor(P / 2) + 1
 
     mid = 0
     blit = []
-    for i in range(waveform_samples_per_cycle):
-        x = (i - waveform_samples_per_cycle / 2) / waveform_samples_per_cycle
+    for i in range(oscillator_waveform_samples_per_cycle):
+        x = (i - oscillator_waveform_samples_per_cycle / 2) / oscillator_waveform_samples_per_cycle
         try:
             blit.append(math.sin(math.pi * x * M) / (M * math.sin(math.pi * x)))
         except ZeroDivisionError:
@@ -90,30 +91,30 @@ for i in range(wavetable_octaves):
         y += blit[i] - blit[i + mid if i < mid else i - mid]
         square.append(y)
     square_avg = min(square) + ((max(square) - min(square)) / 2)
-    wavetables['square'].append(fix_wavetable(square))
+    oscillator_wavetables['square'].append(_fix_wavetable(square))
 
     y = 0
     triangle = []
     for v in square:
         y += v - square_avg
         triangle.append(y)
-    triangle_start = waveform_samples_per_cycle // 4
+    triangle_start = oscillator_waveform_samples_per_cycle // 4
     triangle = triangle[triangle_start:] + triangle[:triangle_start]
-    wavetables['triangle'].append(fix_wavetable(triangle))
+    oscillator_wavetables['triangle'].append(_fix_wavetable(triangle))
 
     y = 0
     sawtooth = []
     for i in range(len(blit)):
         y += blit[i + mid if i < mid else i - mid] - 1. / P
         sawtooth.append(-y)
-    wavetables['sawtooth'].append(fix_wavetable(sawtooth))
+    oscillator_wavetables['sawtooth'].append(_fix_wavetable(sawtooth))
 
 
 '''
 ADSR envelope
 '''
 adsr_amplitude = 0xff
-adsr_samples_per_cycle = waveform_samples_per_cycle
+adsr_samples_per_cycle = oscillator_waveform_samples_per_cycle
 
 # we try to emulate the curves from AS3310.
 # this is from page 2 of datasheet.
@@ -148,6 +149,8 @@ adsr_times_end = adsr_times_max_ms - adsr_times_min_ms
 
 adsr_times = [-1 + math.exp(6 * i / (adsr_times_len - 1)) for i in range(adsr_times_len)]
 adsr_times = [adsr_times_min_ms + int(adsr_times_end * i / adsr_times[-1]) for i in adsr_times]
+
+adsr_time_steps = [((adsr_samples_per_cycle * 1000) / (i * audio_sample_rate)) * (1 << 16) for i in adsr_times]
 
 
 '''
@@ -224,38 +227,38 @@ def dump_macros(items):
         yield '#define %s %s' % (item, items[item])
 
 
-def dump_notes():
+def dump_oscillator_notes():
     yield ''
-    yield 'static const phase_t notes[] = {'
+    yield 'static const uint32_t oscillator_notes[] PROGMEM = {'
 
-    for f in note_frequencies:
-        step = waveform_samples_per_cycle / (audio_sample_rate / f)
-        yield '    {%s},' % format_hex(step * (1 << 16), 8)
+    for i in range(len(oscillator_note_steps) // 4):
+        yield '    %s,' % ', '.join([format_hex(j, 8)
+                                     for j in oscillator_note_steps[i * 4: (i + 1) * 4]])
 
     yield '};'
 
 
-def dump_wavetables():
-    for var, array in wavetables.items():
+def dump_oscillator_wavetables():
+    for var, array in oscillator_wavetables.items():
         if len(array) == 0:
             continue
 
         yield ''
 
         if not isinstance(array[0], list):
-            yield 'static const int16_t %s_wavetable[%s] PROGMEM = {' % \
+            yield 'static const int16_t oscillator_%s_wavetable[%s] PROGMEM = {' % \
                 (var, format_hex(len(array)))
-            for i in range(0, len(array) // 8):
+            for i in range(len(array) // 8):
                 yield '    %s,' % ', '.join([format_hex(j)
                                              for j in array[i * 8: (i + 1) * 8]])
             yield '};'
             continue
 
-        yield 'static const int16_t %s_wavetables[%d][%s] PROGMEM = {' % \
+        yield 'static const int16_t oscillator_%s_wavetables[%d][%s] PROGMEM = {' % \
             (var, len(array), format_hex(len(array[0])))
         for value in array:
             yield '    {'
-            for i in range(0, len(value) // 8):
+            for i in range(len(value) // 8):
                 yield '        %s,' % ', '.join([format_hex(j)
                                                  for j in value[i * 8: (i + 1) * 8]])
             yield '    },'
@@ -265,31 +268,20 @@ def dump_wavetables():
 def dump_adsr_curves():
     for var, value in adsr_curves.items():
         yield ''
-        yield 'static const uint8_t %s_curve[] PROGMEM = {' % var
-        for i in range(0, len(value) // 8):
+        yield 'static const uint8_t adsr_%s_curve[] PROGMEM = {' % var
+        for i in range(len(value) // 8):
             yield '    %s,' % ', '.join([format_hex(j, 2)
                                          for j in value[i * 8: (i + 1) * 8]])
         yield '};'
 
 
-def dump_adsr_times():
+def dump_adsr_time_steps():
     yield ''
-    yield 'static const phase_t times[] = {'
+    yield 'static const uint32_t adsr_time_steps[] PROGMEM = {'
 
-    for t in adsr_times:
-        step = (adsr_samples_per_cycle * 1000) / (t * audio_sample_rate)
-        yield '    {%s},' % format_hex(step * (1 << 16), 8)
-
-    yield '};'
-
-
-def dump_adsr_time_descriptions():
-    yield ''
-    yield 'static const char *time_descriptions[] = {'
-
-    for t in adsr_times:
-        desc = ('%.2fs' % (t / 1000)) if t > 1000 else ('%dms' % t)
-        yield '    "%-6s",' % desc
+    for i in range(len(adsr_time_steps) // 4):
+        yield '    %s,' % ', '.join([format_hex(j, 8)
+                                     for j in adsr_time_steps[i * 4: (i + 1) * 4]])
 
     yield '};'
 
@@ -303,19 +295,18 @@ generators = {
             'opamp_timebase': opamp_timebase,
             'timer_tcb_ccmp': timer_tcb_ccmp,
             'timer_tcb_clksel': timer_tcb_clksel,
-            'waveform_amplitude': format_hex(waveform_amplitude),
+            'oscillator_waveform_amplitude': format_hex(oscillator_waveform_amplitude),
         }),
     ),
     'adsr-data.h': itertools.chain(
         header(),
         dump_headers(['avr/pgmspace.h', 'stdint.h']),
-        dump_headers(['phase.h'], False),
         dump_macros({
             'adsr_amplitude': format_hex(adsr_amplitude, 2),
             'adsr_samples_per_cycle': format_hex(adsr_samples_per_cycle),
         }),
         dump_adsr_curves(),
-        dump_adsr_times(),
+        dump_adsr_time_steps(),
     ),
     'midi-data.h': itertools.chain(
         header(),
@@ -335,14 +326,13 @@ generators = {
     'oscillator-data.h': itertools.chain(
         header(),
         dump_headers(['avr/pgmspace.h', 'stdint.h']),
-        dump_headers(['phase.h'], False),
         dump_macros({
-            'waveform_samples_per_cycle': format_hex(waveform_samples_per_cycle),
-            'wavetable_octaves': wavetable_octaves,
-            'notes_last': len(note_frequencies) - 1,
+            'oscillator_waveform_samples_per_cycle': format_hex(oscillator_waveform_samples_per_cycle),
+            'oscillator_wavetable_octaves': oscillator_wavetable_octaves,
+            'oscillator_notes_last': len(oscillator_note_frequencies) - 1,
         }),
-        dump_wavetables(),
-        dump_notes(),
+        dump_oscillator_wavetables(),
+        dump_oscillator_notes(),
     ),
 }
 
