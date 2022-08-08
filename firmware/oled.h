@@ -8,11 +8,11 @@
 
 #pragma once
 
+#include <avr/io.h>
 #include <stdbool.h>
 #include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
-#include <avr/io.h>
 #include "oled-data.h"
 #include "oled-font.h"
 
@@ -201,7 +201,7 @@ oled_init(volatile oled_t *o)
 }
 
 
-static bool
+static inline bool
 oled_line(volatile oled_t *o, uint8_t line, const char *str, oled_halign_t align)
 {
     if (o == NULL || !o->_initialized)

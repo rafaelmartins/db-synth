@@ -9,6 +9,7 @@
 #pragma once
 
 #include <avr/pgmspace.h>
+#include <stdbool.h>
 #include <stdint.h>
 #include <stdlib.h>
 #include "phase.h"
@@ -85,7 +86,7 @@ _set_state(volatile adsr_t *a, adsr_state_t s)
 }
 
 
-static bool
+static inline bool
 adsr_set_attack(volatile adsr_t *a, uint8_t attack)
 {
     if (a != NULL && a->_initialized && a->_attack != attack) {
@@ -96,7 +97,7 @@ adsr_set_attack(volatile adsr_t *a, uint8_t attack)
 }
 
 
-static bool
+static inline bool
 adsr_set_decay(volatile adsr_t *a, uint8_t decay)
 {
     if (a != NULL && a->_initialized && a->_decay != decay) {
@@ -107,7 +108,7 @@ adsr_set_decay(volatile adsr_t *a, uint8_t decay)
 }
 
 
-static bool
+static inline bool
 adsr_set_sustain(volatile adsr_t *a, uint8_t sustain)
 {
     if (a != NULL && a->_initialized && a->_sustain != sustain) {
@@ -118,7 +119,7 @@ adsr_set_sustain(volatile adsr_t *a, uint8_t sustain)
 }
 
 
-static bool
+static inline bool
 adsr_set_release(volatile adsr_t *a, uint8_t release)
 {
     if (a != NULL && a->_initialized && a->_release != release) {
@@ -129,7 +130,7 @@ adsr_set_release(volatile adsr_t *a, uint8_t release)
 }
 
 
-static void
+static inline void
 adsr_set_velocity(volatile adsr_t *a, uint8_t v)
 {
     if (a == NULL || !a->_initialized)
@@ -141,22 +142,22 @@ adsr_set_velocity(volatile adsr_t *a, uint8_t v)
 }
 
 
-static void
+static inline void
 adsr_set_gate(volatile adsr_t *a)
 {
     _set_state(a, ADSR_STATE_ATTACK);
 }
 
 
-static void
+static inline void
 adsr_unset_gate(volatile adsr_t *a)
 {
     _set_state(a, ADSR_STATE_RELEASE);
 }
 
 
-static int16_t
-adsr_sample(volatile adsr_t *a, int16_t in)
+static inline int16_t
+adsr_get_sample(volatile adsr_t *a, int16_t in)
 {
     if (a == NULL || !a->_initialized)
         return 0;

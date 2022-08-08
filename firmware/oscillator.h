@@ -11,6 +11,7 @@
 #include <avr/pgmspace.h>
 #include <stdbool.h>
 #include <stdint.h>
+#include <stdlib.h>
 #include "phase.h"
 #include "oscillator-data.h"
 
