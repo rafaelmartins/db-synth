@@ -11,16 +11,20 @@ add_executable(db-synth
     main.c
     main-data.h
 
+    adsr.c
     adsr.h
     adsr-data.h
 
+    midi.c
     midi.h
     midi-data.h
 
+    oled.c
     oled.h
     oled-data.h
     oled-font.h
 
+    oscillator.c
     oscillator.h
     oscillator-data.h
 
