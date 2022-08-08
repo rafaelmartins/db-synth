@@ -9,6 +9,7 @@
 #include <avr/interrupt.h>
 #include <avr/io.h>
 #include "adsr.h"
+#include "filter.h"
 #include "midi.h"
 #include "oled.h"
 #include "oscillator.h"
@@ -26,6 +27,7 @@ FUSES =
 };
 
 static volatile adsr_t adsr;
+static volatile filter_t filter;
 static volatile midi_t midi;
 static volatile oled_t oled;
 static volatile oscillator_t oscillator;
@@ -38,7 +40,7 @@ ISR(TCB0_INT_vect)
     midi_task(&midi);
     oled_task(&oled);
 
-    DAC0.DATA = (adsr_get_sample(&adsr, oscillator_get_sample(&oscillator)) + oscillator_waveform_amplitude) << DAC_DATA_0_bp;
+    DAC0.DATA = (filter_get_sample(&filter, adsr_get_sample(&adsr, oscillator_get_sample(&oscillator))) + oscillator_waveform_amplitude) << DAC_DATA_0_bp;
 }
 
 
@@ -159,6 +161,7 @@ main(void)
     timer_init();
 
     adsr_init(&adsr);
+    filter_init(&filter);
     oscillator_init(&oscillator);
 
     oled_init(&oled);
@@ -170,6 +173,8 @@ main(void)
     adsr_set_decay(&adsr, 20);
     adsr_set_sustain(&adsr, 200);
     adsr_set_release(&adsr, 10);
+    filter_set_cutoff(&filter, 128);
+    filter_set_type(&filter, FILTER_TYPE_LOW_PASS);
 
     sei();
 
