@@ -44,8 +44,8 @@ typedef enum {
 } midi_system_subcommand_t;
 
 typedef struct {
-    void (*channel_cb)(midi_command_t cmd, uint8_t ch, volatile uint8_t *buf, uint8_t len);
-    void (*system_cb)(midi_system_subcommand_t cmd, volatile uint8_t *buf, uint8_t len);
+    void (*channel_cb)(midi_command_t cmd, uint8_t ch, uint8_t *buf, uint8_t len);
+    void (*system_cb)(midi_system_subcommand_t cmd, uint8_t *buf, uint8_t len);
     uint8_t _buf[3];
     uint8_t _idx;
     uint8_t _len;
@@ -63,7 +63,7 @@ midi_hw_init(void)
 
 
 static inline void
-midi_task(volatile midi_t *m)
+midi_task(midi_t *m)
 {
     if (m == NULL)
         return;

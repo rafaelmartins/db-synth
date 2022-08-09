@@ -34,7 +34,7 @@ typedef struct {
 
 
 static inline void
-oscillator_init(volatile oscillator_t *o)
+oscillator_init(oscillator_t *o)
 {
     if (o == NULL || o->_initialized)
         return;
@@ -49,7 +49,7 @@ oscillator_init(volatile oscillator_t *o)
 
 
 static inline bool
-oscillator_set_waveform(volatile oscillator_t *o, oscillator_waveform_t wf)
+oscillator_set_waveform(oscillator_t *o, oscillator_waveform_t wf)
 {
     if (o != NULL && o->_initialized && o->_waveform != wf) {
         o->_waveform_next = wf;
@@ -60,7 +60,7 @@ oscillator_set_waveform(volatile oscillator_t *o, oscillator_waveform_t wf)
 
 
 static inline void
-oscillator_set_note(volatile oscillator_t *o, uint8_t n)
+oscillator_set_note(oscillator_t *o, uint8_t n)
 {
     if (o != NULL && o->_initialized)
         o->_note_next = n;
@@ -68,7 +68,7 @@ oscillator_set_note(volatile oscillator_t *o, uint8_t n)
 
 
 static inline int16_t
-oscillator_get_sample(volatile oscillator_t *o)
+oscillator_get_sample(oscillator_t *o)
 {
     if (o == NULL || !o->_initialized)
         return 0;

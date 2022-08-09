@@ -22,7 +22,7 @@ typedef union {
 
 
 static inline bool
-phase_step(volatile phase_t *p, uint32_t s, uint16_t table_len)
+phase_step(phase_t *p, uint32_t s, uint16_t table_len)
 {
     if (p == NULL)
         return false;

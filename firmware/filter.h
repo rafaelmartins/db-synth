@@ -30,7 +30,7 @@ typedef struct {
 
 
 static inline void
-filter_init(volatile filter_t *f)
+filter_init(filter_t *f)
 {
     if (f == NULL || f->_initialized)
         return;
@@ -43,7 +43,7 @@ filter_init(volatile filter_t *f)
 
 
 static inline bool
-filter_set_type(volatile filter_t *f, filter_type_t t)
+filter_set_type(filter_t *f, filter_type_t t)
 {
     if (f != NULL && f->_initialized && f->_type != t) {
         f->_type = t;
@@ -54,7 +54,7 @@ filter_set_type(volatile filter_t *f, filter_type_t t)
 
 
 static inline bool
-filter_set_cutoff(volatile filter_t *f, uint8_t cutoff)
+filter_set_cutoff(filter_t *f, uint8_t cutoff)
 {
     if (f != NULL && f->_initialized && f->_cutoff != cutoff) {
         f->_cutoff = cutoff;
@@ -65,7 +65,7 @@ filter_set_cutoff(volatile filter_t *f, uint8_t cutoff)
 
 
 static inline int16_t
-filter_get_sample(volatile filter_t *f, int16_t in)
+filter_get_sample(filter_t *f, int16_t in)
 {
     if (f == NULL || !f->_initialized)
         return 0;

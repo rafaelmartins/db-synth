@@ -94,7 +94,7 @@ _twi_wait(void)
 
 
 static inline bool
-oled_init(volatile oled_t *o)
+oled_init(oled_t *o)
 {
     if (o == NULL || o->_initialized)
         return false;
@@ -202,7 +202,7 @@ oled_init(volatile oled_t *o)
 
 
 static inline bool
-oled_line(volatile oled_t *o, uint8_t line, const char *str, oled_halign_t align)
+oled_line(oled_t *o, uint8_t line, const char *str, oled_halign_t align)
 {
     if (o == NULL || !o->_initialized)
         return false;
@@ -240,7 +240,7 @@ oled_line(volatile oled_t *o, uint8_t line, const char *str, oled_halign_t align
 
 
 static inline void
-_oled_task_send(volatile oled_t *o)
+_oled_task_send(oled_t *o)
 {
     // the state of the oled_t pointer is checked by the caller.
 
@@ -304,7 +304,7 @@ _oled_task_send(volatile oled_t *o)
 
 
 static inline _twi_state_t
-_oled_task_poll(volatile oled_t *o)
+_oled_task_poll(oled_t *o)
 {
     // the state of the oled_t pointer is checked by the caller.
 
@@ -367,7 +367,7 @@ _oled_task_poll(volatile oled_t *o)
 
 
 static inline bool
-oled_task(volatile oled_t *o)
+oled_task(oled_t *o)
 {
     if (o == NULL || !o->_initialized)
         return false;

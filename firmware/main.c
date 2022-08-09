@@ -26,22 +26,11 @@ FUSES =
     .BOOTSIZE = 0,
 };
 
-static volatile adsr_t adsr;
-static volatile filter_t filter;
-static volatile midi_t midi;
-static volatile oled_t oled;
-static volatile oscillator_t oscillator;
-
-
-ISR(TCB0_INT_vect)
-{
-    TCB0.INTFLAGS = TCB_CAPT_bm;
-
-    midi_task(&midi);
-    oled_task(&oled);
-
-    DAC0.DATA = (filter_get_sample(&filter, adsr_get_sample(&adsr, oscillator_get_sample(&oscillator))) + oscillator_waveform_amplitude) << DAC_DATA_0_bp;
-}
+static adsr_t adsr;
+static filter_t filter;
+static midi_t midi;
+static oled_t oled;
+static oscillator_t oscillator;
 
 
 static inline void
@@ -94,7 +83,7 @@ dac_init(void)
 
 
 static inline void
-midi_channel_cb(midi_command_t cmd, uint8_t ch, volatile uint8_t *buf, uint8_t len)
+midi_channel_cb(midi_command_t cmd, uint8_t ch, uint8_t *buf, uint8_t len)
 {
     if (ch != 0)
         return;
@@ -143,9 +132,6 @@ timer_init(void)
     // number of cycles between each audio sample
     TCB0.CCMP = timer_tcb_ccmp;
 
-    // enable capture interrupt
-    TCB0.INTCTRL = TCB_CAPT_bm;
-
     // enable timer without prescaler division
     TCB0.CTRLA = TCB_RUNSTDBY_bm | timer_tcb_clksel | TCB_ENABLE_bm;
 }
@@ -176,9 +162,17 @@ main(void)
     filter_set_cutoff(&filter, 128);
     filter_set_type(&filter, FILTER_TYPE_LOW_PASS);
 
-    sei();
+    while (1) {
+        if (TCB0.INTFLAGS & TCB_CAPT_bm) {
+            TCB0.INTFLAGS = TCB_CAPT_bm;
 
-    while(1);
+            midi_task(&midi);
+            oled_task(&oled);
+
+            DAC0.DATA = (filter_get_sample(&filter, adsr_get_sample(&adsr, oscillator_get_sample(&oscillator)))
+                + oscillator_waveform_amplitude) << DAC_DATA_0_bp;
+        }
+    }
 
     return 0;
 }

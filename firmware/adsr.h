@@ -40,7 +40,7 @@ typedef struct {
 
 
 static inline void
-adsr_init(volatile adsr_t *a)
+adsr_init(adsr_t *a)
 {
     if (a == NULL || a->_initialized)
         return;
@@ -53,7 +53,7 @@ adsr_init(volatile adsr_t *a)
 
 
 static inline void
-_set_state(volatile adsr_t *a, adsr_state_t s)
+_set_state(adsr_t *a, adsr_state_t s)
 {
     if (a == NULL || !a->_initialized)
         return;
@@ -87,7 +87,7 @@ _set_state(volatile adsr_t *a, adsr_state_t s)
 
 
 static inline bool
-adsr_set_attack(volatile adsr_t *a, uint8_t attack)
+adsr_set_attack(adsr_t *a, uint8_t attack)
 {
     if (a != NULL && a->_initialized && a->_attack != attack) {
         a->_attack = attack;
@@ -98,7 +98,7 @@ adsr_set_attack(volatile adsr_t *a, uint8_t attack)
 
 
 static inline bool
-adsr_set_decay(volatile adsr_t *a, uint8_t decay)
+adsr_set_decay(adsr_t *a, uint8_t decay)
 {
     if (a != NULL && a->_initialized && a->_decay != decay) {
         a->_decay = decay;
@@ -109,7 +109,7 @@ adsr_set_decay(volatile adsr_t *a, uint8_t decay)
 
 
 static inline bool
-adsr_set_sustain(volatile adsr_t *a, uint8_t sustain)
+adsr_set_sustain(adsr_t *a, uint8_t sustain)
 {
     if (a != NULL && a->_initialized && a->_sustain != sustain) {
         a->_sustain = sustain;
@@ -120,7 +120,7 @@ adsr_set_sustain(volatile adsr_t *a, uint8_t sustain)
 
 
 static inline bool
-adsr_set_release(volatile adsr_t *a, uint8_t release)
+adsr_set_release(adsr_t *a, uint8_t release)
 {
     if (a != NULL && a->_initialized && a->_release != release) {
         a->_release = release;
@@ -131,7 +131,7 @@ adsr_set_release(volatile adsr_t *a, uint8_t release)
 
 
 static inline void
-adsr_set_velocity(volatile adsr_t *a, uint8_t v)
+adsr_set_velocity(adsr_t *a, uint8_t v)
 {
     if (a == NULL || !a->_initialized)
         return;
@@ -143,21 +143,21 @@ adsr_set_velocity(volatile adsr_t *a, uint8_t v)
 
 
 static inline void
-adsr_set_gate(volatile adsr_t *a)
+adsr_set_gate(adsr_t *a)
 {
     _set_state(a, ADSR_STATE_ATTACK);
 }
 
 
 static inline void
-adsr_unset_gate(volatile adsr_t *a)
+adsr_unset_gate(adsr_t *a)
 {
     _set_state(a, ADSR_STATE_RELEASE);
 }
 
 
 static inline int16_t
-adsr_get_sample(volatile adsr_t *a, int16_t in)
+adsr_get_sample(adsr_t *a, int16_t in)
 {
     if (a == NULL || !a->_initialized)
         return 0;
