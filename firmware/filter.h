@@ -101,19 +101,20 @@ filter_get_sample(filter_t *f, int16_t in)
         "sbc %B0, r0"   "\n\t"  // rv[h] -= 0 + $carry
         "add %A0, r1"   "\n\t"  // rv[l] += $result[h]
         "adc %B0, r0"   "\n\t"  // rv[h] += 0 + $carry
-        "muls %4, %B2"  "\n\t"  // $result = b0 * in[h] (signed * signed)
+        "mov %3, %4"    "\n\t"  // tmp (a1) = b0
+        "muls %3, %B2"  "\n\t"  // $result = tmp * in[h] (signed * signed)
         "add %A0, r0"   "\n\t"  // rv[l] += $result[l]
         "adc %B0, r1"   "\n\t"  // rv[h] += $result[h] + $carry
-        "mulsu %4, %A2" "\n\t"  // $result = b0 * in[l] (signed * unsigned)
+        "mulsu %3, %A2" "\n\t"  // $result = tmp * in[l] (signed * unsigned)
         "clr r0"        "\n\t"  // $r0 = 0
         "sbc %B0, r0"   "\n\t"  // rv[h] -= 0 + $carry
         "add %A0, r1"   "\n\t"  // rv[l] += $result[h]
         "adc %B0, r0"   "\n\t"  // rv[h] += 0 + $carry
-        "mov %4, %5"    "\n\t"  // b0 = b1
-        "muls %4, %B1"  "\n\t"  // $result = b0 (b1) * _prev[h] (signed * signed)
+        "mov %3, %5"    "\n\t"  // tmp (a1) = b1
+        "muls %3, %B1"  "\n\t"  // $result = tmp * _prev[h] (signed * signed)
         "add %A0, r0"   "\n\t"  // rv[l] += $result[l]
         "adc %B0, r1"   "\n\t"  // rv[h] += $result[h] + $carry
-        "mulsu %4, %A1" "\n\t"  // $result = b0 (b1) * _prev[l] (signed * unsigned)
+        "mulsu %3, %A1" "\n\t"  // $result = tmp * _prev[l] (signed * unsigned)
         "clr r0"        "\n\t"  // $r0 = 0
         "sbc %B0, r0"   "\n\t"  // rv[h] -= 0 + $carry
         "add %A0, r1"   "\n\t"  // rv[l] += $result[h]
@@ -122,7 +123,7 @@ filter_get_sample(filter_t *f, int16_t in)
         "rol %B0"       "\n\t"  // rv[h] = (rv[h] << 1) + $carry
         "clr r1"        "\n\t"  // $r1 = 0 (avr-libc convention)
         : "=&d" (rv)
-        : "r" (f->_prev), "r" (in), "r" (a1), "r" (b0), "d" (b1)
+        : "r" (f->_prev), "r" (in), "r" (a1), "d" (b0), "d" (b1)
     );
 
     f->_prev = rv;
