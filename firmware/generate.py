@@ -126,6 +126,11 @@ adsr_times_len = 0x100
 adsr_times_min_ms = 2
 adsr_times_max_ms = 20000
 
+adsr_levels_len = 0x100
+
+adsr_time_description_strlen = 6
+adsr_level_description_strlen = 6
+
 adsr_t = [i / (adsr_samples_per_cycle - 1) for i in range(adsr_samples_per_cycle)]
 adsr_full_curve = [1 - math.exp(-3 * i) for i in adsr_t]
 
@@ -152,6 +157,9 @@ adsr_times = [adsr_times_min_ms + int(adsr_times_end * i / adsr_times[-1]) for i
 
 adsr_time_steps = [((adsr_samples_per_cycle * 1000) / (i * audio_sample_rate)) * (1 << 16) for i in adsr_times]
 
+adsr_time_descriptions = [('%.2fs' % (i / 1000)) if i > 1000 else ('%dms' % i) for i in adsr_times]
+adsr_level_descriptions = ['%.1f%%' % (100. * i / (adsr_levels_len - 1)) for i in range(adsr_levels_len)]
+
 
 '''
 1-Pole filters
@@ -160,6 +168,8 @@ adsr_time_steps = [((adsr_samples_per_cycle * 1000) / (i * audio_sample_rate)) *
 filter_frequencies_len = 0x100
 filter_frequencies_min = 20
 filter_frequencies_max = 20000
+
+filter_cutoff_description_strlen = 8
 
 filter_frequencies_end = filter_frequencies_max - filter_frequencies_min
 
@@ -183,6 +193,8 @@ for f in filter_frequencies:
     filter_hp_a1.append((1 - (alpha / 2)) / (1 + (alpha / 2)))
     filter_hp_b0.append(1 / (1 + (alpha / 2)))
     filter_hp_b1.append(-1 / (1 + (alpha / 2)))
+
+filter_cutoff_descriptions = [('%.2fkHz' % (i / 1000)) if i > 1000 else ('%dHz' % i) for i in filter_frequencies]
 
 
 '''
@@ -318,6 +330,28 @@ def dump_adsr_time_steps():
     yield '};'
 
 
+def dump_adsr_time_descriptions():
+    yield ''
+    yield 'static const char adsr_time_descriptions[%d][%d] PROGMEM = {' % (len(adsr_times), adsr_time_description_strlen)
+
+    for i in range(len(adsr_time_descriptions) // 8):
+        yield '    %s,' % ', '.join(['"%*s"' % (-adsr_time_description_strlen, j)
+                                     for j in adsr_time_descriptions[i * 8: (i + 1) * 8]])
+
+    yield '};'
+
+
+def dump_adsr_level_descriptions():
+    yield ''
+    yield 'static const char adsr_level_descriptions[%d][%d] PROGMEM = {' % (adsr_levels_len, adsr_level_description_strlen)
+
+    for i in range(len(adsr_level_descriptions) // 8):
+        yield '    %s,' % ', '.join(['"%*s"' % (-adsr_level_description_strlen, j)
+                                     for j in adsr_level_descriptions[i * 8: (i + 1) * 8]])
+
+    yield '};'
+
+
 def dump_filter_coefficients(var, name):
     yield ''
     yield 'static const uint8_t %s[] PROGMEM = {' % name
@@ -325,6 +359,17 @@ def dump_filter_coefficients(var, name):
     for i in range(len(var) // 8):
         yield '    %s,' % ', '.join([format_hex(j * (1 << 7), 2)
                                      for j in var[i * 8: (i + 1) * 8]])
+
+    yield '};'
+
+
+def dump_filter_cuttoff_descriptions():
+    yield ''
+    yield 'static const char filter_cutoff_descriptions[%d][%d] PROGMEM = {' % (len(filter_frequencies), filter_cutoff_description_strlen)
+
+    for i in range(len(filter_cutoff_descriptions) // 8):
+        yield '    %s,' % ', '.join(['"%*s"' % (-filter_cutoff_description_strlen, j)
+                                     for j in filter_cutoff_descriptions[i * 8: (i + 1) * 8]])
 
     yield '};'
 
@@ -386,6 +431,17 @@ generators = {
         }),
         dump_oscillator_wavetables(),
         dump_oscillator_notes(),
+    ),
+    'screen-data.h': itertools.chain(
+        header(),
+        dump_macros({
+            'adsr_time_description_strlen': adsr_time_description_strlen,
+            'adsr_level_description_strlen': adsr_level_description_strlen,
+            'filter_cutoff_description_strlen': filter_cutoff_description_strlen,
+        }),
+        dump_adsr_time_descriptions(),
+        dump_adsr_level_descriptions(),
+        dump_filter_cuttoff_descriptions(),
     ),
 }
 

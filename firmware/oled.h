@@ -226,7 +226,7 @@ oled_line(oled_t *o, uint8_t line, const char *str, oled_halign_t align)
         break;
     }
 
-    memset((void*) o->_lines[line].data, ' ', sizeof(o->_lines[line].data));
+    memset(o->_lines[line].data, ' ', sizeof(o->_lines[line].data));
 
     const char *c = str;
     uint8_t i = start;

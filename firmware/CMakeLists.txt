@@ -28,6 +28,9 @@ add_executable(db-synth
     oscillator-data.h
 
     phase.h
+
+    screen.h
+    screen-data.h
 )
 
 target_compile_options(db-synth PRIVATE

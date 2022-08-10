@@ -6,13 +6,12 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-#include <avr/interrupt.h>
 #include <avr/io.h>
 #include "adsr.h"
 #include "filter.h"
 #include "midi.h"
-#include "oled.h"
 #include "oscillator.h"
+#include "screen.h"
 #include "main-data.h"
 
 FUSES =
@@ -29,8 +28,8 @@ FUSES =
 static adsr_t adsr;
 static filter_t filter;
 static midi_t midi;
-static oled_t oled;
 static oscillator_t oscillator;
+static screen_t screen;
 
 
 static inline void
@@ -94,23 +93,13 @@ midi_channel_cb(midi_command_t cmd, uint8_t ch, uint8_t *buf, uint8_t len)
             oscillator_set_note(&oscillator, buf[0]);
             adsr_set_velocity(&adsr, buf[1]);
             adsr_set_gate(&adsr);
-
-            // FIXME: test code, results in some audio clicks
-            // char b[5];
-            // b[0] = '0';
-            // b[1] = 'x';
-            // b[2] = (buf[0] >> 4) > 10 ? (buf[0] >> 4) - 10 + 'a' : (buf[0] >> 4) + '0';
-            // b[3] = (buf[0] & 0xf) > 10 ? (buf[0] & 0xf) - 10 + 'a' : (buf[0] & 0xf) + '0';
-            // b[4] = 0;
-            // oled_line(&oled, 3, b, OLED_HALIGN_CENTER);
-
-            return;
+            break;
         }
 
     // fall through
     case MIDI_NOTE_OFF:
         adsr_unset_gate(&adsr);
-        return;
+        break;
 
     default:
         break;
@@ -150,24 +139,31 @@ main(void)
     filter_init(&filter);
     oscillator_init(&oscillator);
 
-    oled_init(&oled);
-    oled_line(&oled, 0, "db-synth", OLED_HALIGN_CENTER);
+    screen_init(&screen);
 
     // FIXME: test settings, remove
+    screen_set_midi_channel(&screen, 0);
     oscillator_set_waveform(&oscillator, OSCILLATOR_WAVEFORM_SINE);
+    screen_set_oscillator_waveform(&screen, OSCILLATOR_WAVEFORM_SINE);
     adsr_set_attack(&adsr, 10);
+    screen_set_adsr_attack(&screen, 10);
     adsr_set_decay(&adsr, 20);
+    screen_set_adsr_decay(&screen, 20);
     adsr_set_sustain(&adsr, 200);
+    screen_set_adsr_sustain(&screen, 200);
     adsr_set_release(&adsr, 10);
-    filter_set_cutoff(&filter, 128);
+    screen_set_adsr_release(&screen, 10);
     filter_set_type(&filter, FILTER_TYPE_LOW_PASS);
+    screen_set_filter_type(&screen, FILTER_TYPE_LOW_PASS);
+    filter_set_cutoff(&filter, 128);
+    screen_set_filter_cutoff(&screen, 128);
 
     while (1) {
         if (TCB0.INTFLAGS & TCB_CAPT_bm) {
             TCB0.INTFLAGS = TCB_CAPT_bm;
 
             midi_task(&midi);
-            oled_task(&oled);
+            screen_task(&screen);
 
             DAC0.DATA = (filter_get_sample(&filter, adsr_get_sample(&adsr, oscillator_get_sample(&oscillator)))
                 + oscillator_waveform_amplitude) << DAC_DATA_0_bp;
