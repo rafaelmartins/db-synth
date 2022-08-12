@@ -62,7 +62,7 @@ oscillator_set_waveform(oscillator_t *o, oscillator_waveform_t wf)
 static inline void
 oscillator_set_note(oscillator_t *o, uint8_t n)
 {
-    if (o != NULL && o->_initialized)
+    if (o != NULL && o->_initialized && n <= oscillator_notes_last)
         o->_note_next = n;
 }
 

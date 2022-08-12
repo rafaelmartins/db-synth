@@ -29,6 +29,7 @@ typedef struct {
     uint8_t _attack;
     uint8_t _decay;
     uint8_t _sustain;
+    uint8_t _sustain_level;
     uint8_t _release;
     // velocity is not part of adsr, but it is easier to optimize here
     uint8_t _velocity;
@@ -47,8 +48,9 @@ adsr_init(adsr_t *a)
 
     a->_initialized = true;
     a->_state = ADSR_STATE_OFF;
-    a->_sustain = 0xff;
-    a->_velocity = 0xfe;
+    a->_sustain = 0x7f;
+    a->_sustain_level = a->_sustain << 1;
+    a->_velocity = 0xff;
 }
 
 
@@ -67,7 +69,7 @@ _set_state(adsr_t *a, adsr_state_t s)
         break;
 
     case ADSR_STATE_DECAY:
-        a->_range_end = a->_sustain;
+        a->_range_end = a->_sustain_level;
         break;
 
     case ADSR_STATE_SUSTAIN:
@@ -89,7 +91,7 @@ _set_state(adsr_t *a, adsr_state_t s)
 static inline bool
 adsr_set_attack(adsr_t *a, uint8_t attack)
 {
-    if (a != NULL && a->_initialized && a->_attack != attack) {
+    if (a != NULL && a->_initialized && a->_attack != attack && attack < 0x80) {
         a->_attack = attack;
         return true;
     }
@@ -100,7 +102,7 @@ adsr_set_attack(adsr_t *a, uint8_t attack)
 static inline bool
 adsr_set_decay(adsr_t *a, uint8_t decay)
 {
-    if (a != NULL && a->_initialized && a->_decay != decay) {
+    if (a != NULL && a->_initialized && a->_decay != decay && decay < 0x80) {
         a->_decay = decay;
         return true;
     }
@@ -111,8 +113,9 @@ adsr_set_decay(adsr_t *a, uint8_t decay)
 static inline bool
 adsr_set_sustain(adsr_t *a, uint8_t sustain)
 {
-    if (a != NULL && a->_initialized && a->_sustain != sustain) {
+    if (a != NULL && a->_initialized && a->_sustain != sustain && sustain < 0x80) {
         a->_sustain = sustain;
+        a->_sustain_level = sustain << 1;
         return true;
     }
     return false;
@@ -122,7 +125,7 @@ adsr_set_sustain(adsr_t *a, uint8_t sustain)
 static inline bool
 adsr_set_release(adsr_t *a, uint8_t release)
 {
-    if (a != NULL && a->_initialized && a->_release != release) {
+    if (a != NULL && a->_initialized && a->_release != release && release < 0x80) {
         a->_release = release;
         return true;
     }

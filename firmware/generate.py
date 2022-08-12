@@ -122,11 +122,11 @@ adsr_attack_asymptote_voltage = 7.0
 adsr_attack_peak_voltage = 5.0
 
 # time input data also based on AS3310 as much as possible.
-adsr_times_len = 0x100
+adsr_times_len = 128
 adsr_times_min_ms = 2
 adsr_times_max_ms = 20000
 
-adsr_levels_len = 0x100
+adsr_levels_len = 128
 
 adsr_time_description_strlen = 6
 adsr_level_description_strlen = 6
@@ -165,7 +165,7 @@ adsr_level_descriptions = ['%.1f%%' % (100. * i / (adsr_levels_len - 1)) for i i
 1-Pole filters
 '''
 
-filter_frequencies_len = 0x100
+filter_frequencies_len = 128
 filter_frequencies_min = 20
 filter_frequencies_max = 20000
 

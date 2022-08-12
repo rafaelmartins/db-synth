@@ -56,7 +56,7 @@ filter_set_type(filter_t *f, filter_type_t t)
 static inline bool
 filter_set_cutoff(filter_t *f, uint8_t cutoff)
 {
-    if (f != NULL && f->_initialized && f->_cutoff != cutoff) {
+    if (f != NULL && f->_initialized && f->_cutoff != cutoff && cutoff < 0x80) {
         f->_cutoff = cutoff;
         return true;
     }

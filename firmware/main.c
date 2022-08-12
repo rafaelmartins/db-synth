@@ -145,18 +145,18 @@ main(void)
     screen_set_midi_channel(&screen, 0);
     oscillator_set_waveform(&oscillator, OSCILLATOR_WAVEFORM_SINE);
     screen_set_oscillator_waveform(&screen, OSCILLATOR_WAVEFORM_SINE);
-    adsr_set_attack(&adsr, 10);
-    screen_set_adsr_attack(&screen, 10);
-    adsr_set_decay(&adsr, 20);
-    screen_set_adsr_decay(&screen, 20);
-    adsr_set_sustain(&adsr, 200);
-    screen_set_adsr_sustain(&screen, 200);
-    adsr_set_release(&adsr, 10);
-    screen_set_adsr_release(&screen, 10);
+    adsr_set_attack(&adsr, 5);
+    screen_set_adsr_attack(&screen, 5);
+    adsr_set_decay(&adsr, 5);
+    screen_set_adsr_decay(&screen, 5);
+    adsr_set_sustain(&adsr, 100);
+    screen_set_adsr_sustain(&screen, 100);
+    adsr_set_release(&adsr, 5);
+    screen_set_adsr_release(&screen, 5);
     filter_set_type(&filter, FILTER_TYPE_LOW_PASS);
     screen_set_filter_type(&screen, FILTER_TYPE_LOW_PASS);
-    filter_set_cutoff(&filter, 128);
-    screen_set_filter_cutoff(&screen, 128);
+    filter_set_cutoff(&filter, 64);
+    screen_set_filter_cutoff(&screen, 64);
 
     while (1) {
         if (TCB0.INTFLAGS & TCB_CAPT_bm) {
