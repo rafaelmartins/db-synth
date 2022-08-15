@@ -31,6 +31,8 @@ add_executable(db-synth
 
     screen.h
     screen-data.h
+
+    settings.h
 )
 
 target_compile_options(db-synth PRIVATE

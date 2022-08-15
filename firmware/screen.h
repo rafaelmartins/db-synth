@@ -25,7 +25,7 @@
 // A: 20.00s | D: 20.00s
 // S: 100.0% | R: 20.00s
 // .....................
-// F: LP  | FC: 20.00kHz
+// F: LPF | FC: 20.00kHz
 
 typedef struct {
     oled_t oled;
