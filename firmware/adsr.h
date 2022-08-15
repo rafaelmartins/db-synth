@@ -31,8 +31,6 @@ typedef struct {
     uint8_t _sustain;
     uint8_t _sustain_level;
     uint8_t _release;
-    // velocity is not part of adsr, but it is easier to optimize here
-    uint8_t _velocity;
     uint8_t _level;
     uint8_t _range_start;
     uint8_t _range_end;
@@ -50,7 +48,6 @@ adsr_init(adsr_t *a)
     a->_state = ADSR_STATE_OFF;
     a->_sustain = 0x7f;
     a->_sustain_level = a->_sustain << 1;
-    a->_velocity = 0xff;
 }
 
 
@@ -134,18 +131,6 @@ adsr_set_release(adsr_t *a, uint8_t release)
 
 
 static inline void
-adsr_set_velocity(adsr_t *a, uint8_t v)
-{
-    if (a == NULL || !a->_initialized)
-        return;
-
-    if (v > 127)
-        v = 127;
-    a->_velocity = 2 * v;
-}
-
-
-static inline void
 adsr_set_gate(adsr_t *a)
 {
     _set_state(a, ADSR_STATE_ATTACK);
@@ -159,8 +144,8 @@ adsr_unset_gate(adsr_t *a)
 }
 
 
-static inline int16_t
-adsr_get_sample(adsr_t *a, int16_t in)
+static inline uint8_t
+adsr_get_sample_level(adsr_t *a)
 {
     if (a == NULL || !a->_initialized)
         return 0;
@@ -198,26 +183,19 @@ adsr_get_sample(adsr_t *a, int16_t in)
 
     uint8_t balance = table != NULL ? pgm_read_byte(&(table[a->_phase.pint])) : adsr_amplitude;
 
-    int16_t rv;
+    uint16_t tmp;
     asm volatile (
-        "mul %4, %5"     "\n\t"  // $result = range_end * balance (unsigned multiplication)
-        "movw %A0, r0"   "\n\t"  // rv = $result
-        "com %5"         "\n\t"  // balance = balance complement to 0xff
-        "mul %3, %5"     "\n\t"  // $result = range_start * balance (unsigned multiplication)
-        "add %A0, r0"    "\n\t"  // rv[l] += $result[l]
-        "adc %B0, r1"    "\n\t"  // rv[h] += $result[h] + $carry
-        "mov %1, %B0"    "\n\t"  // level = rv[h]
-        "mul %B0, %6"    "\n\t"  // $result = rv[h] (level) * velocity (unsigned multiplication)
-        "mov %B0, r1"    "\n\t"  // rv[h] ($tmp) = $result[h]
-        "mul %A2, %B0"   "\n\t"  // $result = in[l] * rv[h] ($tmp) (unsigned multiplication)
-        "mov %A0, r1"    "\n\t"  // rv[l] = $result[h]
-        "mulsu %B2, %B0" "\n\t"  // $result = in[h] * rv[h] ($tmp) (signed multiplication)
-        "add %A0, r0"    "\n\t"  // rv[l] += $result[l]
-        "clr %B0"        "\n\t"  // rv[h] = 0
-        "adc %B0, r1"    "\n\t"  // rv[h] += $result[h] + $carry
-        "clr r1"         "\n\t"  // $r1 = 0 (avr-libc convention)
-        : "=&a" (rv), "=&r" (a->_level)
-        : "a" (in), "r" (a->_range_start), "r" (a->_range_end), "r" (balance), "r" (a->_velocity)
+        "mul %2, %3"   "\n\t"  // $result = range_end * balance (unsigned multiplication)
+        "movw %A0, r0" "\n\t"  // tmp = $result
+        "com %3"       "\n\t"  // balance = balance complement to 0xff
+        "mul %1, %3"   "\n\t"  // $result = range_start * balance (unsigned multiplication)
+        "add %A0, r0"  "\n\t"  // tmp[l] += $result[l]
+        "adc %B0, r1"  "\n\t"  // tmp[h] += $result[h] + $carry
+        "mov %A0, %B0" "\n\t"  // tmp[l] = tmp[h]
+        "clr r1"       "\n\t"  // $r1 = 0 (avr-libc convention)
+        : "=&r" (tmp)
+        : "r" (a->_range_start), "r" (a->_range_end), "r" (balance)
     );
-    return rv;
+    a->_level = tmp;
+    return a->_level;
 }

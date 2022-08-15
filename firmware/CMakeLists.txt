@@ -14,6 +14,8 @@ add_executable(db-synth
     adsr.h
     adsr-data.h
 
+    amplifier.h
+
     filter.h
     filter-data.h
 

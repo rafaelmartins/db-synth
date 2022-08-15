@@ -8,6 +8,7 @@
 
 #include <avr/io.h>
 #include "adsr.h"
+#include "amplifier.h"
 #include "filter.h"
 #include "midi.h"
 #include "oscillator.h"
@@ -32,6 +33,7 @@ static midi_t midi;
 static oscillator_t oscillator;
 static screen_t screen;
 static settings_t settings;
+static uint8_t velocity;
 
 static const settings_data_t factory_settings PROGMEM = {
     .version = SETTINGS_VERSION,
@@ -111,7 +113,7 @@ midi_channel_cb(midi_command_t cmd, uint8_t ch, uint8_t *buf, uint8_t len)
     case MIDI_NOTE_ON:
         if (len == 2 && buf[0] != 0) {
             oscillator_set_note(&oscillator, buf[0]);
-            adsr_set_velocity(&adsr, buf[1]);
+            velocity = buf[1] * 2;
             adsr_set_gate(&adsr);
             break;
         }
@@ -271,8 +273,8 @@ main(void)
             screen_task(&screen);
             settings_task(&settings);
 
-            DAC0.DATA = (filter_get_sample(&filter, adsr_get_sample(&adsr, oscillator_get_sample(&oscillator)))
-                + oscillator_waveform_amplitude) << DAC_DATA_0_bp;
+            DAC0.DATA = (filter_get_sample(&filter, amplifier_get_sample(oscillator_get_sample(&oscillator),
+                adsr_get_sample_level(&adsr), velocity)) + oscillator_waveform_amplitude) << DAC_DATA_0_bp;
         }
     }
 
