@@ -105,6 +105,7 @@ screen_set_midi_channel(screen_t *s, uint8_t midi_ch)
     if (s == NULL || midi_ch > 0xf)
         return false;
 
+    midi_ch++;
     s->_line2[19] = midi_ch > 9 ? '1' : midi_ch + '0';
     s->_line2[20] = midi_ch > 9 ? (midi_ch % 10) + '0' : ' ';
 
