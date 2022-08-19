@@ -145,9 +145,12 @@ adsr_attack_curve = [int(adsr_amplitude * i / adsr_attack_curve[-1]) for i in ad
 
 adsr_decay_release_curve = [int(adsr_amplitude * i / adsr_full_curve[-1]) for i in adsr_full_curve]
 
+adsr_linear_curve = [int(adsr_amplitude * i) for i in adsr_t]
+
 adsr_curves = {
     'attack': adsr_attack_curve,
     'decay_release': adsr_decay_release_curve,
+    'linear': adsr_linear_curve,
 }
 
 adsr_times_end = adsr_times_max_ms - adsr_times_min_ms

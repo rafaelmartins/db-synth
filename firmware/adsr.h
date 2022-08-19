@@ -23,9 +23,16 @@ typedef enum {
     ADSR_STATE_RELEASE,
 } adsr_state_t;
 
+typedef enum {
+    ADSR_TYPE_EXPONENTIAL,
+    ADSR_TYPE_LINEAR,
+    ADSR_TYPE__LAST,
+} adsr_type_t;
+
 typedef struct {
     bool _initialized;
     adsr_state_t _state;
+    adsr_type_t _type;
     uint8_t _attack;
     uint8_t _decay;
     uint8_t _sustain;
@@ -82,6 +89,17 @@ _set_state(adsr_t *a, adsr_state_t s)
     }
 
     a->_phase.data = 0;
+}
+
+
+static inline bool
+adsr_set_type(adsr_t *a, adsr_type_t t)
+{
+    if (a != NULL && a->_initialized && a->_type != t) {
+        a->_type = t;
+        return true;
+    }
+    return false;
 }
 
 
@@ -156,14 +174,14 @@ adsr_get_sample_level(adsr_t *a)
     case ADSR_STATE_ATTACK:
         if (phase_step(&a->_phase, pgm_read_dword(&adsr_time_steps[a->_attack]), adsr_samples_per_cycle))
             _set_state(a, ADSR_STATE_DECAY);
-        table = adsr_attack_curve;
+        table = a->_type == ADSR_TYPE_LINEAR ? adsr_linear_curve : adsr_attack_curve;
         break;
 
     case ADSR_STATE_DECAY:
         if (phase_step(&a->_phase, pgm_read_dword(&adsr_time_steps[a->_decay]), adsr_samples_per_cycle))
             _set_state(a, ADSR_STATE_SUSTAIN);
         else
-            table = adsr_decay_release_curve;
+            table = a->_type == ADSR_TYPE_LINEAR ? adsr_linear_curve : adsr_decay_release_curve;
         break;
 
     case ADSR_STATE_RELEASE:
@@ -171,7 +189,7 @@ adsr_get_sample_level(adsr_t *a)
             _set_state(a, ADSR_STATE_OFF);
             return 0;
         }
-        table = adsr_decay_release_curve;
+        table = a->_type == ADSR_TYPE_LINEAR ? adsr_linear_curve : adsr_decay_release_curve;
         break;
 
     case ADSR_STATE_SUSTAIN:
