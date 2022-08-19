@@ -138,6 +138,15 @@ midi_channel_cb(midi_command_t cmd, uint8_t ch, uint8_t *buf, uint8_t len)
                 screen_set_oscillator_waveform(&screen, settings.data.oscillator.waveform);
             break;
 
+        case 0x46:  // adsr type
+            settings.data.adsr.type = buf[1] / (0x80 / ADSR_TYPE__LAST);
+            if (settings.data.adsr.type >= ADSR_TYPE__LAST)
+                settings.data.adsr.type--;
+            settings.pending.adsr.type = true;
+            if (adsr_set_type(&adsr, settings.data.adsr.type))
+                screen_set_adsr_type(&screen, settings.data.adsr.type);
+            break;
+
         case 0x47:  // filter type
             settings.data.filter.type = buf[1] / (0x80 / FILTER_TYPE__LAST);
             if (settings.data.filter.type >= FILTER_TYPE__LAST)
@@ -245,6 +254,9 @@ main(void)
 
         oscillator_set_waveform(&oscillator, settings.data.oscillator.waveform);
         screen_set_oscillator_waveform(&screen, settings.data.oscillator.waveform);
+
+        adsr_set_type(&adsr, settings.data.adsr.type);
+        screen_set_adsr_type(&screen, settings.data.adsr.type);
 
         adsr_set_attack(&adsr, settings.data.adsr.attack);
         screen_set_adsr_attack(&screen, settings.data.adsr.attack);

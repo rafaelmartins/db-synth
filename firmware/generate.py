@@ -128,7 +128,7 @@ adsr_times_max_ms = 20000
 
 adsr_levels_len = 128
 
-adsr_time_description_strlen = 6
+adsr_time_description_strlen = 5
 adsr_level_description_strlen = 6
 
 adsr_t = [i / (adsr_samples_per_cycle - 1) for i in range(adsr_samples_per_cycle)]
@@ -160,8 +160,19 @@ adsr_times = [adsr_times_min_ms + int(adsr_times_end * i / adsr_times[-1]) for i
 
 adsr_time_steps = [((adsr_samples_per_cycle * 1000) / (i * audio_sample_rate)) * (1 << 16) for i in adsr_times]
 
-adsr_time_descriptions = [('%.2fs' % (i / 1000)) if i > 1000 else ('%dms' % i) for i in adsr_times]
 adsr_level_descriptions = ['%.1f%%' % (100. * i / (adsr_levels_len - 1)) for i in range(adsr_levels_len)]
+
+adsr_time_descriptions = []
+for i in adsr_times:
+    if i > 10000:
+        adsr_time_descriptions.append('%.1fs' % (i / 1000))
+        continue
+
+    if i > 1000:
+        adsr_time_descriptions.append('%.2fs' % (i / 1000))
+        continue
+
+    adsr_time_descriptions.append('%dms' % i)
 
 
 '''

@@ -37,7 +37,7 @@ typedef struct __attribute__((packed)) {
         uint8_t decay;
         uint8_t sustain;
         uint8_t release;
-        uint8_t type;  // not implemented yet
+        uint8_t type;
         uint8_t _padding[11];
     } adsr;
 
@@ -60,6 +60,7 @@ typedef struct {
         bool decay;
         bool sustain;
         bool release;
+        bool type;
     } adsr;
 
     struct {
@@ -123,6 +124,11 @@ settings_task(settings_t *s)
     if (s->pending.oscillator.waveform) {
         eeprom_write_byte(_eeprom_addr(&s->data.oscillator.waveform), s->data.oscillator.waveform);
         s->pending.oscillator.waveform = false;
+        return true;
+    }
+    if (s->pending.adsr.type) {
+        eeprom_write_byte(_eeprom_addr(&s->data.adsr.type), s->data.adsr.type);
+        s->pending.adsr.type = false;
         return true;
     }
     if (s->pending.adsr.attack) {

@@ -22,8 +22,8 @@
 // .....................
 // WF: Triangle | CH: 15
 // .....................
-// A: 20.00s | D: 20.00s
-// S: 100.0% | R: 20.00s
+// AE: 20.0s | DE: 20.0s
+// S: 100.0% | RE: 20.0s
 // .....................
 // F: LPF | FC: 20.00kHz
 
@@ -51,8 +51,8 @@ screen_init(screen_t *s)
     s->_initialized = true;
 
     strcpy(s->_line2, "WF:          | CH:   ");
-    strcpy(s->_line4, "A:        | D:       ");
-    strcpy(s->_line5, "S:        | R:       ");
+    strcpy(s->_line4, "A :       | D :      ");
+    strcpy(s->_line5, "S:        | R :      ");
     strcpy(s->_line7, "F:     | FC:         ");
 
     return oled_line(&s->oled, 0, "db-synth", OLED_HALIGN_CENTER);
@@ -114,12 +114,23 @@ screen_set_midi_channel(screen_t *s, uint8_t midi_ch)
 
 
 static inline bool
+screen_set_adsr_type(screen_t *s, adsr_type_t t)
+{
+    if (s == NULL)
+        return false;
+
+    s->_line4[1] = s->_line4[13] = s->_line5[13] = t == ADSR_TYPE_LINEAR ? 'L' : 'E';
+    return oled_line(&s->oled, 4, s->_line4, OLED_HALIGN_LEFT) && oled_line(&s->oled, 5, s->_line5, OLED_HALIGN_LEFT);
+}
+
+
+static inline bool
 screen_set_adsr_attack(screen_t *s, uint8_t v)
 {
     if (s == NULL)
         return false;
 
-    memcpy_P(s->_line4 + 3, adsr_time_descriptions[v], adsr_time_description_strlen);
+    memcpy_P(s->_line4 + 4, adsr_time_descriptions[v], adsr_time_description_strlen);
     return oled_line(&s->oled, 4, s->_line4, OLED_HALIGN_LEFT);
 }
 
@@ -130,7 +141,7 @@ screen_set_adsr_decay(screen_t *s, uint8_t v)
     if (s == NULL)
         return false;
 
-    memcpy_P(s->_line4 + 15, adsr_time_descriptions[v], adsr_time_description_strlen);
+    memcpy_P(s->_line4 + 16, adsr_time_descriptions[v], adsr_time_description_strlen);
     return oled_line(&s->oled, 4, s->_line4, OLED_HALIGN_LEFT);
 }
 
@@ -152,7 +163,7 @@ screen_set_adsr_release(screen_t *s, uint8_t v)
     if (s == NULL)
         return false;
 
-    memcpy_P(s->_line5 + 15, adsr_time_descriptions[v], adsr_time_description_strlen);
+    memcpy_P(s->_line5 + 16, adsr_time_descriptions[v], adsr_time_description_strlen);
     return oled_line(&s->oled, 5, s->_line5, OLED_HALIGN_LEFT);
 }
 
