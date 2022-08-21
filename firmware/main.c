@@ -124,7 +124,7 @@ midi_channel_cb(midi_command_t cmd, uint8_t ch, uint8_t *buf, uint8_t len)
     // fall through
     case MIDI_NOTE_OFF:
         if (buf[0] == note)
-            adsr_unset_gate(&adsr);
+            adsr_unset_gate(&adsr, false);
         break;
 
     case MIDI_CONTROL_CHANGE:
@@ -208,7 +208,7 @@ midi_channel_cb(midi_command_t cmd, uint8_t ch, uint8_t *buf, uint8_t len)
             break;
 
         case 0x7b:  // all notes off
-            adsr_unset_gate(&adsr);
+            adsr_unset_gate(&adsr, true);
             break;
         }
         break;

@@ -156,9 +156,9 @@ adsr_set_gate(adsr_t *a)
 
 
 static inline void
-adsr_unset_gate(adsr_t *a)
+adsr_unset_gate(adsr_t *a, bool force)
 {
-    _set_state(a, ADSR_STATE_RELEASE);
+    _set_state(a, force ? ADSR_STATE_OFF: ADSR_STATE_RELEASE);
 }
 
 
