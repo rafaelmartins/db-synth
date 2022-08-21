@@ -13,6 +13,7 @@
 #define adsr_time_description_strlen 5
 #define adsr_level_description_strlen 6
 #define filter_cutoff_description_strlen 8
+#define notification_1s_count 48000
 
 static const char adsr_time_descriptions[128][5] PROGMEM = {
     "2ms  ", "4ms  ", "6ms  ", "9ms  ", "12ms ", "15ms ", "18ms ", "21ms ",

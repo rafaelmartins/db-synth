@@ -452,6 +452,7 @@ generators = {
             'adsr_time_description_strlen': adsr_time_description_strlen,
             'adsr_level_description_strlen': adsr_level_description_strlen,
             'filter_cutoff_description_strlen': filter_cutoff_description_strlen,
+            'notification_1s_count': audio_sample_rate,
         }),
         dump_adsr_time_descriptions(),
         dump_adsr_level_descriptions(),

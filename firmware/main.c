@@ -277,13 +277,16 @@ main(void)
         screen_set_filter_cutoff(&screen, settings.data.filter.cutoff);
     }
 
+    screen_notification(&screen, SCREEN_NOTIFICATION_READY);
+
     while (1) {
         if (TCB0.INTFLAGS & TCB_CAPT_bm) {
             TCB0.INTFLAGS = TCB_CAPT_bm;
 
             midi_task(&midi);
             screen_task(&screen);
-            settings_task(&settings);
+            if (settings_task(&settings))
+                screen_notification(&screen, SCREEN_NOTIFICATION_PRESET_UPDATED);
 
             DAC0.DATA = (filter_get_sample(&filter, amplifier_get_sample(oscillator_get_sample(&oscillator),
                 adsr_get_sample_level(&adsr), velocity)) + oscillator_waveform_amplitude) << DAC_DATA_0_bp;

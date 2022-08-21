@@ -119,51 +119,51 @@ settings_task(settings_t *s)
     if (s->pending.midi_channel) {
         eeprom_write_byte(_eeprom_addr(&s->data.midi_channel), s->data.midi_channel);
         s->pending.midi_channel = false;
-        return true;
+        return false;
     }
     if (s->pending.oscillator.waveform) {
         eeprom_write_byte(_eeprom_addr(&s->data.oscillator.waveform), s->data.oscillator.waveform);
         s->pending.oscillator.waveform = false;
-        return true;
+        return false;
     }
     if (s->pending.adsr.type) {
         eeprom_write_byte(_eeprom_addr(&s->data.adsr.type), s->data.adsr.type);
         s->pending.adsr.type = false;
-        return true;
+        return false;
     }
     if (s->pending.adsr.attack) {
         eeprom_write_byte(_eeprom_addr(&s->data.adsr.attack), s->data.adsr.attack);
         s->pending.adsr.attack = false;
-        return true;
+        return false;
     }
     if (s->pending.adsr.decay) {
         eeprom_write_byte(_eeprom_addr(&s->data.adsr.decay), s->data.adsr.decay);
         s->pending.adsr.decay = false;
-        return true;
+        return false;
     }
     if (s->pending.adsr.sustain) {
         eeprom_write_byte(_eeprom_addr(&s->data.adsr.sustain), s->data.adsr.sustain);
         s->pending.adsr.sustain = false;
-        return true;
+        return false;
     }
     if (s->pending.adsr.release) {
         eeprom_write_byte(_eeprom_addr(&s->data.adsr.release), s->data.adsr.release);
         s->pending.adsr.release = false;
-        return true;
+        return false;
     }
     if (s->pending.filter.type) {
         eeprom_write_byte(_eeprom_addr(&s->data.filter.type), s->data.filter.type);
         s->pending.filter.type = false;
-        return true;
+        return false;
     }
     if (s->pending.filter.cutoff) {
         eeprom_write_byte(_eeprom_addr(&s->data.filter.cutoff), s->data.filter.cutoff);
         s->pending.filter.cutoff = false;
-        return true;
+        return false;
     }
 
 #undef _eeprom_addr
 
     s->_write = false;
-    return false;
+    return true;
 }

@@ -18,7 +18,7 @@
 
 // there's just one screen for everything:
 
-// ......db-synth.......
+// [db-synth] PRESET UPD
 // .....................
 // WF: Triangle | CH: 15
 // .....................
@@ -32,11 +32,19 @@ typedef struct {
     bool _initialized;
     bool _notification;
     uint16_t _notification_count;
+    uint8_t _notification_sec;
+    char _line0[oled_chars_per_line + 1];
     char _line2[oled_chars_per_line + 1];
     char _line4[oled_chars_per_line + 1];
     char _line5[oled_chars_per_line + 1];
     char _line7[oled_chars_per_line + 1];
 } screen_t;
+
+typedef enum {
+    SCREEN_NOTIFICATION_ERROR,  // not used yet
+    SCREEN_NOTIFICATION_READY,
+    SCREEN_NOTIFICATION_PRESET_UPDATED,
+} screen_notification_t;
 
 
 static inline bool
@@ -49,13 +57,15 @@ screen_init(screen_t *s)
         return false;
 
     s->_initialized = true;
+    s->_notification = false;
 
+    strcpy(s->_line0, "[db-synth]           ");
     strcpy(s->_line2, "WF:          | CH:   ");
     strcpy(s->_line4, "A :       | D :      ");
     strcpy(s->_line5, "S:        | R :      ");
     strcpy(s->_line7, "F:     | FC:         ");
 
-    return oled_line(&s->oled, 0, "db-synth", OLED_HALIGN_CENTER);
+    return oled_line(&s->oled, 0, s->_line0, OLED_HALIGN_LEFT);
 }
 
 
@@ -65,7 +75,44 @@ screen_task(screen_t *s)
     if (s == NULL || !s->_initialized)
         return false;
 
+    // TODO: we have a spare TCB timer available, maybe use it for this?
+    if (s->_notification && ++s->_notification_count == notification_1s_count && ++s->_notification_sec == 2) {
+        memset(s->_line0 + 11, ' ', sizeof(s->_line0) - 11);
+        oled_line(&s->oled, 0, s->_line0, OLED_HALIGN_LEFT);
+        s->_notification = false;
+    }
+
     return oled_task(&s->oled);
+}
+
+
+static inline bool
+screen_notification(screen_t *s, screen_notification_t notif)
+{
+    if (s == NULL)
+        return false;
+
+    s->_notification_count = 0;
+    s->_notification_sec = 0;
+    s->_notification = true;
+
+    char *n;
+    switch (notif) {
+    case SCREEN_NOTIFICATION_ERROR:
+        n = "ERROR     ";
+        break;
+    case SCREEN_NOTIFICATION_READY:
+        n = "READY     ";
+        break;
+    case SCREEN_NOTIFICATION_PRESET_UPDATED:
+        n = "PRESET UPD";
+        break;
+    default:
+        return false;
+    }
+
+    memcpy(s->_line0 + 11, n, 10);
+    return oled_line(&s->oled, 0, s->_line0, OLED_HALIGN_LEFT);
 }
 
 
