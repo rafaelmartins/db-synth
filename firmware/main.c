@@ -207,6 +207,7 @@ midi_channel_cb(midi_command_t cmd, uint8_t ch, uint8_t *buf, uint8_t len)
                 settings_start_write(&settings);
             break;
 
+        case 0x78:  // all sound off
         case 0x7b:  // all notes off
             adsr_unset_gate(&adsr, true);
             break;
