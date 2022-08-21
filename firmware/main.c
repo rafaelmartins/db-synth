@@ -33,6 +33,7 @@ static midi_t midi;
 static oscillator_t oscillator;
 static screen_t screen;
 static settings_t settings;
+static uint8_t note;
 static uint8_t velocity;
 
 static const settings_data_t factory_settings PROGMEM = {
@@ -114,6 +115,7 @@ midi_channel_cb(midi_command_t cmd, uint8_t ch, uint8_t *buf, uint8_t len)
     case MIDI_NOTE_ON:
         if (len == 2 && buf[0] != 0) {
             oscillator_set_note(&oscillator, buf[0]);
+            note = buf[0];
             velocity = buf[1] * 2;
             adsr_set_gate(&adsr);
             break;
@@ -121,8 +123,8 @@ midi_channel_cb(midi_command_t cmd, uint8_t ch, uint8_t *buf, uint8_t len)
 
     // fall through
     case MIDI_NOTE_OFF:
-        // FIXME: validate current note
-        adsr_unset_gate(&adsr);
+        if (buf[0] == note)
+            adsr_unset_gate(&adsr);
         break;
 
     case MIDI_CONTROL_CHANGE:
