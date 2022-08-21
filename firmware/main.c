@@ -42,6 +42,7 @@ static const settings_data_t factory_settings PROGMEM = {
         .waveform = OSCILLATOR_WAVEFORM_SQUARE,
     },
     .adsr = {
+        .type = ADSR_TYPE_EXPONENTIAL,
         .attack = 0x08,
         .decay = 0x08,
         .sustain = 0x60,
