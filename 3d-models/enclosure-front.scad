@@ -51,11 +51,14 @@ difference() {
 
     for (i=[0:1])
         for (j=[0:1])
-            for (k=[0:1])
-                translate([i * (width - thickness),
-                           screw_base_dim(screw_d) / 2 + j * (length - screw_base_dim(screw_d)),
-                           thickness + gap + screw_base_dim(screw_d) / 2 + k * hole_distance_z])
-                    rotate([0, 90, 0])
-                        cylinder(thickness, d=screw_d * 1.1, $fn=20);
-}
+            translate([i * (width - thickness),
+                       screw_base_dim(screw_d) / 2 + j * (length - screw_base_dim(screw_d)),
+                       height - screw_base_dim(screw_d) / 2])
+                rotate([0, 90, 0])
+                    cylinder(thickness, d=screw_d * 1.1, $fn=20);
 
+    translate([thickness, (thickness - gap) / 2, thickness / 2])
+        cube([width - 2 * thickness, thickness / 2 + gap, thickness / 2]);
+    translate([thickness, length - thickness - gap / 2, thickness / 2])
+        cube([width - 2 * thickness, thickness / 2 + gap, thickness / 2]);
+}

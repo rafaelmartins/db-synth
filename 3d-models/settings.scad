@@ -14,13 +14,13 @@ pcb_thickness = 1.6;
 pcb_screw_padding = 3.556;
 pcb_screw_spacing_x = pcb_width - 2 * pcb_screw_padding;
 pcb_screw_spacing_y = pcb_length - 2 * pcb_screw_padding;
-pcb_base_d = 4.4;
+pcb_base_d = 5;
 pcb_base_screw_d = 1.8;
 pcb_base_height = 10 + ssd1306_pcb_thickness + ssd1306_pcb_base_height;
 pcb_oled_pin_y = 2.54;
 
 width = 2 * (thickness + 3) + pcb_width;
-length = 2 * (thickness + 1.4) + pcb_length;
+length = 2 * thickness + 1.2 + pcb_length;
 height = 30;
 
 pcb0_x = (width - pcb_width) / 2;
@@ -33,5 +33,3 @@ screw_d = 2;
 screw_h = 7;
 
 gap = thickness * 0.2;
-hole_distance_z = height - thickness - gap - screw_base_dim(screw_d);
-

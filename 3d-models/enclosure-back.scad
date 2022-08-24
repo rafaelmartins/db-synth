@@ -17,35 +17,35 @@ difference() {
         translate([0, length - thickness, 0])
             cube([width_, thickness, height_]);
 
-        for (i=[0:1]) {
-            translate([0, 0, i * hole_distance_z])
-                rotate([90, 0, 90])
-                    screw_base_add(screw_d, screw_h);
-            translate([0, length, i * hole_distance_z])
-                rotate([90, -90, 90])
-                    screw_base_add(screw_d, screw_h);
-            translate([width_, 0, i * hole_distance_z])
-                rotate([0, -90, 0])
-                    screw_base_add(screw_d, screw_h);
-            translate([width_, length, i * hole_distance_z])
-                rotate([90, 0, -90])
-                    screw_base_add(screw_d, screw_h);
-        }
-    }
-
-    for (i=[0:1]) {
-        translate([0, 0, i * hole_distance_z])
+        translate([0, 0, 0])
             rotate([90, 0, 90])
-                screw_base_sub(screw_d, screw_h);
-        translate([0, length, i * hole_distance_z])
+                screw_base_add(screw_d, screw_h);
+        translate([0, length, 0])
             rotate([90, -90, 90])
-                screw_base_sub(screw_d, screw_h);
-        translate([width_, 0, i * hole_distance_z])
+                screw_base_add(screw_d, screw_h);
+        translate([width_, 0, 0])
             rotate([0, -90, 0])
-                screw_base_sub(screw_d, screw_h);
-        translate([width_, length, i * hole_distance_z])
+                screw_base_add(screw_d, screw_h);
+        translate([width_, length, 0])
             rotate([90, 0, -90])
-                screw_base_sub(screw_d, screw_h);
-    }
-}
+                screw_base_add(screw_d, screw_h);
 
+        translate([4, thickness / 2, height_])
+            cube([width_ - 8, thickness / 2, thickness / 2]);
+        translate([4, length - thickness, height_])
+            cube([width_ - 8, thickness / 2, thickness / 2]);
+    }
+
+    translate([0, 0, 0])
+        rotate([90, 0, 90])
+            screw_base_sub(screw_d, screw_h);
+    translate([0, length, 0])
+        rotate([90, -90, 90])
+            screw_base_sub(screw_d, screw_h);
+    translate([width_, 0, 0])
+        rotate([0, -90, 0])
+            screw_base_sub(screw_d, screw_h);
+    translate([width_, length, 0])
+        rotate([90, 0, -90])
+            screw_base_sub(screw_d, screw_h);
+}
