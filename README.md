@@ -148,7 +148,7 @@ $ sudo gpasswd -a $USER dialout
         </tr>
         <tr>
             <td rowspan="2">Note Number</td>
-            <td>&nbsp</td>
+            <td>&nbsp;</td>
             <td>×</td>
             <td>0 - 127</td>
             <td>&nbsp;</td>
