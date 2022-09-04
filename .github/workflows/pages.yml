@@ -1,0 +1,91 @@
+name: Build website and deploy to GitHub Pages
+
+on:
+  push:
+    paths:
+      - '.github/workflows/pages.yml'
+      - 'pcb/**'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  build-ibom:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v3
+
+      - name: Check out InteractiveHtmlBom
+        uses: actions/checkout@v3
+        with:
+          repository: openscopeproject/InteractiveHtmlBom
+          ref: v2.5.0
+          path: InteractiveHtmlBom
+
+      - name: Install dependencies
+        run: |
+          sudo add-apt-repository -y ppa:kicad/kicad-6.0-releases
+          sudo apt update
+          sudo apt install -y --no-install-recommends kicad
+
+      - name: Generate interactive BOM
+        run: |
+          python3 ./InteractiveHtmlBom/InteractiveHtmlBom/generate_interactive_bom.py \
+              --dark-mode \
+              --no-browser \
+              --dest-dir ../build/ \
+              --name-format "%f" \
+              --include-tracks \
+              --include-nets \
+              ./pcb/db-synth.kicad_pcb
+            mkdir ibom
+            mv build/db-synth.html ibom/index.html
+        env:
+          INTERACTIVE_HTML_BOM_NO_DISPLAY: "1"
+
+      - name: Upload interactive BOM
+        uses: actions/upload-artifact@v3
+        with:
+          name: ibom
+          path: ibom/index.html
+
+  build-website:
+    runs-on: ubuntu-latest
+    needs: build-ibom
+    steps:
+      - name: Setup GitHub Pages
+        uses: actions/configure-pages@v1
+
+      - name: Download interactive BOM
+        uses: actions/download-artifact@v3
+        with:
+          name: ibom
+          path: prefix/ibom
+
+      - name: Upload website artifact
+        uses: actions/upload-pages-artifact@v1
+        with:
+          path: prefix
+
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    needs: build-website
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v1
