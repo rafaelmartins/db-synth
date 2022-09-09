@@ -5,6 +5,7 @@ on:
     paths:
       - '.github/workflows/pages.yml'
       - 'README.md'
+      - 'build-aux/**'
       - 'pcb/**'
   workflow_dispatch:
 
@@ -35,26 +36,8 @@ jobs:
           ref: v2.5.0
           path: InteractiveHtmlBom
 
-      - name: Install dependencies
-        run: |
-          sudo add-apt-repository -y ppa:kicad/kicad-6.0-releases
-          sudo apt update
-          sudo apt install -y --no-install-recommends kicad
-
       - name: Generate interactive BOM
-        run: |
-          python3 ./InteractiveHtmlBom/InteractiveHtmlBom/generate_interactive_bom.py \
-            --dark-mode \
-            --no-browser \
-            --dest-dir ../build/ \
-            --name-format "%f" \
-            --include-tracks \
-            --include-nets \
-            ./pcb/db-synth.kicad_pcb
-          mkdir ibom
-          mv build/db-synth.html ibom/index.html
-        env:
-          INTERACTIVE_HTML_BOM_NO_DISPLAY: "1"
+        run: mkdir ibom && ./build-aux/ibom.sh > ibom/index.html
 
       - name: Upload interactive BOM
         uses: actions/upload-artifact@v3
@@ -68,37 +51,8 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v3
 
-      - name: Install dependencies
-        run: sudo apt install -y wkhtmltopdf
-
       - name: Generate MIDI Implementation Chart
-        run: |
-          cat <<EOF | wkhtmltopdf - midi.pdf
-          <html>
-          <head>
-          <meta charset="UTF-8">
-          <title>MIDI Implementation Chart</title>
-          <style type="text/css">
-          h1 {
-              text-align: center;
-          }
-          table {
-              width: 100%;
-          }
-          table, th, td {
-              border: 1px solid black;
-          }
-          th, td {
-              padding: 5px;
-          }
-          </style>
-          </head>
-          <body>
-          <h1>MIDI Implementation Chart</h1>
-          $(cat README.md | sed -n '/<table/, /<\/table/p')
-          </body>
-          </html>
-          EOF
+        run: ./build-aux/midi.sh > midi.pdf
 
       - name: Upload MIDI Implementation Chart
         uses: actions/upload-artifact@v3
