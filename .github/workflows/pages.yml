@@ -50,6 +50,8 @@ jobs:
     steps:
       - name: Check out code
         uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
 
       - name: Generate MIDI Implementation Chart
         run: ./build-aux/midi.sh midi.pdf
