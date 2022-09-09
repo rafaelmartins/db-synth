@@ -37,7 +37,7 @@ jobs:
           path: InteractiveHtmlBom
 
       - name: Generate interactive BOM
-        run: mkdir ibom && ./build-aux/ibom.sh > ibom/index.html
+        run: ./build-aux/ibom.sh ibom/index.html
 
       - name: Upload interactive BOM
         uses: actions/upload-artifact@v3
@@ -52,7 +52,7 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Generate MIDI Implementation Chart
-        run: ./build-aux/midi.sh > midi.pdf
+        run: ./build-aux/midi.sh midi.pdf
 
       - name: Upload MIDI Implementation Chart
         uses: actions/upload-artifact@v3

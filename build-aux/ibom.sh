@@ -2,6 +2,11 @@
 
 set -e
 
+if [[ -z "${1}" ]]; then
+    echo "error: missing output file"
+    exit 1
+fi
+
 MYDIR="$(realpath "$(dirname "${0}")")"
 ROOTDIR="$(realpath "${MYDIR}/../")"
 MYTMPDIR="$(mktemp -d)"
@@ -27,4 +32,5 @@ generate_interactive_bom.py \
     --include-nets \
     "${ROOTDIR}/pcb/db-synth.kicad_pcb"
 
-cat "${MYTMPDIR}/db-synth.html"
+mkdir -p "$(dirname "${1}")"
+mv "${MYTMPDIR}/db-synth.html" "${1}"

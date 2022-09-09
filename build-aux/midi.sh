@@ -2,6 +2,11 @@
 
 set -e
 
+if [[ -z "${1}" ]]; then
+    echo "error: missing output file"
+    exit 1
+fi
+
 MYDIR="$(realpath "$(dirname "${0}")")"
 ROOTDIR="$(realpath "${MYDIR}/../")"
 
@@ -9,7 +14,9 @@ if [[ x$CI = xtrue ]]; then
     sudo apt install -y wkhtmltopdf
 fi
 
-cat <<EOF | wkhtmltopdf - -
+mkdir -p "$(dirname "${1}")"
+
+cat <<EOF | wkhtmltopdf - "${1}"
 <html>
 <head>
 <meta charset="UTF-8">
