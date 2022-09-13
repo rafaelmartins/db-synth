@@ -37,13 +37,13 @@ jobs:
           path: InteractiveHtmlBom
 
       - name: Generate interactive BOM
-        run: ./build-aux/ibom.sh ibom/index.html
+        run: ./build-aux/ibom.sh index.html
 
       - name: Upload interactive BOM
         uses: actions/upload-artifact@v3
         with:
           name: ibom
-          path: ibom/index.html
+          path: index.html
 
   build-midi:
     runs-on: ubuntu-latest
