@@ -1,0 +1,168 @@
+name: Build distribution artifacts and deploy to GitHub Releases
+
+on:
+  - push
+  - workflow_dispatch
+
+env:
+  AVR_TOOLCHAIN_TIMESTAMP: "202209132341"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: dist
+  cancel-in-progress: true
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  build-ibom:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v3
+
+      - name: Check out InteractiveHtmlBom
+        uses: actions/checkout@v3
+        with:
+          repository: openscopeproject/InteractiveHtmlBom
+          ref: v2.5.0
+          path: InteractiveHtmlBom
+
+      - name: Generate interactive BOM
+        run: ./build-aux/ibom.sh ibom.html
+
+      - name: Upload interactive BOM
+        uses: actions/upload-artifact@v3
+        with:
+          name: ibom
+          path: ibom.html
+
+  build-midi:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Generate MIDI Implementation Chart
+        run: ./build-aux/midi.sh midi.pdf
+
+      - name: Upload MIDI Implementation Chart
+        uses: actions/upload-artifact@v3
+        with:
+          name: midi
+          path: midi.pdf
+
+  build-binaries:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v3
+
+      - name: Build binaries
+        run: ./build-aux/binaries.sh ./prefix
+
+      - name: Upload binaries
+        uses: actions/upload-artifact@v3
+        with:
+          name: binaries
+          path: prefix/**
+
+  bdist:
+    runs-on: ubuntu-latest
+    needs:
+      - build-ibom
+      - build-midi
+      - build-binaries
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Get version
+        id: version
+        run: echo "::set-output name=version::$(./build-aux/version.sh)"
+
+      - name: Download interactive BOM
+        uses: actions/download-artifact@v3
+        with:
+          name: ibom
+          path: prefix/db-synth-${{ steps.version.outputs.version }}/pcb
+
+      - name: Download MIDI Implementation Chart
+        uses: actions/download-artifact@v3
+        with:
+          name: midi
+          path: prefix/db-synth-${{ steps.version.outputs.version }}
+
+      - name: Download binaries
+        uses: actions/download-artifact@v3
+        with:
+          name: binaries
+          path: prefix/db-synth-${{ steps.version.outputs.version }}
+
+      - name: Generate README.txt
+        run: ./build-aux/bdist-readme.sh ./prefix/db-synth-${{ steps.version.outputs.version }}/README.txt
+
+      - name: Copy additional files
+        run: |
+          mkdir -p "./prefix/db-synth-${{ steps.version.outputs.version }}/"{3d-models,pcb}
+          cp -v LICENSE "./prefix/db-synth-${{ steps.version.outputs.version }}"
+          cp -v 3d-models/*.stl "./prefix/db-synth-${{ steps.version.outputs.version }}/3d-models/"
+          cp -v pcb/db-synth.pdf "./prefix/db-synth-${{ steps.version.outputs.version }}/pcb/schematics.pdf"
+
+      - name: Compress files
+        run: tar -cvJf "db-synth-${{ steps.version.outputs.version }}.tar.xz" -C prefix/ .
+
+      - name: Generate release data
+        run: |
+          cat <<EOF > release.md
+          ### README.txt
+          \`\`\`
+          $(cat ./prefix/db-synth-${{ steps.version.outputs.version }}/README.txt)
+          \`\`\`
+
+          ### Memory Usage Reports
+          EOF
+
+          for i in ./prefix/db-synth-${{ steps.version.outputs.version }}/avr*/size.txt; do
+          cat <<EOF >> release.md
+          \`\`\`
+          $(cat "${i}")
+          \`\`\`
+          EOF
+          done
+
+      - name: Upload bdist
+        uses: actions/upload-artifact@v3
+        with:
+          name: bdist
+          path: |
+            db-synth-*.tar.xz
+            release.md
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: bdist
+    if: startsWith(github.ref, 'refs/tags/')
+    steps:
+      - name: Download bdist
+        uses: actions/download-artifact@v3
+        with:
+          name: bdist
+
+      - name: Create release
+        uses: ncipollo/release-action@v1
+        with:
+          name: "db-synth-${{ github.ref_name }}"
+          artifacts: "db-synth-*.tar.xz"
+          bodyFile: release.md
+          allowUpdates: true
+          removeArtifacts: true
+          generateReleaseNotes: true
