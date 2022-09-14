@@ -7,6 +7,11 @@ include(./cmake/avr.cmake)
 
 project(db-synth C)
 
+option(WITH_MCU "AVR Microcontroller.")
+if(NOT WITH_MCU)
+    set(WITH_MCU "avr128db28" CACHE STRING "AVR Microcontroller" FORCE)
+endif()
+
 add_executable(db-synth
     main.c
     main-data.h
@@ -43,8 +48,8 @@ target_compile_options(db-synth PRIVATE
     -Werror
 )
 
-avr_target_set_device(db-synth avr128db28 24000000UL)
-avr_target_show_size(db-synth avr128db28)
+avr_target_set_device(db-synth "${WITH_MCU}" 24000000UL)
+avr_target_show_size(db-synth "${WITH_MCU}")
 avr_target_gen_map(db-synth)
 avr_target_generate_hex(db-synth)
 avr_target_generate_fuse_hex(db-synth)
