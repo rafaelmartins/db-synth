@@ -3,6 +3,7 @@
 
 cmake_minimum_required(VERSION 3.12)
 
+include(CheckIPOSupported)
 include(./cmake/avr.cmake)
 
 project(db-synth C)
@@ -47,6 +48,9 @@ target_compile_options(db-synth PRIVATE
     -Wextra
     -Werror
 )
+
+check_ipo_supported()
+set_property(TARGET db-synth PROPERTY INTERPROCEDURAL_OPTIMIZATION TRUE)
 
 avr_target_set_device(db-synth "${WITH_MCU}" 24000000UL)
 avr_target_show_size(db-synth "${WITH_MCU}")
