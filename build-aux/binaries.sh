@@ -10,9 +10,9 @@ fi
 if [[ x$CI = xtrue ]]; then
     sudo apt install -y ninja-build
 
-    wget -q https://github.com/rafaelmartins/avr-toolchain/releases/download/avr-toolchain-linux-amd64-${AVR_TOOLCHAIN_TIMESTAMP}/avr-toolchain-linux-amd64-${AVR_TOOLCHAIN_TIMESTAMP}.tar.xz{,.sha512}
-    sha512sum -c avr-toolchain-linux-amd64-${AVR_TOOLCHAIN_TIMESTAMP}.tar.xz.sha512
-    tar -xf avr-toolchain-linux-amd64-${AVR_TOOLCHAIN_TIMESTAMP}.tar.xz
+    wget -q "https://github.com/rafaelmartins/avr-toolchain/releases/download/avr-toolchain-linux-amd64-${AVR_TOOLCHAIN_TIMESTAMP}/avr-toolchain-linux-amd64-${AVR_TOOLCHAIN_TIMESTAMP}.tar.xz"{,.sha512}
+    sha512sum -c "avr-toolchain-linux-amd64-${AVR_TOOLCHAIN_TIMESTAMP}.tar.xz.sha512"
+    tar -xf "avr-toolchain-linux-amd64-${AVR_TOOLCHAIN_TIMESTAMP}.tar.xz"
 
     export PATH="$(pwd)/avr/bin:${PATH}"
 fi
