@@ -55,10 +55,12 @@ typedef struct {
 static inline void
 midi_hw_init(void)
 {
+    PORTC.PIN0CTRL = PORT_ISC_INPUT_DISABLE_gc;
     PORTC.PIN1CTRL = PORT_PULLUPEN_bm;
     USART1.BAUD = midi_usart_baud;
     USART1.CTRLC = midi_usart_cmode | USART_PMODE_DISABLED_gc | USART_SBMODE_1BIT_gc | USART_CHSIZE_8BIT_gc;
-    USART1.CTRLB = USART_RXEN_bm | midi_usart_rxmode;
+    PORTC.DIRSET = PIN0_bm;
+    USART1.CTRLB = USART_TXEN_bm | USART_RXEN_bm | midi_usart_rxmode;
 }
 
 
@@ -91,6 +93,8 @@ midi_task(midi_t *m)
         return;
 
     uint8_t b = USART1.RXDATAL;
+    if (USART1.STATUS & USART_DREIF_bm)
+        USART1.TXDATAL = b;
 
     if (b < 0x80) {  // data
         if (m->_idx == 0)  // no status yet
