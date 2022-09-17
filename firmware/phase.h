@@ -8,9 +8,7 @@
 
 #pragma once
 
-#include <stdbool.h>
 #include <stdint.h>
-#include <stdlib.h>
 
 typedef union {
     uint32_t data;
@@ -20,17 +18,4 @@ typedef union {
     };
 } phase_t;
 
-
-static inline bool
-phase_step(phase_t *p, uint32_t s, uint16_t table_len)
-{
-    if (p == NULL)
-        return false;
-
-    p->data += s;
-    if (p->pint >= table_len) {
-        p->pint -= table_len;
-        return true;
-    }
-    return false;
-}
+bool phase_step(phase_t *p, uint32_t s, uint16_t table_len);
