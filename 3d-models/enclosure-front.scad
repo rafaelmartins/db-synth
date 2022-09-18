@@ -28,26 +28,34 @@ difference() {
         translate([oled0_x, oled0_y, 0])
             ssd1306_add(thickness);
 
-        translate([0, pcb0_y + pcb_length - 2 * pcb_screw_padding - 5, thickness + pcb_base_height / 2])
+        translate([0, (length - jack_distance) / 2, thickness + pcb_base_height / 2]) {
             rotate([0, 90, 0])
                 audiojack_add(thickness);
-        translate([width, pcb0_y + pcb_length - 2 * pcb_screw_padding - 5, thickness + pcb_base_height / 2])
-            rotate([0, -90, 0])
-                audiojack_add(thickness);
+            translate([0, jack_distance, 0])
+                rotate([0, 90, 0])
+                    audiojack_add(thickness);
+            translate([width, jack_distance, 0])
+                rotate([0, -90, 0])
+                    audiojack_add(thickness);
+        }
     }
 
     translate([oled0_x, oled0_y, 0])
         ssd1306_sub(thickness);
 
-    translate([0, pcb0_y + pcb_length - 2 * pcb_screw_padding - 5, thickness + pcb_base_height / 2])
+    translate([0, (length - jack_distance) / 2, thickness + pcb_base_height / 2]) {
         rotate([0, 90, 0])
             audiojack_sub(thickness);
-    translate([width, pcb0_y + pcb_length - 2 * pcb_screw_padding - 5, thickness + pcb_base_height / 2])
-        rotate([0, -90, 0])
-            audiojack_sub(thickness);
-    translate([width - thickness, pcb0_y + 2 * pcb_screw_padding + 4, thickness + pcb_base_height / 2])
-        rotate([0, 90, 0])
-            cylinder(h=thickness, d=8.5, $fn=20);
+        translate([0, jack_distance, 0])
+            rotate([0, 90, 0])
+                audiojack_sub(thickness);
+        translate([width, jack_distance, 0])
+            rotate([0, -90, 0])
+                audiojack_sub(thickness);
+        translate([width - thickness, 0, 0])
+            rotate([0, 90, 0])
+                cylinder(h=thickness, d=8.5, $fn=20);
+    }
 
     for (i=[0:1])
         for (j=[0:1])
