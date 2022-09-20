@@ -7,6 +7,7 @@
  */
 
 #include <avr/io.h>
+#include <stdlib.h>
 #include "adsr.h"
 #include "amplifier.h"
 #include "filter.h"
@@ -221,14 +222,6 @@ midi_channel_cb(midi_command_t cmd, uint8_t ch, uint8_t *buf, uint8_t len)
 
 
 static inline void
-midi_init(void)
-{
-    midi_hw_init();
-    midi.channel_cb = midi_channel_cb;
-}
-
-
-static inline void
 timer_init(void)
 {
     // number of cycles between each audio sample
@@ -245,11 +238,11 @@ main(void)
     clock_init();
     opamp_init();
     dac_init();
-    midi_init();
     timer_init();
 
     adsr_init(&adsr);
     filter_init(&filter);
+    midi_init(&midi, midi_channel_cb, NULL);
     oscillator_init(&oscillator);
     screen_init(&screen);
 

@@ -7,6 +7,7 @@
  */
 
 #include <avr/io.h>
+#include <stdbool.h>
 #include <stdint.h>
 #include <stdlib.h>
 #include "midi.h"
@@ -14,21 +15,28 @@
 
 
 void
-midi_hw_init(void)
+midi_init(midi_t *m, midi_channel_cb_t ch, midi_system_cb_t sys)
 {
+    if (m == NULL || m->_initialized)
+        return;
+
     PORTC.PIN0CTRL = PORT_ISC_INPUT_DISABLE_gc;
     PORTC.PIN1CTRL = PORT_PULLUPEN_bm;
     USART1.BAUD = midi_usart_baud;
     USART1.CTRLC = midi_usart_cmode | USART_PMODE_DISABLED_gc | USART_SBMODE_1BIT_gc | USART_CHSIZE_8BIT_gc;
     PORTC.DIRSET = PIN0_bm;
     USART1.CTRLB = USART_TXEN_bm | USART_RXEN_bm | midi_usart_rxmode;
+
+    m->_channel_cb = ch;
+    m->_system_cb = sys;
+    m->_initialized = true;
 }
 
 
 void
 midi_task(midi_t *m)
 {
-    if (m == NULL)
+    if (m == NULL || !m->_initialized)
         return;
 
     // run some pending callback and return
@@ -36,12 +44,12 @@ midi_task(midi_t *m)
         midi_command_t cmd = m->_buf[0] >> 4;
         switch (cmd) {
         case MIDI_SYSTEM:
-            if (m->system_cb != NULL)
-                m->system_cb(m->_buf[0] & 0xf, m->_buf + 1, m->_len);
+            if (m->_system_cb != NULL)
+                m->_system_cb(m->_buf[0] & 0xf, m->_buf + 1, m->_len);
             break;
         default:
-            if (m->channel_cb != NULL)
-                m->channel_cb(cmd, m->_buf[0] & 0xf, m->_buf + 1, m->_len);
+            if (m->_channel_cb != NULL)
+                m->_channel_cb(cmd, m->_buf[0] & 0xf, m->_buf + 1, m->_len);
             break;
         }
         m->_idx = 0;
