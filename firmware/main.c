@@ -133,7 +133,7 @@ midi_channel_cb(midi_command_t cmd, uint8_t ch, uint8_t *buf, uint8_t len)
             break;
 
         switch (buf[0]) {
-        case 0x03:  // waveform
+        case 3:  // waveform
             settings.data.oscillator.waveform = buf[1] / (0x80 / OSCILLATOR_WAVEFORM__LAST);
             if (settings.data.oscillator.waveform >= OSCILLATOR_WAVEFORM__LAST)
                 settings.data.oscillator.waveform--;
@@ -142,7 +142,7 @@ midi_channel_cb(midi_command_t cmd, uint8_t ch, uint8_t *buf, uint8_t len)
                 screen_set_oscillator_waveform(&screen, settings.data.oscillator.waveform);
             break;
 
-        case 0x46:  // adsr type
+        case 70:  // adsr type
             settings.data.adsr.type = buf[1] / (0x80 / ADSR_TYPE__LAST);
             if (settings.data.adsr.type >= ADSR_TYPE__LAST)
                 settings.data.adsr.type--;
@@ -151,7 +151,7 @@ midi_channel_cb(midi_command_t cmd, uint8_t ch, uint8_t *buf, uint8_t len)
                 screen_set_adsr_type(&screen, settings.data.adsr.type);
             break;
 
-        case 0x47:  // filter type
+        case 71:  // filter type
             settings.data.filter.type = buf[1] / (0x80 / FILTER_TYPE__LAST);
             if (settings.data.filter.type >= FILTER_TYPE__LAST)
                 settings.data.filter.type--;
@@ -160,42 +160,42 @@ midi_channel_cb(midi_command_t cmd, uint8_t ch, uint8_t *buf, uint8_t len)
                 screen_set_filter_type(&screen, settings.data.filter.type);
             break;
 
-        case 0x48:  // adsr release
+        case 72:  // adsr release
             settings.data.adsr.release = buf[1];
             settings.pending.adsr.release = true;
             if (adsr_set_release(&adsr, settings.data.adsr.release))
                 screen_set_adsr_release(&screen, settings.data.adsr.release);
             break;
 
-        case 0x49:  // adsr attack
+        case 73:  // adsr attack
             settings.data.adsr.attack = buf[1];
             settings.pending.adsr.attack = true;
             if (adsr_set_attack(&adsr, settings.data.adsr.attack))
                 screen_set_adsr_attack(&screen, settings.data.adsr.attack);
             break;
 
-        case 0x4a:  // filter cutoff
+        case 74:  // filter cutoff
             settings.data.filter.cutoff = buf[1];
             settings.pending.filter.cutoff = true;
             if (filter_set_cutoff(&filter, settings.data.filter.cutoff))
                 screen_set_filter_cutoff(&screen, settings.data.filter.cutoff);
             break;
 
-        case 0x4b:  // adsr decay
+        case 75:  // adsr decay
             settings.data.adsr.decay = buf[1];
             settings.pending.adsr.decay = true;
             if (adsr_set_decay(&adsr, settings.data.adsr.decay))
                 screen_set_adsr_decay(&screen, settings.data.adsr.decay);
             break;
 
-        case 0x4f:  // adsr sustain
+        case 79:  // adsr sustain
             settings.data.adsr.sustain = buf[1];
             settings.pending.adsr.sustain = true;
             if (adsr_set_sustain(&adsr, settings.data.adsr.sustain))
                 screen_set_adsr_sustain(&screen, settings.data.adsr.sustain);
             break;
 
-        case 0x66:  // midi channel
+        case 102:  // midi channel
             if (buf[1] > 0x3f) {
                 settings.data.midi_channel = ch;
                 settings.pending.midi_channel = true;
@@ -203,13 +203,13 @@ midi_channel_cb(midi_command_t cmd, uint8_t ch, uint8_t *buf, uint8_t len)
             }
             break;
 
-        case 0x77:  // write settings
+        case 119:  // write settings
             if (buf[1] > 0x3f)
                 settings_start_write(&settings);
             break;
 
-        case 0x78:  // all sound off
-        case 0x7b:  // all notes off
+        case 120:  // all sound off
+        case 123:  // all notes off
             adsr_unset_gate(&adsr, true);
             break;
         }
