@@ -227,7 +227,7 @@ $ sudo gpasswd -a $USER dialout
                 <ul>
                     <li>0 - 42 (Off)</li>
                     <li>43 - 85 (Low pass)</li>
-                    <li>86 - 127(High pass)</li>
+                    <li>86 - 127 (High pass)</li>
                 </ul>
             </td>
         </tr>
@@ -269,7 +269,7 @@ $ sudo gpasswd -a $USER dialout
                 Set MIDI Channel
                 <ul>
                     <li>0 - 63 (No action)</li>
-                    <li>64 - 127 (Set active channel to current channel)</li>
+                    <li>64 - 127 (Set db-synth active channel to current message channel)</li>
                 </ul>
             </td>
         </tr>
