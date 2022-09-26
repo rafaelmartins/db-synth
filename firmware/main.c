@@ -274,8 +274,6 @@ main(void)
         screen_set_filter_cutoff(&screen, settings.data.filter.cutoff);
     }
 
-    screen_notification(&screen, SCREEN_NOTIFICATION_READY);
-
     while (1) {
         if (TCB0.INTFLAGS & TCB_CAPT_bm) {
             TCB0.INTFLAGS = TCB_CAPT_bm;

@@ -16,17 +16,6 @@
 #include "oscillator.h"
 #include "screen-data.h"
 
-// there's just one screen for everything:
-
-// [db-synth] PRESET UPD
-// .....................
-// WF: Triangle | CH: 15
-// .....................
-// AE: 20.0s | DE: 20.0s
-// S: 100.0% | RE: 20.0s
-// .....................
-// F: LPF | FC: 20.00kHz
-
 typedef struct {
     oled_t oled;
     bool _initialized;
@@ -41,14 +30,13 @@ typedef struct {
 } screen_t;
 
 typedef enum {
-    SCREEN_NOTIFICATION_ERROR,  // not used yet
-    SCREEN_NOTIFICATION_READY,
+    SCREEN_NOTIFICATION_SPLASH,
     SCREEN_NOTIFICATION_PRESET_UPDATED,
 } screen_notification_t;
 
 bool screen_init(screen_t *s);
 bool screen_task(screen_t *s);
-bool screen_notification(screen_t *s, screen_notification_t notif);
+bool screen_notification(screen_t *s, screen_notification_t n);
 bool screen_set_oscillator_waveform(screen_t *s, oscillator_waveform_t wf);
 bool screen_set_midi_channel(screen_t *s, uint8_t midi_ch);
 bool screen_set_adsr_type(screen_t *s, adsr_type_t t);

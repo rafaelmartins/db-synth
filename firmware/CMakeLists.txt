@@ -13,6 +13,12 @@ if(NOT WITH_MCU)
     set(WITH_MCU "avr128db28" CACHE STRING "AVR Microcontroller" FORCE)
 endif()
 
+execute_process(
+    COMMAND "${CMAKE_CURRENT_SOURCE_DIR}/../build-aux/version.sh"
+    OUTPUT_VARIABLE DB_SYNTH_VERSION
+    OUTPUT_STRIP_TRAILING_WHITESPACE
+)
+
 add_executable(db-synth
     main.c
     main-data.h
@@ -50,6 +56,10 @@ add_executable(db-synth
 
     settings.c
     settings.h
+)
+
+target_compile_definitions(db-synth PRIVATE
+    DB_SYNTH_VERSION=\"${DB_SYNTH_VERSION}\"
 )
 
 target_compile_options(db-synth PRIVATE
