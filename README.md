@@ -202,7 +202,7 @@ $ sudo gpasswd -a $USER dialout
                     <li>0 - 31 (Square)</li>
                     <li>32 - 63 (Sine)</li>
                     <li>64 - 95 (Triangle)</li>
-                    <li>95 - 127 (Saw)</li>
+                    <li>96 - 127 (Saw)</li>
                 </ul>
             </td>
         </tr>
