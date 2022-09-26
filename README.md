@@ -196,61 +196,94 @@ $ sudo gpasswd -a $USER dialout
             <td>3</td>
             <td>×</td>
             <td>○</td>
-            <td>Oscillator Waveform Type</td>
+            <td>
+                Oscillator Waveform Type<br />
+                <ul>
+                    <li>0 - 31 (Square)</li>
+                    <li>32 - 63 (Sine)</li>
+                    <li>64 - 95 (Triangle)</li>
+                    <li>95 - 127 (Saw)</li>
+                </ul>
+            </td>
         </tr>
         <tr>
             <td>70</td>
             <td>×</td>
             <td>○</td>
-            <td>ADSR Envelope Type</td>
+            <td>
+                ADSR Envelope Type
+                <ul>
+                    <li>0 - 63 (Exponential)</li>
+                    <li>64 - 127 (Linear)</li>
+                </ul>
+            </td>
         </tr>
         <tr>
             <td>71</td>
             <td>×</td>
             <td>○</td>
-            <td>Filter Type</td>
+            <td>
+                Filter Type
+                <ul>
+                    <li>0 - 42 (Off)</li>
+                    <li>43 - 85 (Low pass)</li>
+                    <li>86 - 127(High pass)</li>
+                </ul>
+            </td>
         </tr>
         <tr>
             <td>72</td>
             <td>×</td>
             <td>○</td>
-            <td>ADSR Envelope Release</td>
+            <td>ADSR Envelope Release (20ms - 20s)</td>
         </tr>
         <tr>
             <td>73</td>
             <td>×</td>
             <td>○</td>
-            <td>ADSR Envelope Attack</td>
+            <td>ADSR Envelope Attack (20ms - 20s)</td>
         </tr>
         <tr>
             <td>74</td>
             <td>×</td>
             <td>○</td>
-            <td>Filter Cutoff</td>
+            <td>Filter Cutoff (20Hz - 20kHz)</td>
         </tr>
         <tr>
             <td>75</td>
             <td>×</td>
             <td>○</td>
-            <td>ADSR Envelope Decay</td>
+            <td>ADSR Envelope Decay (20ms - 20s)</td>
         </tr>
         <tr>
             <td>79</td>
             <td>×</td>
             <td>○</td>
-            <td>ADSR Envelope Sustain</td>
+            <td>ADSR Envelope Sustain (0 - 100%)</td>
         </tr>
         <tr>
             <td>102</td>
             <td>×</td>
             <td>○</td>
-            <td>Set MIDI Channel</td>
+            <td>
+                Set MIDI Channel
+                <ul>
+                    <li>0 - 63 (No action)</li>
+                    <li>64 - 127 (Set active channel to current channel)</li>
+                </ul>
+            </td>
         </tr>
         <tr>
             <td>119</td>
             <td>×</td>
             <td>○</td>
-            <td>Write Settings to EEPROM</td>
+            <td>
+                Write Settings to EEPROM
+                <ul>
+                    <li>0 - 63 (No action)</li>
+                    <li>64 - 127 (Write settings)</li>
+                </ul>
+            </td>
         </tr>
         <tr>
             <td colspan="2">Program Change</td>
