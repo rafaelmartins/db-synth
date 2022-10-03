@@ -87,7 +87,9 @@ jobs:
 
       - name: Get version
         id: version
-        run: echo "::set-output name=version::$(./build-aux/version.sh)"
+        run: |
+          ./build-aux/version.sh > VERSION
+          echo "::set-output name=version::$(cat VERSION)"
 
       - name: Download interactive BOM
         uses: actions/download-artifact@v3
@@ -148,6 +150,7 @@ jobs:
           path: |
             db-synth-*.tar.xz*
             release.md
+            VERSION
 
   deploy:
     runs-on: ubuntu-latest
@@ -159,10 +162,14 @@ jobs:
         with:
           name: bdist
 
+      - name: Get version
+        id: version
+        run: echo "::set-output name=version::$(cat VERSION)"
+
       - name: Create release
         uses: ncipollo/release-action@v1
         with:
-          name: "db-synth-${{ github.ref_name }}"
+          name: "db-synth-${{ steps.version.outputs.version }}"
           artifacts: "db-synth-*.tar.xz*"
           bodyFile: release.md
           allowUpdates: true
