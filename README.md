@@ -46,7 +46,7 @@ Other features include:
 A PCB for this synthesizer was designed using [Kicad](https://www.kicad.org/):
 
 - [Schematics](./pcb/db-synth.pdf)
-<!-- - [Interactive Bill of Materials](https://rafaelmartins.github.io/db-synth/ibom/)-->
+- [Interactive Bill of Materials](https://rafaelmartins.github.io/db-synth/ibom/)
 
 A 3D-printable enclosure was designed using [OpenSCAD](https://openscad.org/):
 
