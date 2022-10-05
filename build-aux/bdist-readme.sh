@@ -35,6 +35,7 @@ Files:
         enclosure-back.stl: Enclosure (back)
         enclosure-front.stl: Enclosure (front)
     pcb/: Printed circuit board resources
+        db-synth-r$("${MYDIR}/pcb-revision.sh").zip: Gerber files for manufacturing
         ibom.html: Kicad PCB interactive bill of materials
         schematics.pdf: Kicad schematics
     midi.pdf: Midi Implementation Chart

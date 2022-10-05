@@ -118,11 +118,14 @@ jobs:
           cp -v LICENSE "./prefix/db-synth-${{ steps.version.outputs.version }}"
           cp -v 3d-models/*.stl "./prefix/db-synth-${{ steps.version.outputs.version }}/3d-models/"
           cp -v pcb/db-synth.pdf "./prefix/db-synth-${{ steps.version.outputs.version }}/pcb/schematics.pdf"
+          cp -v pcb/gerber/db-synth-r*.zip "./prefix/db-synth-${{ steps.version.outputs.version }}/pcb/"
 
       - name: Compress files and calculate checksum
         run: |
-          tar -cvJf "db-synth-${{ steps.version.outputs.version }}.tar.xz" -C prefix/ .
-          sha512sum "db-synth-${{ steps.version.outputs.version }}.tar.xz" > "db-synth-${{ steps.version.outputs.version }}.tar.xz.sha512"
+          pushd prefix/ > /dev/null
+          zip -r9 "../db-synth-${{ steps.version.outputs.version }}.zip" .
+          popd > /dev/null
+          sha512sum "db-synth-${{ steps.version.outputs.version }}.zip" > "db-synth-${{ steps.version.outputs.version }}.zip.sha512"
 
       - name: Generate release data
         run: |
@@ -148,7 +151,7 @@ jobs:
         with:
           name: bdist
           path: |
-            db-synth-*.tar.xz*
+            db-synth-*.zip*
             release.md
             VERSION
 
@@ -170,7 +173,7 @@ jobs:
         uses: ncipollo/release-action@v1
         with:
           name: "db-synth-${{ steps.version.outputs.version }}"
-          artifacts: "db-synth-*.tar.xz*"
+          artifacts: "db-synth-*.zip*"
           bodyFile: release.md
           allowUpdates: true
           removeArtifacts: true
