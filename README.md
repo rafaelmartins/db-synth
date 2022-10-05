@@ -5,8 +5,9 @@ A MIDI-controlled mono-voice digital synthesizer built on top of the AVR DB micr
 > **Quick access**
 >
 > - ["I want to build a db-synth!"](#hardware)
-> - ["I want to flash the firmware to a db-synth!"](#software)
-> - ["I want to setup my MIDI controller for db-synth!"](#midi-implementation-chart)
+> - ["I want to program a firmware to my db-synth!"](#software)
+> - ["I have a problem to program a firmware to my db-synth!"](#troubleshooting)
+> - ["I want to setup a MIDI controller for usage with my db-synth!"](#midi-implementation-chart)
 
 
 ## Why?!
@@ -48,6 +49,8 @@ A PCB for this synthesizer was designed using [Kicad](https://www.kicad.org/):
 - [Schematics](./pcb/db-synth.pdf)
 - [Interactive Bill of Materials](https://rafaelmartins.github.io/db-synth/ibom/)
 
+### Enclosure
+
 A 3D-printable enclosure was designed using [OpenSCAD](https://openscad.org/):
 
 - [Front](./3d-models/enclosure-front.stl) ([source](./3d-models/enclosure-front.scad))
@@ -58,51 +61,56 @@ A 3D-printable enclosure was designed using [OpenSCAD](https://openscad.org/):
 
 ### Download prebuilt binaries
 
-TODO
+Download latest release from https://github.com/rafaelmartins/db-synth/releases/latest and follow instructions from `README.txt`.
 
 ### ... or compile from source
 
 To build the firmware, you need an AVR toolchain with support for the AVR DB series. Linux users can download it from https://github.com/rafaelmartins/avr-toolchain/releases/latest. Just extract it somewhere and add the `avr/bin` folder to your `PATH` variable. [`cmake`](https://cmake.org/) is also required.
 
 ```console
-$ mkdir build
-$ cd build
+$ git clone https://github.com/rafaelmartins/db-synth.git
+$ mkdir -p db-synth/build
+$ cd db-synth/build
 $ cmake -DCMAKE_BUILD_TYPE=Release ../firmware
 $ make
 ```
 
 This will create the `db-synth.hex` and `db-synth-fuse.hex` files.
 
-### Write to microcontroller
+#### Program microcontroller
 
-We can write to the microcontroller memory spaces using the UPDI interface. I recommend using the [`pymcuprog`](https://github.com/microchip-pic-avr-tools/pymcuprog) tool, from Microchip itself, with a [Serial port UPDI adapter](https://github.com/microchip-pic-avr-tools/pymcuprog#serial-port-updi-pyupdi), that can be easily built using a TTL serial adapter and a resistor, as described in the link. This was NOT tested with the AVR128DB48 Curiosity Nano or similar evaluation boards.
+We can write to the microcontroller memory spaces using the UPDI interface. It is recommended to use the [`pymcuprog`](https://github.com/microchip-pic-avr-tools/pymcuprog) tool, from Microchip itself, with a [Serial port UPDI adapter](https://github.com/microchip-pic-avr-tools/pymcuprog#serial-port-updi-pyupdi), that can be easily built using a TTL serial adapter and a resistor, as described in the link. This was NOT tested with the AVR128DB48 Curiosity Nano or similar evaluation boards.
 
-With the adapter connected to the UPDI port in the db-synth PCB, and configured as described in the [`pymcuprog`](https://github.com/microchip-pic-avr-tools/pymcuprog) documentation, run (assuming that serial adapter is available at `/dev/ttyUSB0` and that it supports a baudrate of `230400`):
+With the adapter connected to the UPDI port in the db-synth PCB, and configured as described in the [`pymcuprog`](https://github.com/microchip-pic-avr-tools/pymcuprog) documentation, run (assuming that the microcontroller is `AVR128DB28` (`AVR64DB28` is also supported), that serial adapter is available at `/dev/ttyUSB0` and that it supports a baudrate of `230400`):
 
 ```console
-$ pymcuprog -t uart -d avr128db28 --uart /dev/ttyUSB0 -c 230400 write -f db-synth-fuse.hex  --erase
-$ pymcuprog -t uart -d avr128db28 --uart /dev/ttyUSB0 -c 230400 write -f db-synth.hex  --erase
+$ pymcuprog --tool uart --device avr128db28 --uart /dev/ttyUSB0 \
+    --clk 230400 write --filename db-synth-fuse.hex
+$ pymcuprog --tool uart --device avr128db28 --uart /dev/ttyUSB0 \
+    --clk 230400 write --filename db-synth.hex --erase
 ```
 
 The first command will write fuses, and the second command will write the firmware to flash.
 
-#### Troubleshooting
+### Troubleshooting
 
-If the `pymcuprog` command fails on Linux with some permission problem, make sure to add your user to the group that owns the device `/dev/ttyUSB0` (in our example). You can check which group is it, by running:
+If the `pymcuprog` command fails on Linux with some permission problem, make sure to add the user to the group that owns the device `/dev/ttyUSB0` (from the example commands). It is possible to check which group is it, by running:
 
 ```console
 $ ls -l /dev/ttyUSB0
 crw-rw---- 1 root dialout 188, 3 Aug 29 00:06 /dev/ttyUSB0
 ```
 
-In this example, the group is `dialout`. Just add yourself to the group:
+In this example, the group is `dialout`. To add current user to the group:
 
 ```console
 $ sudo gpasswd -a $USER dialout
 ```
 
 
-### MIDI Implementation Chart
+## MIDI Implementation Chart
+
+(Also available as a PDF [here](https://rafaelmartins.github.io/db-synth/midi.pdf))
 
 <table>
     <thead>
