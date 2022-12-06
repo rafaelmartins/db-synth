@@ -66,10 +66,8 @@ midi_task(midi_t *m)
         USART1.TXDATAL = b;
 
     if (b < 0x80) {  // data
-        if (m->_idx == 0)  // no status yet
-            return;
-
-        m->_buf[m->_idx++] = b;
+        if (m->_idx)
+            m->_buf[m->_idx++] = b;
         return;
     }
 
