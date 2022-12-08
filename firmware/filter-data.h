@@ -17,7 +17,7 @@ static const struct {
     int8_t a1;
     int8_t b0;
     int8_t b1;
-} filter_lp[] __attribute__((aligned)) PROGMEM = {
+} filter_lp[] PROGMEM = {
     {0x7f, 0x00, 0x00},
     {0x7f, 0x00, 0x00},
     {0x7e, 0x00, 0x00},
@@ -152,7 +152,7 @@ static const struct {
     int8_t a1;
     int8_t b0;
     int8_t b1;
-} filter_hp[] __attribute__((aligned)) PROGMEM = {
+} filter_hp[] PROGMEM = {
     {0x7f, 0x7f, -0x7f},
     {0x7f, 0x7f, -0x7f},
     {0x7e, 0x7f, -0x7f},

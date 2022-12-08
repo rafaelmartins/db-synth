@@ -372,7 +372,7 @@ def dump_filter_coefficients(var, name):
     yield '    int8_t a1;'
     yield '    int8_t b0;'
     yield '    int8_t b1;'
-    yield '} %s[] __attribute__((aligned)) PROGMEM = {' % name
+    yield '} %s[] PROGMEM = {' % name
 
     for i in range(len(var)):
         yield '    {%s, %s, %s},' % (
