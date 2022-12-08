@@ -190,23 +190,23 @@ filter_frequencies_end = filter_frequencies_max - filter_frequencies_min
 filter_frequencies = [-1 + math.exp(3 * i / (filter_frequencies_len - 1)) for i in range(filter_frequencies_len)]
 filter_frequencies = [filter_frequencies_min + int(filter_frequencies_end * i / filter_frequencies[-1]) for i in filter_frequencies]
 
-filter_lp_a1 = []
-filter_lp_b0 = []
-filter_lp_b1 = []
-filter_hp_a1 = []
-filter_hp_b0 = []
-filter_hp_b1 = []
+filter_lp = []
+filter_hp = []
 
 for f in filter_frequencies:
     alpha = (2 * math.pi * f) / audio_sample_rate
 
-    filter_lp_a1.append(-(alpha - 2) / (alpha + 2))
-    filter_lp_b0.append(alpha / (alpha + 2))
-    filter_lp_b1.append(alpha / (alpha + 2))
+    filter_lp.append([
+        -(alpha - 2) / (alpha + 2),
+        alpha / (alpha + 2),
+        alpha / (alpha + 2),
+    ])
 
-    filter_hp_a1.append((1 - (alpha / 2)) / (1 + (alpha / 2)))
-    filter_hp_b0.append(1 / (1 + (alpha / 2)))
-    filter_hp_b1.append(-1 / (1 + (alpha / 2)))
+    filter_hp.append([
+        (1 - (alpha / 2)) / (1 + (alpha / 2)),
+        1 / (1 + (alpha / 2)),
+        -1 / (1 + (alpha / 2)),
+    ])
 
 filter_cutoff_descriptions = [('%.2fkHz' % (i / 1000)) if i > 1000 else ('%dHz' % i) for i in filter_frequencies]
 
@@ -368,11 +368,18 @@ def dump_adsr_level_descriptions():
 
 def dump_filter_coefficients(var, name):
     yield ''
-    yield 'static const uint8_t %s[] PROGMEM = {' % name
+    yield 'static const struct {'
+    yield '    int8_t a1;'
+    yield '    int8_t b0;'
+    yield '    int8_t b1;'
+    yield '} %s[] __attribute__((aligned)) PROGMEM = {' % name
 
-    for i in range(len(var) // 8):
-        yield '    %s,' % ', '.join([format_hex(j * (1 << 7), 2)
-                                     for j in var[i * 8: (i + 1) * 8]])
+    for i in range(len(var)):
+        yield '    {%s, %s, %s},' % (
+            format_hex(var[i][0] * (1 << 7), 2),
+            format_hex(var[i][1] * (1 << 7), 2),
+            format_hex(var[i][2] * (1 << 7), 2),
+        )
 
     yield '};'
 
@@ -413,12 +420,8 @@ generators = {
     'filter-data.h': itertools.chain(
         header(),
         dump_headers(['avr/pgmspace.h', 'stdint.h']),
-        dump_filter_coefficients(filter_lp_a1, 'filter_lp_a1'),
-        dump_filter_coefficients(filter_lp_b0, 'filter_lp_b0'),
-        dump_filter_coefficients(filter_lp_b1, 'filter_lp_b1'),
-        dump_filter_coefficients(filter_hp_a1, 'filter_hp_a1'),
-        dump_filter_coefficients(filter_hp_b0, 'filter_hp_b0'),
-        dump_filter_coefficients(filter_hp_b1, 'filter_hp_b1'),
+        dump_filter_coefficients(filter_lp, 'filter_lp'),
+        dump_filter_coefficients(filter_hp, 'filter_hp'),
     ),
     'midi-data.h': itertools.chain(
         header(),
