@@ -200,7 +200,7 @@
     (pad "17" thru_hole oval (at 7.62 27.94 90) (size 1.6 1.6) (drill 0.8) (layers *.Cu *.Mask)
       (net 20 "unconnected-(U1-Pad17)") (pinfunction "PF1/XTAL32K2") (pintype "bidirectional+no_connect") (tstamp dfe9748d-68e7-4649-820e-c20f5e403677))
     (pad "18" thru_hole oval (at 7.62 25.4 90) (size 1.6 1.6) (drill 0.8) (layers *.Cu *.Mask)
-      (net 21 "unconnected-(U1-Pad18)") (pinfunction "PF6") (pintype "bidirectional+no_connect") (tstamp bde0c3bc-8e66-4a1a-bc67-0a4bcb947067))
+      (net 21 "unconnected-(U1-Pad18)") (pinfunction "PF6/~{RESET}") (pintype "input+no_connect") (tstamp bde0c3bc-8e66-4a1a-bc67-0a4bcb947067))
     (pad "19" thru_hole oval (at 7.62 22.86 90) (size 1.6 1.6) (drill 0.8) (layers *.Cu *.Mask)
       (net 34 "Net-(J2-Pad3)") (pinfunction "UPDI") (pintype "bidirectional") (tstamp 1cdfb0cc-a618-4e74-978b-020836d92638))
     (pad "20" thru_hole oval (at 7.62 20.32 90) (size 1.6 1.6) (drill 0.8) (layers *.Cu *.Mask)
