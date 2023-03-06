@@ -24,12 +24,12 @@ fi
 export INTERACTIVE_HTML_BOM_NO_DISPLAY=1
 
 generate_interactive_bom.py \
-    --dark-mode \
     --no-browser \
     --dest-dir "${MYTMPDIR}" \
     --name-format "%f" \
     --include-tracks \
     --include-nets \
+    --blacklist "H*" \
     "${ROOTDIR}/pcb/db-synth.kicad_pcb"
 
 mkdir -p "$(dirname "${1}")"
