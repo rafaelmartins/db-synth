@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <title>{{ SITE_TITLE }}{% block entry %} - {% ifdef TITLE %}{{ TITLE }}{% else %}{{ SITE_TAGLINE }}{% endif %}{%
+    endblock %}{% block listing_once %} - News{% endblock %}</title>
+  <meta name="description" content="{{ SITE_TAGLINE }}">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" type="text/css" href="{{ BASE_URL }}/assets/primer.css" />
+</head>
+
+<body>
+  <div class="container-lg clearfix px-3">
+    <div class="col-12 float-left my-3">
+      <h1><a href="{{ BASE_URL }}/">{{ SITE_TITLE }}</a></h1>
+      <p class="f3-light my-1">{{ SITE_TAGLINE }}</p>
+    </div>
+    <div class="col-12 float-left mb-3">
+      <nav class="UnderlineNav" aria-label="Menu">
+        <div class="UnderlineNav-body">
+          <a class="UnderlineNav-item" href="{{ BASE_URL }}/" {% if MAKE_SLUG == "index" %} aria-current="page" {% endif
+            %}>Home</a>
+          <a class="UnderlineNav-item" href="{{ BASE_URL }}/news/" {% if MAKE_TYPE == "post" %} aria-current="page" {%
+            endif %}>News</a>
+          {%- ifdef GITHUB_PROJECT %}
+          <a class="UnderlineNav-item" href="{{ GITHUB_PROJECT }}">GitHub</a>
+          {%- endif %}
+        </div>
+      </nav>
+    </div>
+    <div class="col-sm-9 col-12 float-left pb-sm-3 pr-sm-3">
+      {%- block listing %}
+      <article class="markdown-body mb-3">
+        {%- ifdef TITLE %}
+        <h2 class="pt-1"><a href="{{ BASE_URL }}/news/{{ FILENAME }}/">{{ TITLE }}</a></h2>
+        {%- endif %}
+        {{ CONTENT }}
+      </article>
+      {%- endblock %}
+      {%- block listing_once %}
+      <nav class="paginate-container mt-4" aria-label="Pagination">
+        <div class="pagination">
+          {%- ifdef PREVIOUS_PAGE %}
+          <a class="previous_page" rel="prev" href="{{ BASE_URL }}/news/page/{{ PREVIOUS_PAGE }}/"
+            aria-label="Previous Page">Previous</a>
+          {%- else %}
+          <span class="previous_page" aria-disabled="true">Previous</span>
+          {%- endif %}
+          {%- ifdef NEXT_PAGE %}
+          <a class="next_page" rel="next" href="{{ BASE_URL }}/news/page/{{ NEXT_PAGE }}/"
+            aria-label="Next Page">Next</a>
+          {%- else %}
+          <span class="next_page" aria-disabled="true">Next</span>
+          {%- endif %}
+        </div>
+      </nav>
+      {%- endblock %}
+      {%- block entry %}
+      <article class="markdown-body mb-3">
+        {%- ifdef TITLE %}
+        <h2 class="pt-1">{{ TITLE }}</h2>
+        {%- endif %}
+        {{ CONTENT }}
+      </article>
+      {%- endblock %}
+    </div>
+    <div class="col-sm-3 col-12 float-left">
+      <nav class="menu" aria-labelledby="menu-heading">
+        <span class="menu-heading" id="menu-heading">Latest release</span>
+        {%- ifdef LATEST_RELEASE %}
+        <span class="menu-heading text-center p-3 f3-light">{{ SITE_TITLE }}-{{ LATEST_RELEASE }}</span>
+        {%- ifdef GITHUB_PROJECT %}
+        {%- ifdef ARCHIVE1_TITLE %}
+        <a class="menu-item" href="{{ GITHUB_PROJECT }}/releases/download/v{{ LATEST_RELEASE }}/{%
+          ifdef ARCHIVE1_PREFIX %}{{ ARCHIVE1_PREFIX }}{% else %}{{ SITE_TITLE }}-{% endif %}{{ LATEST_RELEASE }}{%
+          ifdef ARCHIVE1_SUFFIX %}{{ ARCHIVE1_SUFFIX }}{% else %}.tar.gz{% endif %}">{{ ARCHIVE1_TITLE }}</a>
+        {%- endif %}
+        {%- ifdef ARCHIVE2_TITLE %}
+        <a class="menu-item" href="{{ GITHUB_PROJECT }}/releases/download/v{{ LATEST_RELEASE }}/{%
+          ifdef ARCHIVE2_PREFIX %}{{ ARCHIVE2_PREFIX }}{% else %}{{ SITE_TITLE }}-{% endif %}{{ LATEST_RELEASE }}{%
+          ifdef ARCHIVE2_SUFFIX %}{{ ARCHIVE2_SUFFIX }}{% else %}.tar.gz{% endif %}">{{ ARCHIVE2_TITLE }}</a>
+        {%- endif %}
+        {%- ifdef ARCHIVE3_TITLE %}
+        <a class="menu-item" href="{{ GITHUB_PROJECT }}/releases/download/v{{ LATEST_RELEASE }}/{%
+          ifdef ARCHIVE3_PREFIX %}{{ ARCHIVE3_PREFIX }}{% else %}{{ SITE_TITLE }}-{% endif %}{{ LATEST_RELEASE }}{%
+          ifdef ARCHIVE3_SUFFIX %}{{ ARCHIVE3_SUFFIX }}{% else %}.tar.gz{% endif %}">{{ ARCHIVE3_TITLE }}</a>
+        {%- endif %}
+        {%- ifdef ARCHIVE4_TITLE %}
+        <a class="menu-item" href="{{ GITHUB_PROJECT }}/releases/download/v{{ LATEST_RELEASE }}/{%
+          ifdef ARCHIVE4_PREFIX %}{{ ARCHIVE4_PREFIX }}{% else %}{{ SITE_TITLE }}-{% endif %}{{ LATEST_RELEASE }}{%
+          ifdef ARCHIVE4_SUFFIX %}{{ ARCHIVE4_SUFFIX }}{% else %}.tar.gz{% endif %}">{{ ARCHIVE4_TITLE }}</a>
+        {%- endif %}
+        {%- ifdef ARCHIVE5_TITLE %}
+        <a class="menu-item" href="{{ GITHUB_PROJECT }}/releases/download/v{{ LATEST_RELEASE }}/{%
+          ifdef ARCHIVE5_PREFIX %}{{ ARCHIVE5_PREFIX }}{% else %}{{ SITE_TITLE }}-{% endif %}{{ LATEST_RELEASE }}{%
+          ifdef ARCHIVE5_SUFFIX %}{{ ARCHIVE5_SUFFIX }}{% else %}.tar.gz{% endif %}">{{ ARCHIVE5_TITLE }}</a>
+        {%- endif %}
+        {%- ifdef ARCHIVE6_TITLE %}
+        <a class="menu-item" href="{{ GITHUB_PROJECT }}/releases/download/v{{ LATEST_RELEASE }}/{%
+          ifdef ARCHIVE6_PREFIX %}{{ ARCHIVE6_PREFIX }}{% else %}{{ SITE_TITLE }}-{% endif %}{{ LATEST_RELEASE }}{%
+          ifdef ARCHIVE6_SUFFIX %}{{ ARCHIVE6_SUFFIX }}{% else %}.tar.gz{% endif %}">{{ ARCHIVE6_TITLE }}</a>
+        {%- endif %}
+        {%- ifdef ARCHIVE7_TITLE %}
+        <a class="menu-item" href="{{ GITHUB_PROJECT }}/releases/download/v{{ LATEST_RELEASE }}/{%
+          ifdef ARCHIVE7_PREFIX %}{{ ARCHIVE7_PREFIX }}{% else %}{{ SITE_TITLE }}-{% endif %}{{ LATEST_RELEASE }}{%
+          ifdef ARCHIVE7_SUFFIX %}{{ ARCHIVE7_SUFFIX }}{% else %}.tar.gz{% endif %}">{{ ARCHIVE7_TITLE }}</a>
+        {%- endif %}
+        {%- ifdef ARCHIVE8_TITLE %}
+        <a class="menu-item" href="{{ GITHUB_PROJECT }}/releases/download/v{{ LATEST_RELEASE }}/{%
+          ifdef ARCHIVE8_PREFIX %}{{ ARCHIVE8_PREFIX }}{% else %}{{ SITE_TITLE }}-{% endif %}{{ LATEST_RELEASE }}{%
+          ifdef ARCHIVE8_SUFFIX %}{{ ARCHIVE8_SUFFIX }}{% else %}.tar.gz{% endif %}">{{ ARCHIVE8_TITLE }}</a>
+        {%- endif %}
+        {%- ifdef ARCHIVE9_TITLE %}
+        <a class="menu-item" href="{{ GITHUB_PROJECT }}/releases/download/v{{ LATEST_RELEASE }}/{%
+          ifdef ARCHIVE9_PREFIX %}{{ ARCHIVE9_PREFIX }}{% else %}{{ SITE_TITLE }}-{% endif %}{{ LATEST_RELEASE }}{%
+          ifdef ARCHIVE9_SUFFIX %}{{ ARCHIVE9_SUFFIX }}{% else %}.tar.gz{% endif %}">{{ ARCHIVE9_TITLE }}</a>
+        {%- endif %}
+        {%- endif %}
+        {%- else %}
+        <span class="menu-heading text-center p-3 f3-light">Unreleased :-(</span>
+        {% endif %}
+      </nav>
+      {%- ifdef MENU1 %}
+      <nav class="menu"{% ifdef MENU1_HEADING %} aria-labelledby="menu1-heading"{% endif %}>
+        {%- ifdef MENU1_HEADING %}
+        <span class="menu-heading" id="menu1-heading">{{ MENU1_HEADING }}</span>
+        {%- endif %}
+        {%- foreach MENU1 %}
+        {%- ifdef FOREACH_VALUE %}
+        <a class="menu-item" href="{{ BASE_URL }}/{{ FOREACH_ITEM }}"{%
+          if MAKE_SLUG == FOREACH_ITEM %} aria-current="page"{% endif %}>{{ FOREACH_VALUE }}</a>
+        {%- endif %}
+        {%- endforeach %}
+      </nav>
+      {%- endif %}
+      {%- ifdef MENU2 %}
+      <nav class="menu"{% ifdef MENU2_HEADING %} aria-labelledby="menu2-heading"{% endif %}>
+        {%- ifdef MENU2_HEADING %}
+        <span class="menu-heading" id="menu2-heading">{{ MENU2_HEADING }}</span>
+        {%- endif %}
+        {%- foreach MENU2 %}
+        {%- ifdef FOREACH_VALUE %}
+        <a class="menu-item" href="{{ BASE_URL }}/{{ FOREACH_ITEM }}"{%
+          if MAKE_SLUG == FOREACH_ITEM %} aria-current="page"{% endif %}>{{ FOREACH_VALUE }}</a>
+        {%- endif %}
+        {%- endforeach %}
+      </nav>
+      {%- endif %}
+      {%- ifdef MENU3 %}
+      <nav class="menu"{% ifdef MENU3_HEADING %} aria-labelledby="menu3-heading"{% endif %}>
+        {%- ifdef MENU3_HEADING %}
+        <span class="menu-heading" id="menu3-heading">{{ MENU3_HEADING }}</span>
+        {%- endif %}
+        {%- foreach MENU3 %}
+        {%- ifdef FOREACH_VALUE %}
+        <a class="menu-item" href="{{ BASE_URL }}/{{ FOREACH_ITEM }}"{%
+          if MAKE_SLUG == FOREACH_ITEM %} aria-current="page"{% endif %}>{{ FOREACH_VALUE }}</a>
+        {%- endif %}
+        {%- endforeach %}
+      </nav>
+      {%- endif %}
+      {%- ifdef MENU4 %}
+      <nav class="menu"{% ifdef MENU4_HEADING %} aria-labelledby="menu4-heading"{% endif %}>
+        {%- ifdef MENU4_HEADING %}
+        <span class="menu-heading" id="menu4-heading">{{ MENU4_HEADING }}</span>
+        {%- endif %}
+        {%- foreach MENU4 %}
+        {%- ifdef FOREACH_VALUE %}
+        <a class="menu-item" href="{{ BASE_URL }}/{{ FOREACH_ITEM }}"{%
+          if MAKE_SLUG == FOREACH_ITEM %} aria-current="page"{% endif %}>{{ FOREACH_VALUE }}</a>
+        {%- endif %}
+        {%- endforeach %}
+      </nav>
+      {%- endif %}
+    </div>
+    <div class="col-12 float-left border-top border-gray-light py-3">
+      <p class="color-fg-muted text-left text-sm-right text-small">
+        &copy; {{ COPYRIGHT_YEAR }} <a href="mailto:{{ AUTHOR_EMAIL }}">{{ AUTHOR_NAME }}</a>.
+        {%- ifdef GITHUB_PROJECT %}
+        {%- ifdef LICENSE %}
+        Project released under a <a href="{{ GITHUB_PROJECT }}/blob/master/LICENSE">{{ LICENSE }}</a>.
+        {%- endif %}
+        {%- endif %}
+        <a href="https://rafaelmartins.eng.br/imprint/" rel="nofollow">Impressum/Imprint</a>
+        <br />
+        Website powered by: <strong>blogc {{ BLOGC_VERSION }}</strong> |
+        Built {% ifdef BLOGC_SYSINFO_USERNAME %}by {{ BLOGC_SYSINFO_USERNAME }}{% endif %}
+        {%- ifdef BLOGC_SYSINFO_HOSTNAME %}{% ifdef BLOGC_SYSINFO_USERNAME %}@
+        {%- else %}at {% endif %}{{ BLOGC_SYSINFO_HOSTNAME }}
+        {%- ifdef BLOGC_SYSINFO_INSIDE_DOCKER %} (docker){% endif %} {% endif %}
+        {%- ifdef BLOGC_RUSAGE_CPU_TIME %}in {{ BLOGC_RUSAGE_CPU_TIME }}
+        {%- ifdef BLOGC_SYSINFO_DATETIME %} ({{ BLOGC_SYSINFO_DATETIME }} GMT){% endif %}
+        {%- ifdef BLOGC_RUSAGE_MEMORY %}, {% endif %}{% endif %}
+        {%- ifdef BLOGC_RUSAGE_MEMORY %}using {{ BLOGC_RUSAGE_MEMORY }}{% endif %}.
+      </p>
+    </div>
+  </div>
+</body>
+
+</html>

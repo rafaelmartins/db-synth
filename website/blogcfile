@@ -1,0 +1,34 @@
+[global]
+AUTHOR_NAME = Rafael G. Martins
+AUTHOR_EMAIL = rafael@rafaelmartins.eng.br
+SITE_TITLE = db-synth
+SITE_TAGLINE = A MIDI-controlled mono-voice digital synthesizer built on top of the AVR DB microcontroller series.
+BASE_DOMAIN = https://db-synth.rgm.io
+
+#LATEST_RELEASE = 0.0.0
+GITHUB_PROJECT = https://github.com/rafaelmartins/db-synth
+COPYRIGHT_YEAR = 2022-2023
+LICENSE = BSD 3 clause license
+
+MENU1_HEADING = Resources
+MENU1 = midi ibom
+MENU1__MIDI = Midi Implementation Chart
+MENU1__IBOM = Interactive BOM
+
+[settings]
+locale = en_US.utf8
+post_prefix = news
+pagination_prefix = news/page
+index_prefix = news
+posts_per_page = 4
+posts_sort = 1
+main_template = main.html
+
+[posts]
+
+[pages]
+index
+midi
+
+[copy]
+assets/primer.css
