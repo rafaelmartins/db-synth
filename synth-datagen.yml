@@ -133,6 +133,7 @@ output:
         name: notes
         selectors:
           - phase_steps
+          - octaves
 
   firmware/screen-data.h:
     includes:

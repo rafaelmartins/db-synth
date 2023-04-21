@@ -77,7 +77,7 @@ oscillator_get_sample(oscillator_t *o)
 
     const int16_t *table;
 
-    uint8_t octave = o->_note / 12;
+    uint8_t octave = pgm_read_byte(&(notes_octaves[o->_note]));
     if (octave >= oscillator_blsquare_rows) {
         table = oscillator_sine;
     }
