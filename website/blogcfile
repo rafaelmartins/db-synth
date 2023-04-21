@@ -32,3 +32,5 @@ midi
 
 [copy]
 assets/primer.css
+charts/adsr-data.html
+charts/oscillator-data.html

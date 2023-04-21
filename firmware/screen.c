@@ -71,7 +71,7 @@ screen_task(screen_t *s)
         return false;
 
     // TODO: we have a spare TCB timer available, maybe use it for this?
-    if (s->_notification && ++s->_notification_count == notification_1s_count && ++s->_notification_sec == 2) {
+    if (s->_notification && ++s->_notification_count == sample_rate && ++s->_notification_sec == 2) {
         oled_line(&s->oled, 0, s->_line0, OLED_HALIGN_LEFT);
         oled_line(&s->oled, 1, "", OLED_HALIGN_LEFT);
         oled_line(&s->oled, 2, s->_line2, OLED_HALIGN_LEFT);
@@ -195,7 +195,7 @@ screen_set_adsr_attack(screen_t *s, uint8_t v)
     if (s == NULL)
         return false;
 
-    memcpy_P(s->_line4 + 4, adsr_time_descriptions[v], adsr_time_description_strlen);
+    memcpy_P(s->_line4 + 4, adsr_time_descriptions[v], adsr_time_descriptions_cols);
 
     if (s->_notification)
         return true;
@@ -209,7 +209,7 @@ screen_set_adsr_decay(screen_t *s, uint8_t v)
     if (s == NULL)
         return false;
 
-    memcpy_P(s->_line4 + 16, adsr_time_descriptions[v], adsr_time_description_strlen);
+    memcpy_P(s->_line4 + 16, adsr_time_descriptions[v], adsr_time_descriptions_cols);
 
     if (s->_notification)
         return true;
@@ -223,7 +223,7 @@ screen_set_adsr_sustain(screen_t *s, uint8_t v)
     if (s == NULL)
         return false;
 
-    memcpy_P(s->_line5 + 3, adsr_level_descriptions[v], adsr_level_description_strlen);
+    memcpy_P(s->_line5 + 3, adsr_level_descriptions[v], adsr_level_descriptions_cols);
 
     if (s->_notification)
         return true;
@@ -237,7 +237,7 @@ screen_set_adsr_release(screen_t *s, uint8_t v)
     if (s == NULL)
         return false;
 
-    memcpy_P(s->_line5 + 16, adsr_time_descriptions[v], adsr_time_description_strlen);
+    memcpy_P(s->_line5 + 16, adsr_time_descriptions[v], adsr_time_descriptions_cols);
 
     if (s->_notification)
         return true;
@@ -281,7 +281,7 @@ screen_set_filter_cutoff(screen_t *s, uint8_t c)
     if (s == NULL)
         return false;
 
-    memcpy_P(s->_line7 + 13, filter_cutoff_descriptions[c], filter_cutoff_description_strlen);
+    memcpy_P(s->_line7 + 13, filter_frequency_descriptions[c], filter_frequency_descriptions_cols);
 
     if (s->_notification)
         return true;

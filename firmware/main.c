@@ -284,7 +284,7 @@ main(void)
                 screen_notification(&screen, SCREEN_NOTIFICATION_PRESET_UPDATED);
 
             DAC0.DATA = (filter_get_sample(&filter, amplifier_get_sample(oscillator_get_sample(&oscillator),
-                adsr_get_sample_level(&adsr), velocity)) + oscillator_waveform_amplitude) << DAC_DATA_0_bp;
+                adsr_get_sample_level(&adsr), velocity)) + output_offset) << DAC_DATA_0_bp;
         }
     }
 

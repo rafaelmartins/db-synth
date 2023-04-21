@@ -1,0 +1,150 @@
+---
+global_parameters:
+  clock_frequency: &clock_frequency 24000000
+  sample_rate: &sample_rate 48000
+  samples_per_cycle: 0x0200
+  data_attributes:
+    - PROGMEM
+
+  adsr_samples: 0x0200
+  adsr_sample_amplitude: &adsr_sample_amplitude 0xff
+  adsr_sample_scalar_type: &adsr_sample_scalar_type uint8_t
+  adsr_time_steps: 0x80
+  adsr_time_steps_min_ms: 2
+  adsr_time_steps_max_ms: 20000
+  adsr_time_steps_scalar_type: uint32_t
+  adsr_time_steps_fractional_bit_width: 16
+  adsr_level_descriptions: 0x80
+  adsr_level_descriptions_string_width: -6
+  adsr_time_descriptions_string_width: -5
+
+  wavetables_sample_amplitude: &wavetables_sample_amplitude 0x01ff
+  wavetables_sample_scalar_type: &wavetables_sample_scalar_type int16_t
+  wavetables_bandlimited_omit_high_octaves: 1
+
+  filters_frequencies: 0x80
+  filters_frequency_min: 20
+  filters_frequency_max: 20000
+  filters_frequency_descriptions_string_width: -8
+
+  notes_phase_steps_scalar_type: uint32_t
+  notes_phase_steps_fractional_bit_width: 16
+
+output:
+  firmware/adsr-data.h:
+    charts_output: website/charts/adsr-data.html
+    includes:
+      avr/pgmspace.h: true
+      stdint.h: true
+    macros:
+      adsr_sample_amplitude:
+        value: *adsr_sample_amplitude
+        type: *adsr_sample_scalar_type
+        hex: true
+    modules:
+      adsr:
+        name: adsr
+        selectors:
+          - curves_as3310
+          - curves_linear
+          - time_steps
+
+  firmware/filter-data.h:
+    includes:
+      avr/pgmspace.h: true
+      stdint.h: true
+    modules:
+      filter:
+        name: filters
+        selectors:
+          - lowpass_1pole
+          - highpass_1pole
+
+  firmware/main-data.h:
+    includes:
+      avr/io.h: true
+    macros:
+      cpu_frqsel:
+        value: CLKCTRL_FRQSEL_24M_gc
+        raw: true
+      opamp_timebase:
+        value: (clock_frequency * 1e-6) - 1
+        type: uint8_t
+        eval_env:
+          clock_frequency: *clock_frequency
+      output_offset:
+        value: *wavetables_sample_amplitude
+        type: *wavetables_sample_scalar_type
+        hex: true
+      timer_tcb_ccmp:
+        value: clock_frequency / sample_rate
+        type: uint16_t
+        eval_env:
+          clock_frequency: *clock_frequency
+          sample_rate: *sample_rate
+      timer_tcb_clksel:
+        value: TCB_CLKSEL_DIV1_gc
+        raw: true
+    modules:
+      output:
+        name: wavetables
+
+  firmware/midi-data.h:
+    includes:
+      avr/io.h: true
+    macros:
+      midi_usart_baud:
+        value: (64 * clock_frequency) / (16 * midi_usart_baudrate)
+        type: uint16_t
+        eval_env:
+          clock_frequency: *clock_frequency
+          midi_usart_baudrate: 31250
+      midi_usart_rxmode:
+        value: USART_RXMODE_NORMAL_gc
+        raw: true
+      midi_usart_cmode:
+        value: USART_CMODE_ASYNCHRONOUS_gc
+        raw: true
+
+  firmware/oled-data.h:
+    macros:
+      oled_twi_mbaud:
+        value: (clock_frequency / (2 * oled_twi_baudrate)) - (5 + ((clock_frequency * oled_twi_rise_time) / 2))
+        type: uint8_t
+        eval_env:
+          clock_frequency: *clock_frequency
+          oled_twi_baudrate: 400000
+          oled_twi_rise_time: 400e-9
+
+  firmware/oscillator-data.h:
+    charts_output: website/charts/oscillator-data.html
+    includes:
+      avr/pgmspace.h: true
+      stdint.h: true
+    modules:
+      oscillator:
+        name: wavetables
+        selectors:
+          - sine
+          - blsquare
+          - bltriangle
+          - blsawtooth
+      notes:
+        name: notes
+        selectors:
+          - phase_steps
+
+  firmware/screen-data.h:
+    includes:
+      avr/pgmspace.h: true
+    macros:
+      sample_rate: *sample_rate
+    modules:
+      adsr:
+        name: adsr
+        selectors:
+          - descriptions
+      filter:
+        name: filters
+        selectors:
+          - descriptions

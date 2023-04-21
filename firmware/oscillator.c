@@ -44,7 +44,7 @@ oscillator_set_waveform(oscillator_t *o, oscillator_waveform_t wf)
 void
 oscillator_set_note(oscillator_t *o, uint8_t n)
 {
-    if (o != NULL && o->_initialized && n <= oscillator_notes_last)
+    if (o != NULL && o->_initialized && n < notes_phase_steps_len)
         o->_note_next = n;
 }
 
@@ -55,8 +55,8 @@ oscillator_get_sample(oscillator_t *o)
     if (o == NULL || !o->_initialized)
         return 0;
 
-    if (o->_note > oscillator_notes_last) {  // not running
-        if (o->_note_next > oscillator_notes_last || o->_waveform_next >= OSCILLATOR_WAVEFORM__LAST)  // no note to play yet
+    if (o->_note >= notes_phase_steps_len) {  // not running
+        if (o->_note_next >= notes_phase_steps_len || o->_waveform_next >= OSCILLATOR_WAVEFORM__LAST)  // no note to play yet
             return 0;
         o->_note = o->_note_next;
         o->_note_next = 0xff;
@@ -64,8 +64,8 @@ oscillator_get_sample(oscillator_t *o)
         o->_waveform_next = OSCILLATOR_WAVEFORM__LAST;
         o->_phase.data = 0;
     }
-    else if (phase_step(&o->_phase, pgm_read_dword(&oscillator_notes[o->_note]), oscillator_waveform_samples_per_cycle)) {
-        if (o->_note_next <= oscillator_notes_last) {  // new note to play
+    else if (phase_step(&o->_phase, pgm_read_dword(&notes_phase_steps[o->_note]), oscillator_sine_len)) {
+        if (o->_note_next < notes_phase_steps_len) {  // new note to play
             o->_note = o->_note_next;
             o->_note_next = 0xff;
         }
@@ -78,25 +78,25 @@ oscillator_get_sample(oscillator_t *o)
     const int16_t *table;
 
     uint8_t octave = o->_note / 12;
-    if (octave >= oscillator_wavetable_octaves) {
-        table = oscillator_sine_wavetable;
+    if (octave >= oscillator_blsquare_rows) {
+        table = oscillator_sine;
     }
     else {
         switch (o->_waveform) {
         case OSCILLATOR_WAVEFORM_SQUARE:
-            table = oscillator_square_wavetables[octave];
+            table = oscillator_blsquare[octave];
             break;
 
         case OSCILLATOR_WAVEFORM_SINE:
-            table = oscillator_sine_wavetable;
+            table = oscillator_sine;
             break;
 
         case OSCILLATOR_WAVEFORM_TRIANGLE:
-            table = oscillator_triangle_wavetables[octave];
+            table = oscillator_bltriangle[octave];
             break;
 
         case OSCILLATOR_WAVEFORM_SAW:
-            table = oscillator_sawtooth_wavetables[octave];
+            table = oscillator_blsawtooth[octave];
             break;
 
         default:

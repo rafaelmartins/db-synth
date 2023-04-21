@@ -39,7 +39,7 @@ _set_state(adsr_t *a, adsr_state_t s)
 
     switch (a->_state) {
     case ADSR_STATE_ATTACK:
-        a->_range_end = adsr_amplitude;
+        a->_range_end = adsr_sample_amplitude;
         break;
 
     case ADSR_STATE_DECAY:
@@ -142,24 +142,24 @@ adsr_get_sample_level(adsr_t *a)
 
     switch (a->_state) {
     case ADSR_STATE_ATTACK:
-        if (phase_step(&a->_phase, pgm_read_dword(&adsr_time_steps[a->_attack]), adsr_samples_per_cycle))
+        if (phase_step(&a->_phase, pgm_read_dword(&adsr_time_steps[a->_attack]), adsr_curve_linear_len))
             _set_state(a, ADSR_STATE_DECAY);
-        table = a->_type == ADSR_TYPE_LINEAR ? adsr_linear_curve : adsr_attack_curve;
+        table = a->_type == ADSR_TYPE_LINEAR ? adsr_curve_linear : adsr_curve_attack;
         break;
 
     case ADSR_STATE_DECAY:
-        if (phase_step(&a->_phase, pgm_read_dword(&adsr_time_steps[a->_decay]), adsr_samples_per_cycle))
+        if (phase_step(&a->_phase, pgm_read_dword(&adsr_time_steps[a->_decay]), adsr_curve_linear_len))
             _set_state(a, ADSR_STATE_SUSTAIN);
         else
-            table = a->_type == ADSR_TYPE_LINEAR ? adsr_linear_curve : adsr_decay_release_curve;
+            table = a->_type == ADSR_TYPE_LINEAR ? adsr_curve_linear : adsr_curve_decay_release;
         break;
 
     case ADSR_STATE_RELEASE:
-        if (phase_step(&a->_phase, pgm_read_dword(&adsr_time_steps[a->_release]), adsr_samples_per_cycle)) {
+        if (phase_step(&a->_phase, pgm_read_dword(&adsr_time_steps[a->_release]), adsr_curve_linear_len)) {
             _set_state(a, ADSR_STATE_OFF);
             return 0;
         }
-        table = a->_type == ADSR_TYPE_LINEAR ? adsr_linear_curve : adsr_decay_release_curve;
+        table = a->_type == ADSR_TYPE_LINEAR ? adsr_curve_linear : adsr_curve_decay_release;
         break;
 
     case ADSR_STATE_SUSTAIN:
@@ -169,7 +169,7 @@ adsr_get_sample_level(adsr_t *a)
         return 0;
     }
 
-    uint8_t balance = table != NULL ? pgm_read_byte(&(table[a->_phase.pint])) : adsr_amplitude;
+    uint8_t balance = table != NULL ? pgm_read_byte(&(table[a->_phase.pint])) : adsr_sample_amplitude;
 
     uint16_t tmp;
     asm volatile (
