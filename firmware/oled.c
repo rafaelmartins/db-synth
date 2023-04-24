@@ -182,13 +182,10 @@ oled_line(oled_t *o, uint8_t line, const char *str, oled_halign_t align)
         break;
     }
 
-    memset(o->_lines[line].data, ' ', sizeof(o->_lines[line].data));
-
     const char *c = str;
     uint8_t i = start;
-    while (i < oled_chars_per_line && *c != 0)
-        o->_lines[line].data[i++] = *c++;
-
+    while (i < oled_chars_per_line)
+        o->_lines[line].data[i++] = *c != 0 ? *c++ : ' ';
     o->_lines[line].state = LINE_STATE_PENDING;
 
     return true;
