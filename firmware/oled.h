@@ -30,6 +30,7 @@ typedef struct {
     uint8_t _current_line;
     uint8_t _current_data;
     uint8_t _current_char;
+    uint8_t _current_column;
 
     enum {
         OLED_TASK_STATE_ADDR1,

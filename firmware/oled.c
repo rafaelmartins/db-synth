@@ -244,11 +244,10 @@ _oled_task_send(oled_t *o)
 
     case OLED_TASK_STATE_DATAN: {
         char c = o->_lines[o->_current_line].data[o->_current_char];
-        uint8_t i = o->_current_data % (oled_font_width + 1);
-        if (i == oled_font_width)
+        if (o->_current_column == oled_font_width)
             TWI0.MDATA = 0;
         else
-            TWI0.MDATA = pgm_read_byte(&(oled_font[(uint8_t) c][i]));
+            TWI0.MDATA = pgm_read_byte(&(oled_font[(uint8_t) c][o->_current_column]));
         break;
     }
 
@@ -294,6 +293,7 @@ _oled_task_poll(oled_t *o)
         o->_task_state++;
         o->_current_char = 0;
         o->_current_data = 0;
+        o->_current_column = 0;
         return rv;
 
     case OLED_TASK_STATE_DATAN:
@@ -304,8 +304,10 @@ _oled_task_poll(oled_t *o)
             o->_task_state++;
             return rv;
         }
-        if ((o->_current_data % (oled_font_width + 1)) == 0)
+        if (++o->_current_column == oled_font_width + 1) {
+            o->_current_column = 0;
             o->_current_char++;
+        }
         return rv;
 
     case OLED_TASK_STATE_STOP1:
