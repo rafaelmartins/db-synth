@@ -140,6 +140,7 @@ time_step(adsr_time_t *t, uint8_t idx)
     uint16_t addr_t = (uint16_t) t;
     uint16_t addr_s = (uint16_t) &adsr_time_steps[idx];
 
+    // WARNING: this implementation assumes that adsr lookup tables are 256 bytes
     bool rv;
     asm volatile (
                 "clr %0"        "\n\t"  // rv = false
@@ -153,7 +154,7 @@ time_step(adsr_time_t *t, uint8_t idx)
                 "add r15, r12"  "\n\t"  // $r15 += $r12
                 "adc r16, r13"  "\n\t"  // $r16 += $r13 + $carry
                 "adc r17, r14"  "\n\t"  // $r17 += $r14 + $carry
-                "brcc L_%="     "\n\t"  // jump to L_%= if $carry
+                "brcc L_%="     "\n\t"  // jump to L_%= if $carry clear
                 "inc %0"        "\n\t"  // rv = true
         "L_%=:" "st X+, r15"    "\n\t"  // addr_t++ = $r15
                 "st X+, r16"    "\n\t"  // addr_t++ = $r16
