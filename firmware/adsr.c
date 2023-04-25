@@ -10,7 +10,6 @@
 #include <stdbool.h>
 #include <stdint.h>
 #include <stdlib.h>
-#include "phase.h"
 #include "adsr.h"
 #include "adsr-data.h"
 
@@ -58,7 +57,7 @@ _set_state(adsr_t *a, adsr_state_t s)
         break;
     }
 
-    a->_phase.data = 0;
+    a->_time.data = 0;
 }
 
 
@@ -132,6 +131,42 @@ adsr_unset_gate(adsr_t *a, bool force)
 }
 
 
+static bool
+time_step(adsr_time_t *t, uint8_t idx)
+{
+    if (t == NULL)
+        return false;
+
+    uint16_t addr_t = (uint16_t) t;
+    uint16_t addr_s = (uint16_t) &adsr_time_steps[idx];
+
+    bool rv;
+    asm volatile (
+                "clr %0"        "\n\t"  // rv = false
+                "lpm r12, Z+"   "\n\t"  // $r12 = addr_s++
+                "lpm r13, Z+"   "\n\t"  // $r13 = addr_s++
+                "lpm r14, Z"    "\n\t"  // $r14 = addr_s
+                "ld r15, X+"    "\n\t"  // $r15 = addr_t++
+                "ld r16, X+"    "\n\t"  // $r16 = addr_t++
+                "ld r17, X"     "\n\t"  // $r17 = addr_t
+                "sbiw %1, 2"    "\n\t"  // addr_t -= 2
+                "add r15, r12"  "\n\t"  // $r15 += $r12
+                "adc r16, r13"  "\n\t"  // $r16 += $r13 + $carry
+                "adc r17, r14"  "\n\t"  // $r17 += $r14 + $carry
+                "brcc L_%="     "\n\t"  // jump to L_%= if $carry
+                "inc %0"        "\n\t"  // rv = true
+        "L_%=:" "st X+, r15"    "\n\t"  // addr_t++ = $r15
+                "st X+, r16"    "\n\t"  // addr_t++ = $r16
+                "st X, r17"     "\n\t"  // addr_t = $r17
+                "clr r1"        "\n\t"  // $r1 = 0 (avr-libc convention)
+        : "=r" (rv), "=x" (addr_t), "=z" (addr_s)
+        : "1" (addr_t), "2" (addr_s)
+        : "r12", "r13", "r14", "r15", "r16", "r17"
+    );
+    return rv;
+}
+
+
 uint8_t
 adsr_get_sample_level(adsr_t *a)
 {
@@ -142,20 +177,20 @@ adsr_get_sample_level(adsr_t *a)
 
     switch (a->_state) {
     case ADSR_STATE_ATTACK:
-        if (phase_step(&a->_phase, pgm_read_dword(&adsr_time_steps[a->_attack]), adsr_curve_linear_len))
+        if (time_step(&a->_time, a->_attack))
             _set_state(a, ADSR_STATE_DECAY);
         table = a->_type == ADSR_TYPE_LINEAR ? adsr_curve_linear : adsr_curve_attack;
         break;
 
     case ADSR_STATE_DECAY:
-        if (phase_step(&a->_phase, pgm_read_dword(&adsr_time_steps[a->_decay]), adsr_curve_linear_len))
+        if (time_step(&a->_time, a->_decay))
             _set_state(a, ADSR_STATE_SUSTAIN);
         else
             table = a->_type == ADSR_TYPE_LINEAR ? adsr_curve_linear : adsr_curve_decay_release;
         break;
 
     case ADSR_STATE_RELEASE:
-        if (phase_step(&a->_phase, pgm_read_dword(&adsr_time_steps[a->_release]), adsr_curve_linear_len)) {
+        if (time_step(&a->_time, a->_release)) {
             _set_state(a, ADSR_STATE_OFF);
             return 0;
         }
@@ -169,7 +204,7 @@ adsr_get_sample_level(adsr_t *a)
         return 0;
     }
 
-    uint8_t balance = table != NULL ? pgm_read_byte(&(table[a->_phase.pint])) : adsr_sample_amplitude;
+    uint8_t balance = table != NULL ? pgm_read_byte(&(table[a->_time.pint])) : adsr_sample_amplitude;
 
     uint16_t tmp;
     asm volatile (

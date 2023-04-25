@@ -6,7 +6,7 @@ global_parameters:
   data_attributes:
     - PROGMEM
 
-  adsr_samples: 0x0200
+  adsr_samples: 0x0100
   adsr_sample_amplitude: &adsr_sample_amplitude 0xff
   adsr_sample_scalar_type: &adsr_sample_scalar_type uint8_t
   adsr_time_steps: 0x80

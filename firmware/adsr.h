@@ -10,7 +10,6 @@
 
 #include <stdbool.h>
 #include <stdint.h>
-#include "phase.h"
 
 typedef enum {
     ADSR_STATE_OFF,
@@ -26,6 +25,14 @@ typedef enum {
     ADSR_TYPE__LAST,
 } adsr_type_t;
 
+typedef union {
+    uint32_t data : 24;
+    struct {
+        uint16_t pfrac;
+        uint8_t pint;
+    };
+} adsr_time_t;
+
 typedef struct {
     bool _initialized;
     adsr_state_t _state;
@@ -38,7 +45,7 @@ typedef struct {
     uint8_t _level;
     uint8_t _range_start;
     uint8_t _range_end;
-    phase_t _phase;
+    adsr_time_t _time;
 } adsr_t;
 
 void adsr_init(adsr_t *a);
