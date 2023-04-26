@@ -48,10 +48,17 @@ typedef void (*midi_system_cb_t)(midi_system_subcommand_t cmd, uint8_t *buf, uin
 typedef struct {
     bool _initialized;
     uint8_t _buf[3];
-    uint8_t _idx;
     uint8_t _len;
     midi_channel_cb_t _channel_cb;
     midi_system_cb_t _system_cb;
+
+    enum {
+        MIDI_STATE_WAITING,
+        MIDI_STATE_STATUS,
+        MIDI_STATE_DATA1,
+        MIDI_STATE_DATA2,
+        MIDI_STATE_CALLBACK,
+    } _state;
 } midi_t;
 
 void midi_init(midi_t *m, midi_channel_cb_t ch, midi_system_cb_t sys);
