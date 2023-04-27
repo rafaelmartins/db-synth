@@ -7,10 +7,10 @@
  */
 
 #include <avr/pgmspace.h>
+#include <assert.h>
 #include <stdbool.h>
 #include <stdint.h>
 #include <stdlib.h>
-#include "phase.h"
 #include "oscillator.h"
 #include "oscillator-data.h"
 
@@ -49,6 +49,21 @@ oscillator_set_note(oscillator_t *o, uint8_t n)
 }
 
 
+static bool
+phase_step(oscillator_phase_t *p, uint8_t idx)
+{
+    if (p == NULL)
+        return false;
+
+    p->data += pgm_read_dword(&(notes_phase_steps[idx]));
+    if (p->pint >= oscillator_sine_len) {
+        p->pint -= oscillator_sine_len;
+        return true;
+    }
+    return false;
+}
+
+
 int16_t
 oscillator_get_sample(oscillator_t *o)
 {
@@ -64,7 +79,7 @@ oscillator_get_sample(oscillator_t *o)
         o->_waveform_next = OSCILLATOR_WAVEFORM__LAST;
         o->_phase.data = 0;
     }
-    else if (phase_step(&o->_phase, pgm_read_dword(&notes_phase_steps[o->_note]), oscillator_sine_len)) {
+    else if (phase_step(&o->_phase, o->_note)) {
         if (o->_note_next < notes_phase_steps_len) {  // new note to play
             o->_note = o->_note_next;
             o->_note_next = 0xff;

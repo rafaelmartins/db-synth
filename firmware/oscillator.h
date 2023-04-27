@@ -10,7 +10,14 @@
 
 #include <stdbool.h>
 #include <stdint.h>
-#include "phase.h"
+
+typedef union {
+    uint32_t data;
+    struct {
+        uint16_t pfrac;
+        uint16_t pint;
+    };
+} oscillator_phase_t;
 
 typedef enum {
     OSCILLATOR_WAVEFORM_SQUARE,
@@ -22,7 +29,7 @@ typedef enum {
 
 typedef struct {
     bool _initialized;
-    phase_t _phase;
+    oscillator_phase_t _phase;
     oscillator_waveform_t _waveform;
     oscillator_waveform_t _waveform_next;
     uint8_t _note;

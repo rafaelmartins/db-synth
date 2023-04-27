@@ -47,9 +47,6 @@ add_executable(db-synth
     oscillator.h
     oscillator-data.h
 
-    phase.c
-    phase.h
-
     screen.c
     screen.h
     screen-data.h
