@@ -6,6 +6,7 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
+#include <assert.h>
 #include <avr/pgmspace.h>
 #include <stdbool.h>
 #include <stdint.h>
@@ -141,6 +142,8 @@ time_step(adsr_time_t *t, uint8_t idx)
     uint16_t addr_s = (uint16_t) &adsr_time_steps[idx];
 
     // WARNING: this implementation assumes that adsr lookup tables are 256 bytes
+    static_assert(adsr_curve_linear_len == 256, "invalid adsr lookup table size");
+
     bool rv;
     asm volatile (
                 "clr %0"        "\n\t"  // rv = false
