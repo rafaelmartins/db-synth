@@ -1,2 +1,44 @@
 ----------
-TODO
+A `MIDI`-controlled mono-voice digital synthesizer built on top of the AVR DB
+microcontroller series.
+
+### Why?!
+
+I've been playing around the design of synthesizers (both analog and digital) for
+some time, and I'm a long time AVR user. When I noticed that Microchip released
+a new [AVR DB series]
+(https://www.microchip.com/en-us/products/microcontrollers-and-microprocessors/8-bit-mcus/avr-mcus/avr-db),
+that included internal `DAC`s and operational amplifiers, building a digital
+synthesizer out of that was the only obvious thing to do! :D
+
+
+### Features
+
+This synthesizer implements a single but reasonably capable voice, with the
+following modules:
+
+Band-limited oscillator (tracks most of the `MIDI` note range, with decent
+tracking up to 8th octave):
+
+* Square (*not* Pulse)
+* Sine
+* Triangle
+* Saw
+
+ADSR envelope generator (time parameters from 20ms to 20s, emulating `AS3310`):
+
+* Linear curves
+* Exponential curves (emulating `AS3310`)
+
+First order (1 pole) filter (cutoff range from 20Hz to 20kHz):
+
+* Low pass
+* High pass
+
+Other features include:
+
+* 48kHz/10bit sample rate.
+* Fully controllable via `MIDI`.
+* Current settings can be stored into the internal `EEPROM` as a preset.
+* Second order reconstruction filter for signal output.
+* `OLED` display for parameter monitoring.

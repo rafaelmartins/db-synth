@@ -1,0 +1,21 @@
+TITLE: Printed Circuit Board
+---------------------------------------
+A Printed Circuit Board for this synthesizer was designed using [Kicad](https://www.kicad.org/):
+
+- [Schematics](https://raw.githubusercontent.com/rafaelmartins/db-synth/main/pcb/db-synth.pdf)
+- [Interactive Bill of Materials](https://rafaelmartins.github.io/db-synth/ibom/)
+
+High quality PCBs can be ordered from several vendors, using the Gerber files from the
+[GitHub repository](https://github.com/rafaelmartins/db-synth/tree/main/pcb/gerber) or the
+release Zip file.
+
+### Front
+
+![PCB 3D Rendering - Front](/images/pcb-3d-front.png)
+![PCB 3D Rendering - Plain - Front](/images/pcb-3d-plain-front.png)
+
+
+### Back
+
+![PCB 3D Rendering - Back](/images/pcb-3d-back.png)
+![PCB 3D Rendering - Plain - Back](/images/pcb-3d-plain-back.png)

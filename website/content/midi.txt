@@ -264,3 +264,6 @@ TITLE: Midi Implementation Chart
         </tr>
     </tbody>
 </table>
+
+The synthesizer includes a `MIDI` thru output, that replicates anything received
+via `MIDI` output, allowing synthesizers to be chained.
