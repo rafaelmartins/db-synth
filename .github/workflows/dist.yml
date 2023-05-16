@@ -91,7 +91,7 @@ jobs:
         id: version
         run: |
           ./build-aux/version.sh > VERSION
-          echo "::set-output name=version::$(cat VERSION)"
+          echo "version=$(cat VERSION)" >> $GITHUB_OUTPUT
 
       - name: Download interactive BOM
         uses: actions/download-artifact@v3
@@ -169,7 +169,7 @@ jobs:
 
       - name: Get version
         id: version
-        run: echo "::set-output name=version::$(cat VERSION)"
+        run: echo "version=$(cat VERSION)" >> $GITHUB_OUTPUT
 
       - name: Create release
         uses: ncipollo/release-action@v1
