@@ -58,11 +58,20 @@ midi_task(midi_t *m)
     if (m == NULL || !m->_initialized)
         return;
 
+    uint8_t prev;
+
     switch (m->_state) {
     case MIDI_STATE_WAITING:
+        prev = m->_buf[0];
         if (handle_byte(&(m->_buf[0]))) {
-            if (m->_buf[0] >= 0x80)  // status
+            if (m->_buf[0] >= 0x80) {  // status
                 m->_state = MIDI_STATE_STATUS;
+            }
+            else if (prev >= 0x80) {  // running status
+                m->_state = m->_len == 1 ? MIDI_STATE_CALLBACK : MIDI_STATE_DATA2;
+                m->_buf[1] = m->_buf[0];
+                m->_buf[0] = prev;
+            }
             // ignore data
         }
         break;
