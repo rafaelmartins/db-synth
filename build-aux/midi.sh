@@ -43,7 +43,7 @@ th, td {
 <li><strong>Product Version:</strong> $("${MYDIR}/version.sh")</li>
 <li><strong>PCB Revision:</strong> $("${MYDIR}/pcb-revision.sh")</li>
 </ul>
-$(cat "${ROOTDIR}/README.md" | sed -n '/<table/, /<\/table/p')
+$(cat "${ROOTDIR}/website/content/midi.txt" | sed -n '/<table/, /<\/p/p')
 </body>
 </html>
 EOF
