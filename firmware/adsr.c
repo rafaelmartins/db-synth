@@ -183,14 +183,14 @@ adsr_get_sample_level(adsr_t *a)
     case ADSR_STATE_ATTACK:
         if (time_step(&a->_time, a->_attack))
             _set_state(a, ADSR_STATE_DECAY);
-        table = a->_type == ADSR_TYPE_LINEAR ? adsr_curve_linear : adsr_curve_attack;
+        table = a->_type == ADSR_TYPE_LINEAR ? adsr_curve_linear : adsr_curve_as3310_attack;
         break;
 
     case ADSR_STATE_DECAY:
         if (time_step(&a->_time, a->_decay))
             _set_state(a, ADSR_STATE_SUSTAIN);
         else
-            table = a->_type == ADSR_TYPE_LINEAR ? adsr_curve_linear : adsr_curve_decay_release;
+            table = a->_type == ADSR_TYPE_LINEAR ? adsr_curve_linear : adsr_curve_as3310_decay_release;
         break;
 
     case ADSR_STATE_RELEASE:
@@ -198,7 +198,7 @@ adsr_get_sample_level(adsr_t *a)
             _set_state(a, ADSR_STATE_OFF);
             return 0;
         }
-        table = a->_type == ADSR_TYPE_LINEAR ? adsr_curve_linear : adsr_curve_decay_release;
+        table = a->_type == ADSR_TYPE_LINEAR ? adsr_curve_linear : adsr_curve_as3310_decay_release;
         break;
 
     case ADSR_STATE_SUSTAIN:
