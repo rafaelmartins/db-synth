@@ -7,6 +7,7 @@
  */
 
 #include <avr/io.h>
+#include <avr/pgmspace.h>
 #include <stdlib.h>
 #include "adsr.h"
 #include "amplifier.h"

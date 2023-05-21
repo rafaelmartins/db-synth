@@ -5,11 +5,9 @@
 
 #pragma once
 
-#include <avr/pgmspace.h>
-
 #define sample_rate 48000
 
-static const char adsr_level_descriptions[128][6] PROGMEM = {
+static const char adsr_level_descriptions[128][6] = {
     "0.0%  ", "0.8%  ", "1.6%  ", "2.4%  ", "3.1%  ", "3.9%  ", "4.7%  ", "5.5%  ", "6.3%  ",
     "7.1%  ", "7.9%  ", "8.7%  ", "9.4%  ", "10.2% ", "11.0% ", "11.8% ", "12.6% ", "13.4% ",
     "14.2% ", "15.0% ", "15.7% ", "16.5% ", "17.3% ", "18.1% ", "18.9% ", "19.7% ", "20.5% ",
@@ -29,7 +27,7 @@ static const char adsr_level_descriptions[128][6] PROGMEM = {
 #define adsr_level_descriptions_rows 128
 #define adsr_level_descriptions_cols 6
 
-static const char adsr_time_descriptions[128][5] PROGMEM = {
+static const char adsr_time_descriptions[128][5] = {
     "2ms  ", "4ms  ", "6ms  ", "9ms  ", "12ms ", "15ms ", "18ms ", "21ms ", "24ms ", "28ms ",
     "32ms ", "35ms ", "39ms ", "44ms ", "48ms ", "53ms ", "58ms ", "63ms ", "68ms ", "74ms ",
     "80ms ", "86ms ", "92ms ", "99ms ", "106ms", "114ms", "122ms", "130ms", "138ms", "147ms",
@@ -47,7 +45,7 @@ static const char adsr_time_descriptions[128][5] PROGMEM = {
 #define adsr_time_descriptions_rows 128
 #define adsr_time_descriptions_cols 5
 
-static const char filter_frequency_descriptions[128][8] PROGMEM = {
+static const char filter_frequency_descriptions[128][8] = {
     "20Hz    ", "45Hz    ", "70Hz    ", "96Hz    ", "123Hz   ", "151Hz   ", "179Hz   ", "208Hz   ",
     "237Hz   ", "267Hz   ", "298Hz   ", "330Hz   ", "363Hz   ", "396Hz   ", "430Hz   ", "465Hz   ",
     "500Hz   ", "537Hz   ", "574Hz   ", "613Hz   ", "652Hz   ", "692Hz   ", "733Hz   ", "775Hz   ",

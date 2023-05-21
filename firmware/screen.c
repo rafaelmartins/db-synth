@@ -54,11 +54,11 @@ screen_init(screen_t *s)
     s->_initialized = true;
     s->_notification = false;
 
-    strcpy(s->_line0, "[db-synth]           ");
-    strcpy(s->_line2, "WF:          | CH:   ");
-    strcpy(s->_line4, "A :       | D :      ");
-    strcpy(s->_line5, "S:        | R :      ");
-    strcpy(s->_line7, "F:     | FC:         ");
+    memcpy(s->_line0, "[db-synth]           ", 22);
+    memcpy(s->_line2, "WF:          | CH:   ", 22);
+    memcpy(s->_line4, "A :       | D :      ", 22);
+    memcpy(s->_line5, "S:        | R :      ", 22);
+    memcpy(s->_line7, "F:     | FC:         ", 22);
 
     return screen_notification(s, SCREEN_NOTIFICATION_SPLASH);
 }
@@ -192,10 +192,10 @@ screen_set_adsr_type(screen_t *s, adsr_type_t t)
 bool
 screen_set_adsr_attack(screen_t *s, uint8_t v)
 {
-    if (s == NULL)
+    if (s == NULL || v >= adsr_time_descriptions_rows)
         return false;
 
-    memcpy_P(s->_line4 + 4, adsr_time_descriptions[v], adsr_time_descriptions_cols);
+    memcpy(s->_line4 + 4, adsr_time_descriptions[v], adsr_time_descriptions_cols);
 
     if (s->_notification)
         return true;
@@ -206,10 +206,10 @@ screen_set_adsr_attack(screen_t *s, uint8_t v)
 bool
 screen_set_adsr_decay(screen_t *s, uint8_t v)
 {
-    if (s == NULL)
+    if (s == NULL || v >= adsr_time_descriptions_rows)
         return false;
 
-    memcpy_P(s->_line4 + 16, adsr_time_descriptions[v], adsr_time_descriptions_cols);
+    memcpy(s->_line4 + 16, adsr_time_descriptions[v], adsr_time_descriptions_cols);
 
     if (s->_notification)
         return true;
@@ -220,10 +220,10 @@ screen_set_adsr_decay(screen_t *s, uint8_t v)
 bool
 screen_set_adsr_sustain(screen_t *s, uint8_t v)
 {
-    if (s == NULL)
+    if (s == NULL || v >= adsr_level_descriptions_rows)
         return false;
 
-    memcpy_P(s->_line5 + 3, adsr_level_descriptions[v], adsr_level_descriptions_cols);
+    memcpy(s->_line5 + 3, adsr_level_descriptions[v], adsr_level_descriptions_cols);
 
     if (s->_notification)
         return true;
@@ -234,10 +234,10 @@ screen_set_adsr_sustain(screen_t *s, uint8_t v)
 bool
 screen_set_adsr_release(screen_t *s, uint8_t v)
 {
-    if (s == NULL)
+    if (s == NULL || v >= adsr_time_descriptions_rows)
         return false;
 
-    memcpy_P(s->_line5 + 16, adsr_time_descriptions[v], adsr_time_descriptions_cols);
+    memcpy(s->_line5 + 16, adsr_time_descriptions[v], adsr_time_descriptions_cols);
 
     if (s->_notification)
         return true;
@@ -251,23 +251,20 @@ screen_set_filter_type(screen_t *s, filter_type_t ft)
     if (s == NULL)
         return false;
 
-    char *f;
     switch (ft) {
     case FILTER_TYPE_OFF:
-        f = "Off";
+        memcpy(s->_line7 + 3, "Off", 3);
         break;
     case FILTER_TYPE_LOW_PASS:
-        f = "LPF";
+        memcpy(s->_line7 + 3, "LPF", 3);
         break;
     case FILTER_TYPE_HIGH_PASS:
-        f = "HPF";
+        memcpy(s->_line7 + 3, "HPF", 3);
         break;
     default:
-        f = "Unk";
+        memcpy(s->_line7 + 3, "Unk", 3);
         break;
     }
-
-    memcpy(s->_line7 + 3, f, 3);
 
     if (s->_notification)
         return true;
@@ -278,10 +275,10 @@ screen_set_filter_type(screen_t *s, filter_type_t ft)
 bool
 screen_set_filter_cutoff(screen_t *s, uint8_t c)
 {
-    if (s == NULL)
+    if (s == NULL || c >= filter_frequency_descriptions_rows)
         return false;
 
-    memcpy_P(s->_line7 + 13, filter_frequency_descriptions[c], filter_frequency_descriptions_cols);
+    memcpy(s->_line7 + 13, filter_frequency_descriptions[c], filter_frequency_descriptions_cols);
 
     if (s->_notification)
         return true;

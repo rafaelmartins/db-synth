@@ -6,7 +6,6 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-#include <avr/pgmspace.h>
 #include <stdbool.h>
 #include <stdint.h>
 #include <stdlib.h>
@@ -55,15 +54,21 @@ filter_get_sample(filter_t *f, int16_t in)
     if (f == NULL || !f->_initialized)
         return 0;
 
-    uint16_t coefficients;
+    uint8_t a1;
+    uint8_t b0;
+    uint8_t b1;
 
     switch (f->_type) {
     case FILTER_TYPE_LOW_PASS:
-        coefficients = (uint16_t) &filter_lowpass_1pole_coefficients[f->_cutoff].a1;
+        a1 = filter_lowpass_1pole_coefficients[f->_cutoff].a1;
+        b0 = filter_lowpass_1pole_coefficients[f->_cutoff].b0;
+        b1 = filter_lowpass_1pole_coefficients[f->_cutoff].b1;
         break;
 
     case FILTER_TYPE_HIGH_PASS:
-        coefficients = (uint16_t) &filter_highpass_1pole_coefficients[f->_cutoff].a1;
+        a1 = filter_highpass_1pole_coefficients[f->_cutoff].a1;
+        b0 = filter_highpass_1pole_coefficients[f->_cutoff].b0;
+        b1 = filter_highpass_1pole_coefficients[f->_cutoff].b1;
         break;
 
     case FILTER_TYPE_OFF:
@@ -73,38 +78,34 @@ filter_get_sample(filter_t *f, int16_t in)
 
     int16_t rv;
     asm volatile (
-        "lpm r23, Z+"    "\n\t"  // tmp = coefficients++
-        "muls r23, %B2"  "\n\t"  // $result = a1 * _prev[h] (signed * signed)
-        "movw %A0, r0"   "\n\t"  // rv = $result
-        "mulsu r23, %A2" "\n\t"  // $result = a1 * _prev[l] (signed * unsigned)
-        "clr r0"         "\n\t"  // $r0 = 0
-        "sbc %B0, r0"    "\n\t"  // rv[h] -= 0 + $carry
-        "add %A0, r1"    "\n\t"  // rv[l] += $result[h]
-        "adc %B0, r0"    "\n\t"  // rv[h] += 0 + $carry
-        "lpm r23, Z+"    "\n\t"  // tmp = coefficients++
-        "muls r23, %B3"  "\n\t"  // $result = tmp * in[h] (signed * signed)
-        "add %A0, r0"    "\n\t"  // rv[l] += $result[l]
-        "adc %B0, r1"    "\n\t"  // rv[h] += $result[h] + $carry
-        "mulsu r23, %A3" "\n\t"  // $result = tmp * in[l] (signed * unsigned)
-        "clr r0"         "\n\t"  // $r0 = 0
-        "sbc %B0, r0"    "\n\t"  // rv[h] -= 0 + $carry
-        "add %A0, r1"    "\n\t"  // rv[l] += $result[h]
-        "adc %B0, r0"    "\n\t"  // rv[h] += 0 + $carry
-        "lpm r23, Z"     "\n\t"  // tmp = coefficients
-        "muls r23, %B2"  "\n\t"  // $result = tmp * _prev[h] (signed * signed)
-        "add %A0, r0"    "\n\t"  // rv[l] += $result[l]
-        "adc %B0, r1"    "\n\t"  // rv[h] += $result[h] + $carry
-        "mulsu r23, %A2" "\n\t"  // $result = tmp * _prev[l] (signed * unsigned)
-        "clr r0"         "\n\t"  // $r0 = 0
-        "sbc %B0, r0"    "\n\t"  // rv[h] -= 0 + $carry
-        "add %A0, r1"    "\n\t"  // rv[l] += $result[h]
-        "adc %B0, r0"    "\n\t"  // rv[h] += 0 + $carry
-        "lsl %A0"        "\n\t"  // rv[l] = (rv[l] << 1)
-        "rol %B0"        "\n\t"  // rv[h] = (rv[h] << 1) + $carry
-        "clr r1"         "\n\t"  // $r1 = 0 (avr-libc convention)
-        : "=d" (rv), "=z" (coefficients)
-        : "a" (f->_prev), "a" (in), "1" (coefficients)
-        : "r23"
+        "muls %3, %B1"  "\n\t"  // $result = a1 * _prev[h] (signed * signed)
+        "movw %A0, r0"  "\n\t"  // rv = $result
+        "mulsu %3, %A1" "\n\t"  // $result = a1 * _prev[l] (signed * unsigned)
+        "clr r0"        "\n\t"  // $r0 = 0
+        "sbc %B0, r0"   "\n\t"  // rv[h] -= 0 + $carry
+        "add %A0, r1"   "\n\t"  // rv[l] += $result[h]
+        "adc %B0, r0"   "\n\t"  // rv[h] += 0 + $carry
+        "muls %4, %B2"  "\n\t"  // $result = b0 * in[h] (signed * signed)
+        "add %A0, r0"   "\n\t"  // rv[l] += $result[l]
+        "adc %B0, r1"   "\n\t"  // rv[h] += $result[h] + $carry
+        "mulsu %4, %A2" "\n\t"  // $result = b0 * in[l] (signed * unsigned)
+        "clr r0"        "\n\t"  // $r0 = 0
+        "sbc %B0, r0"   "\n\t"  // rv[h] -= 0 + $carry
+        "add %A0, r1"   "\n\t"  // rv[l] += $result[h]
+        "adc %B0, r0"   "\n\t"  // rv[h] += 0 + $carry
+        "muls %5, %B1"  "\n\t"  // $result = b1 * _prev[h] (signed * signed)
+        "add %A0, r0"   "\n\t"  // rv[l] += $result[l]
+        "adc %B0, r1"   "\n\t"  // rv[h] += $result[h] + $carry
+        "mulsu %5, %A1" "\n\t"  // $result = b1 * _prev[l] (signed * unsigned)
+        "clr r0"        "\n\t"  // $r0 = 0
+        "sbc %B0, r0"   "\n\t"  // rv[h] -= 0 + $carry
+        "add %A0, r1"   "\n\t"  // rv[l] += $result[h]
+        "adc %B0, r0"   "\n\t"  // rv[h] += 0 + $carry
+        "lsl %A0"       "\n\t"  // rv[l] = (rv[l] << 1)
+        "rol %B0"       "\n\t"  // rv[h] = (rv[h] << 1) + $carry
+        "clr r1"        "\n\t"  // $r1 = 0 (avr-libc convention)
+        : "=d" (rv)
+        : "a" (f->_prev), "a" (in), "a" (a1), "a" (b0), "a" (b1)
     );
 
     f->_prev = rv;

@@ -5,14 +5,13 @@
 
 #pragma once
 
-#include <avr/pgmspace.h>
 #include <stdint.h>
 
 static const struct {
     int8_t a1;
     int8_t b0;
     int8_t b1;
-} filter_lowpass_1pole_coefficients[128] PROGMEM = {
+} filter_lowpass_1pole_coefficients[128] = {
     {
         0x7f, 0x00, 0x00,
     },
@@ -404,7 +403,7 @@ static const struct {
     int8_t a1;
     int8_t b0;
     int8_t b1;
-} filter_highpass_1pole_coefficients[128] PROGMEM = {
+} filter_highpass_1pole_coefficients[128] = {
     {
         0x7f, 0x7f, 0x81,
     },

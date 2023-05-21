@@ -244,7 +244,7 @@ _oled_task_send(oled_t *o)
         if (o->_current_column == oled_font_width)
             TWI0.MDATA = 0;
         else
-            TWI0.MDATA = pgm_read_byte(&(oled_font[(uint8_t) c][o->_current_column]));
+            TWI0.MDATA = oled_font[(uint8_t) c][o->_current_column];
         break;
     }
 

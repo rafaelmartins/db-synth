@@ -6,8 +6,6 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-#include <assert.h>
-#include <avr/pgmspace.h>
 #include <stdbool.h>
 #include <stdint.h>
 #include <stdlib.h>
@@ -138,36 +136,12 @@ time_step(adsr_time_t *t, uint8_t idx)
     if (t == NULL)
         return false;
 
-    uint16_t addr_t = (uint16_t) t;
-    uint16_t addr_s = (uint16_t) &adsr_time_steps[idx];
-
-    // WARNING: this implementation assumes that adsr lookup tables are 256 bytes
-    static_assert(adsr_curve_linear_len == 256, "invalid adsr lookup table size");
-
-    bool rv;
-    asm volatile (
-                "clr %0"        "\n\t"  // rv = false
-                "lpm r12, Z+"   "\n\t"  // $r12 = addr_s++
-                "lpm r13, Z+"   "\n\t"  // $r13 = addr_s++
-                "lpm r14, Z"    "\n\t"  // $r14 = addr_s
-                "ld r15, X+"    "\n\t"  // $r15 = addr_t++
-                "ld r16, X+"    "\n\t"  // $r16 = addr_t++
-                "ld r17, X"     "\n\t"  // $r17 = addr_t
-                "sbiw %1, 2"    "\n\t"  // addr_t -= 2
-                "add r15, r12"  "\n\t"  // $r15 += $r12
-                "adc r16, r13"  "\n\t"  // $r16 += $r13 + $carry
-                "adc r17, r14"  "\n\t"  // $r17 += $r14 + $carry
-                "brcc L_%="     "\n\t"  // jump to L_%= if $carry clear
-                "inc %0"        "\n\t"  // rv = true
-        "L_%=:" "st X+, r15"    "\n\t"  // addr_t++ = $r15
-                "st X+, r16"    "\n\t"  // addr_t++ = $r16
-                "st X, r17"     "\n\t"  // addr_t = $r17
-                "clr r1"        "\n\t"  // $r1 = 0 (avr-libc convention)
-        : "=r" (rv), "=x" (addr_t), "=z" (addr_s)
-        : "1" (addr_t), "2" (addr_s)
-        : "r12", "r13", "r14", "r15", "r16", "r17"
-    );
-    return rv;
+    t->data += adsr_time_steps[idx];
+    if (t->pint >= adsr_time_steps_len) {
+        t->pint -= adsr_time_steps_len;
+        return true;
+    }
+    return false;
 }
 
 
@@ -208,7 +182,7 @@ adsr_get_sample_level(adsr_t *a)
         return 0;
     }
 
-    uint8_t balance = table != NULL ? pgm_read_byte(&(table[a->_time.pint])) : adsr_sample_amplitude;
+    uint8_t balance = table != NULL ? table[a->_time.pint] : adsr_sample_amplitude;
 
     uint16_t tmp;
     asm volatile (

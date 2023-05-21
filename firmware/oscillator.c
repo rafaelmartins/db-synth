@@ -55,7 +55,7 @@ phase_step(oscillator_phase_t *p, uint8_t idx)
     if (p == NULL)
         return false;
 
-    p->data += pgm_read_dword(&(notes_phase_steps[idx]));
+    p->data += notes_phase_steps[idx];
     if (p->pint >= oscillator_sine_len) {
         p->pint -= oscillator_sine_len;
         return true;
@@ -92,7 +92,7 @@ oscillator_get_sample(oscillator_t *o)
 
     const int16_t *table;
 
-    uint8_t octave = pgm_read_byte(&(notes_octaves[o->_note]));
+    uint8_t octave = notes_octaves[o->_note];
     if (octave >= oscillator_blsquare_rows) {
         table = oscillator_sine;
     }

@@ -34,13 +34,12 @@
 
 #pragma once
 
-#include <avr/pgmspace.h>
 #include <stdint.h>
 
 #define oled_font_width 5
 #define oled_font_height 7
 
-static const uint8_t oled_font[256][5] PROGMEM = {
+static const uint8_t oled_font[256][5] = {
     //
     //
     //

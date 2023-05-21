@@ -3,8 +3,6 @@ global_parameters:
   clock_frequency: &clock_frequency 24000000
   sample_rate: &sample_rate 48000
   samples_per_cycle: 0x0200
-  data_attributes:
-    - PROGMEM
 
   adsr_samples: 0x0100
   adsr_sample_amplitude: &adsr_sample_amplitude 0xff
@@ -34,7 +32,6 @@ output:
   firmware/adsr-data.h:
     charts_output: website/charts/adsr-data.html
     includes:
-      avr/pgmspace.h: true
       stdint.h: true
     macros:
       adsr_sample_amplitude:
@@ -51,7 +48,6 @@ output:
 
   firmware/filter-data.h:
     includes:
-      avr/pgmspace.h: true
       stdint.h: true
     modules:
       filter:
@@ -129,6 +125,9 @@ output:
           - blsquare
           - bltriangle
           - blsawtooth
+        parameters:
+          data_attributes:
+            - PROGMEM
       notes:
         name: notes
         selectors:
@@ -136,8 +135,6 @@ output:
           - octaves
 
   firmware/screen-data.h:
-    includes:
-      avr/pgmspace.h: true
     macros:
       sample_rate: *sample_rate
     modules:
