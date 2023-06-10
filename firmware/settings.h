@@ -37,11 +37,8 @@ typedef struct __attribute__((packed)) {
         uint8_t _padding[11];
     } adsr;
 
-    struct __attribute__((packed)) {
-        uint8_t type;
-        uint8_t cutoff;
-        uint8_t _padding[14];
-    } filter;
+    // placeholder for filter settings, we may want to reimplement.
+    uint8_t _filter[16];
 } settings_data_t;
 
 typedef struct {
@@ -58,11 +55,6 @@ typedef struct {
         bool release;
         bool type;
     } adsr;
-
-    struct {
-        bool type;
-        bool cutoff;
-    } filter;
 } settings_pending_t;
 
 typedef struct {

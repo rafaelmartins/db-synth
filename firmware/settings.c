@@ -89,16 +89,6 @@ settings_task(settings_t *s)
         s->pending.adsr.release = false;
         return false;
     }
-    if (s->pending.filter.type) {
-        eeprom_write_byte(_eeprom_addr(&s->data.filter.type), s->data.filter.type);
-        s->pending.filter.type = false;
-        return false;
-    }
-    if (s->pending.filter.cutoff) {
-        eeprom_write_byte(_eeprom_addr(&s->data.filter.cutoff), s->data.filter.cutoff);
-        s->pending.filter.cutoff = false;
-        return false;
-    }
 
 #undef _eeprom_addr
 

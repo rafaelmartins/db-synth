@@ -11,7 +11,6 @@
 #include <stdlib.h>
 #include "adsr.h"
 #include "amplifier.h"
-#include "filter.h"
 #include "midi.h"
 #include "oscillator.h"
 #include "screen.h"
@@ -30,7 +29,6 @@ FUSES =
 };
 
 static adsr_t adsr;
-static filter_t filter;
 static midi_t midi;
 static oscillator_t oscillator;
 static screen_t screen;
@@ -50,10 +48,6 @@ static const settings_data_t factory_settings PROGMEM = {
         .decay = 0x08,
         .sustain = 0x60,
         .release = 0x08,
-    },
-    .filter = {
-        .type = FILTER_TYPE_LOW_PASS,
-        .cutoff = 0x3f,
     },
 };
 
@@ -152,15 +146,6 @@ midi_channel_cb(midi_command_t cmd, uint8_t ch, uint8_t *buf, uint8_t len)
                 screen_set_adsr_type(&screen, settings.data.adsr.type);
             break;
 
-        case 71:  // filter type
-            settings.data.filter.type = buf[1] / (0x80 / FILTER_TYPE__LAST);
-            if (settings.data.filter.type >= FILTER_TYPE__LAST)
-                settings.data.filter.type--;
-            settings.pending.filter.type = true;
-            if (filter_set_type(&filter, settings.data.filter.type))
-                screen_set_filter_type(&screen, settings.data.filter.type);
-            break;
-
         case 72:  // adsr release
             settings.data.adsr.release = buf[1];
             settings.pending.adsr.release = true;
@@ -173,13 +158,6 @@ midi_channel_cb(midi_command_t cmd, uint8_t ch, uint8_t *buf, uint8_t len)
             settings.pending.adsr.attack = true;
             if (adsr_set_attack(&adsr, settings.data.adsr.attack))
                 screen_set_adsr_attack(&screen, settings.data.adsr.attack);
-            break;
-
-        case 74:  // filter cutoff
-            settings.data.filter.cutoff = buf[1];
-            settings.pending.filter.cutoff = true;
-            if (filter_set_cutoff(&filter, settings.data.filter.cutoff))
-                screen_set_filter_cutoff(&screen, settings.data.filter.cutoff);
             break;
 
         case 75:  // adsr decay
@@ -242,7 +220,6 @@ main(void)
     timer_init();
 
     adsr_init(&adsr);
-    filter_init(&filter);
     midi_init(&midi, midi_channel_cb, NULL);
     oscillator_init(&oscillator);
     screen_init(&screen);
@@ -267,12 +244,6 @@ main(void)
 
         adsr_set_release(&adsr, settings.data.adsr.release);
         screen_set_adsr_release(&screen, settings.data.adsr.release);
-
-        filter_set_type(&filter, settings.data.filter.type);
-        screen_set_filter_type(&screen, settings.data.filter.type);
-
-        filter_set_cutoff(&filter, settings.data.filter.cutoff);
-        screen_set_filter_cutoff(&screen, settings.data.filter.cutoff);
     }
 
     while (1) {
@@ -284,8 +255,8 @@ main(void)
             if (settings_task(&settings))
                 screen_notification(&screen, SCREEN_NOTIFICATION_PRESET_UPDATED);
 
-            DAC0.DATA = (filter_get_sample(&filter, amplifier_get_sample(oscillator_get_sample(&oscillator),
-                adsr_get_sample_level(&adsr), velocity)) + output_offset) << DAC_DATA_0_bp;
+            DAC0.DATA = (amplifier_get_sample(oscillator_get_sample(&oscillator),
+                adsr_get_sample_level(&adsr), velocity) + output_offset) << DAC_DATA_0_bp;
         }
     }
 
