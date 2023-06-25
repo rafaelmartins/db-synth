@@ -88,7 +88,7 @@ TITLE: Midi Implementation Chart
             <td>&nbsp;</td>
         </tr>
         <tr>
-            <td rowspan="10">Control Change</td>
+            <td rowspan="8">Control Change</td>
             <td>3</td>
             <td>×</td>
             <td>○</td>
