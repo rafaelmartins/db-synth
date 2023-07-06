@@ -11,6 +11,7 @@ MYDIR="$(realpath "$(dirname "${0}")")"
 ROOTDIR="$(realpath "${MYDIR}/../")"
 
 if [[ x$CI = xtrue ]]; then
+    sudo apt update
     sudo apt install -y wkhtmltopdf
 fi
 

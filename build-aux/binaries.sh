@@ -8,6 +8,7 @@ if [[ -z "${1}" ]]; then
 fi
 
 if [[ x$CI = xtrue ]]; then
+    sudo apt update
     sudo apt install -y ninja-build
 
     wget -q "https://github.com/rafaelmartins/avr-toolchain/releases/download/avr-toolchain-linux-amd64-${AVR_TOOLCHAIN_TIMESTAMP}/avr-toolchain-linux-amd64-${AVR_TOOLCHAIN_TIMESTAMP}.tar.xz"{,.sha512}
