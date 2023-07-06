@@ -8,7 +8,7 @@ BASE_DOMAIN = https://db-synth.rgm.io
 #LATEST_RELEASE = 0.0.0
 GITHUB_PROJECT = https://github.com/rafaelmartins/db-synth
 COPYRIGHT_YEAR = 2022-2023
-LICENSE = BSD 3 clause license
+LICENSE = BSD-3-Clause (Software) and CERN-OHL-S-2.0 (Hardware)
 
 MENU1_HEADING = Resources
 MENU1 = midi ibom
