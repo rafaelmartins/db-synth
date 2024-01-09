@@ -14,7 +14,7 @@ MYTMPDIR="$(mktemp -d)"
 trap 'rm -rf -- "${MYTMPDIR}"' EXIT
 
 if [[ x$CI = xtrue ]]; then
-    sudo add-apt-repository -y ppa:kicad/kicad-6.0-releases
+    sudo add-apt-repository -y ppa:kicad/kicad-7.0-releases
     sudo apt update
     sudo apt install -y --no-install-recommends kicad
 
