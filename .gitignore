@@ -42,6 +42,9 @@ fp-info-cache
 *.gtp
 *.gts
 
+# FreeCAD
+*.FCStd[0-9]*
+
 # Python
 *.pyc
 *.pyo
