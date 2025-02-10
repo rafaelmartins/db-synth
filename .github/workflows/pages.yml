@@ -28,20 +28,20 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Check out code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Check out InteractiveHtmlBom
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           repository: openscopeproject/InteractiveHtmlBom
-          ref: v2.5.0
+          ref: v2.9.0
           path: InteractiveHtmlBom
 
       - name: Generate interactive BOM
         run: ./build-aux/ibom.sh index.html
 
       - name: Upload interactive BOM
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: ibom
           path: index.html
@@ -50,7 +50,7 @@ jobs:
   #   runs-on: ubuntu-latest
   #   steps:
   #     - name: Check out code
-  #       uses: actions/checkout@v3
+  #       uses: actions/checkout@v4
   #       with:
   #         fetch-depth: 0
 
@@ -58,7 +58,7 @@ jobs:
   #       run: ./build-aux/midi.sh midi.pdf
 
   #     - name: Upload MIDI Implementation Chart
-  #       uses: actions/upload-artifact@v3
+  #       uses: actions/upload-artifact@v4
   #       with:
   #         name: midi
   #         path: midi.pdf
@@ -76,10 +76,10 @@ jobs:
           sudo apt install -y blogc-make
 
       - name: Check out code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Setup GitHub Pages
-        uses: actions/configure-pages@v1
+        uses: actions/configure-pages@v5
 
       - name: Build
         run: |
@@ -89,19 +89,19 @@ jobs:
           popd > /dev/null
 
       - name: Download interactive BOM
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: ibom
           path: prefix/ibom
 
       # - name: Download MIDI Implementation Chart
-      #   uses: actions/download-artifact@v3
+      #   uses: actions/download-artifact@v4
       #   with:
       #     name: midi
       #     path: prefix
 
       - name: Upload website artifact
-        uses: actions/upload-pages-artifact@v1
+        uses: actions/upload-pages-artifact@v3
         with:
           path: prefix
 
@@ -115,4 +115,4 @@ jobs:
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v1
+        uses: actions/deploy-pages@v4
