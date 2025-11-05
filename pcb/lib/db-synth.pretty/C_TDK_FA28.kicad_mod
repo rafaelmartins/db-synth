@@ -1,7 +1,7 @@
 (footprint "C_TDK_FA28"
-	(version 20240108)
+	(version 20241229)
 	(generator "pcbnew")
-	(generator_version "8.0")
+	(generator_version "9.0")
 	(layer "F.Cu")
 	(descr "C, Disc series, Radial, pin pitch=5.00mm, , diameter*width=5*2.5mm^2, Capacitor, http://cdn-reichelt.de/documents/datenblatt/B300/DS_KERKO_TC.pdf")
 	(tags "C Disc series Radial pin pitch 5.00mm  diameter 5mm width 2.5mm Capacitor")
@@ -23,18 +23,6 @@
 		(effects
 			(font
 				(size 1 1)
-				(thickness 0.15)
-			)
-		)
-	)
-	(property "Footprint" ""
-		(at 0 0 0)
-		(layer "F.Fab")
-		(hide yes)
-		(uuid "c0f5686f-9e3a-4949-ae03-d556e89ba8c3")
-		(effects
-			(font
-				(size 1.27 1.27)
 				(thickness 0.15)
 			)
 		)
@@ -231,6 +219,7 @@
 		(remove_unused_layers no)
 		(uuid "a7891e67-b100-4dd6-858d-8b1c8a5c4376")
 	)
+	(embedded_fonts no)
 	(model "${KIPRJMOD}/lib/3d-models/C_TDK_Fx28.step"
 		(offset
 			(xyz 2.5 0 0)

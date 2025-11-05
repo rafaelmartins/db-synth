@@ -1,7 +1,7 @@
 (footprint "R_YAGEO_MFR-25FTE52_Horizontal"
-	(version 20240108)
+	(version 20241229)
 	(generator "pcbnew")
-	(generator_version "8.0")
+	(generator_version "9.0")
 	(layer "F.Cu")
 	(descr "Resistor, Axial_DIN0207 series, Axial, Horizontal, pin pitch=10.16mm, 0.25W = 1/4W, length*diameter=6.3*2.5mm^2, http://cdn-reichelt.de/documents/datenblatt/B400/1_4W%23YAG.pdf")
 	(tags "Resistor Axial_DIN0207 series Axial Horizontal pin pitch 10.16mm 0.25W = 1/4W length 6.3mm diameter 2.5mm")
@@ -23,18 +23,6 @@
 		(effects
 			(font
 				(size 1 1)
-				(thickness 0.15)
-			)
-		)
-	)
-	(property "Footprint" ""
-		(at 0 0 0)
-		(layer "F.Fab")
-		(hide yes)
-		(uuid "ec21caa7-b180-4c42-93dd-6e724171af68")
-		(effects
-			(font
-				(size 1.27 1.27)
 				(thickness 0.15)
 			)
 		)
@@ -251,6 +239,7 @@
 		(remove_unused_layers no)
 		(uuid "8344306a-f2e9-488c-89f8-795d49418b7b")
 	)
+	(embedded_fonts no)
 	(model "${KIPRJMOD}/lib/3d-models/R_YAGEO_MFR-25FTE52_Horizontal.step"
 		(offset
 			(xyz 0 0 0)

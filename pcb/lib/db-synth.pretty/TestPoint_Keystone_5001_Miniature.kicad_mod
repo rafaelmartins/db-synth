@@ -1,7 +1,7 @@
 (footprint "TestPoint_Keystone_5001_Miniature"
-	(version 20240108)
+	(version 20241229)
 	(generator "pcbnew")
-	(generator_version "8.0")
+	(generator_version "9.0")
 	(layer "F.Cu")
 	(descr "Keystone Miniature THM Test Point 5000-5004, http://www.keyelco.com/product-pdf.cfm?p=1309")
 	(tags "Through Hole Mount Test Points")
@@ -23,18 +23,6 @@
 		(effects
 			(font
 				(size 1 1)
-				(thickness 0.15)
-			)
-		)
-	)
-	(property "Footprint" ""
-		(at 0 0 0)
-		(layer "F.Fab")
-		(hide yes)
-		(uuid "8d46a395-ccc4-4090-a01b-9f5e1ab80fa9")
-		(effects
-			(font
-				(size 1.27 1.27)
 				(thickness 0.15)
 			)
 		)
@@ -71,7 +59,7 @@
 			(width 0.15)
 			(type solid)
 		)
-		(fill none)
+		(fill no)
 		(layer "F.SilkS")
 		(uuid "37442380-0ccf-4cbb-af5b-f414222b76d4")
 	)
@@ -82,7 +70,7 @@
 			(width 0.05)
 			(type solid)
 		)
-		(fill none)
+		(fill no)
 		(layer "F.CrtYd")
 		(uuid "33420d11-7d91-47a4-bc6e-e0db84820589")
 	)
@@ -133,7 +121,7 @@
 			(width 0.15)
 			(type solid)
 		)
-		(fill none)
+		(fill no)
 		(layer "F.Fab")
 		(uuid "dd962169-4778-4239-b7ef-f12bbeac5bc4")
 	)
@@ -156,6 +144,7 @@
 		(remove_unused_layers no)
 		(uuid "2eea8f1e-26a0-45ff-b675-89cc314d7f6a")
 	)
+	(embedded_fonts no)
 	(model "${KIPRJMOD}/lib/3d-models/TestPoint_Keystone_5001_Miniature.step"
 		(offset
 			(xyz 0 0 0)
