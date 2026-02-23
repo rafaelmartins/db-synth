@@ -11,6 +11,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "adsr.h"
+#include "filter.h"
 #include "oled.h"
 #include "oscillator.h"
 #include "screen.h"
@@ -25,7 +26,7 @@
 // AE: 20.0s | DE: 20.0s
 // S: 100.0% | RE: 20.0s
 // .....................
-// .....................
+// F: LPF | FC: 20.00kHz
 
 
 // a notification screen appears for a few seconds (but the context of
@@ -57,6 +58,7 @@ screen_init(screen_t *s)
     memcpy(s->_line2, "WF:          | CH:   ", 22);
     memcpy(s->_line4, "A :       | D :      ", 22);
     memcpy(s->_line5, "S:        | R :      ", 22);
+    memcpy(s->_line7, "F:     | FC:         ", 22);
 
     return screen_notification(s, SCREEN_NOTIFICATION_SPLASH);
 }
@@ -77,7 +79,7 @@ screen_task(screen_t *s)
         oled_line(&s->oled, 4, s->_line4, OLED_HALIGN_LEFT);
         oled_line(&s->oled, 5, s->_line5, OLED_HALIGN_LEFT);
         oled_line(&s->oled, 6, "", OLED_HALIGN_LEFT);
-        oled_line(&s->oled, 7, "", OLED_HALIGN_LEFT);
+        oled_line(&s->oled, 7, s->_line7, OLED_HALIGN_LEFT);
         s->_notification = false;
     }
 
@@ -240,4 +242,45 @@ screen_set_adsr_release(screen_t *s, uint8_t v)
     if (s->_notification)
         return true;
     return oled_line(&s->oled, 5, s->_line5, OLED_HALIGN_LEFT);
+}
+
+
+bool
+screen_set_filter_type(screen_t *s, filter_type_t ft)
+{
+    if (s == NULL)
+        return false;
+
+    switch (ft) {
+    case FILTER_TYPE_OFF:
+        memcpy(s->_line7 + 3, "Off", 3);
+        break;
+    case FILTER_TYPE_LOW_PASS:
+        memcpy(s->_line7 + 3, "LPF", 3);
+        break;
+    case FILTER_TYPE_HIGH_PASS:
+        memcpy(s->_line7 + 3, "HPF", 3);
+        break;
+    default:
+        memcpy(s->_line7 + 3, "Unk", 3);
+        break;
+    }
+
+    if (s->_notification)
+        return true;
+    return oled_line(&s->oled, 7, s->_line7, OLED_HALIGN_LEFT);
+}
+
+
+bool
+screen_set_filter_cutoff(screen_t *s, uint8_t c)
+{
+    if (s == NULL || c >= filter_frequency_descriptions_rows)
+        return false;
+
+    memcpy(s->_line7 + 13, filter_frequency_descriptions[c], filter_frequency_descriptions_cols);
+
+    if (s->_notification)
+        return true;
+    return oled_line(&s->oled, 7, s->_line7, OLED_HALIGN_LEFT);
 }

@@ -20,6 +20,11 @@ global_parameters:
   wavetables_sample_scalar_type: &wavetables_sample_scalar_type int16_t
   wavetables_bandlimited_omit_high_octaves: 1
 
+  filters_frequencies: 0x80
+  filters_frequency_min: 20
+  filters_frequency_max: 20000
+  filters_frequency_descriptions_string_width: -8
+
   notes_phase_steps_scalar_type: uint32_t
   notes_phase_steps_fractional_bit_width: 16
 
@@ -40,6 +45,16 @@ output:
           - curves_as3310
           - curves_linear
           - time_steps
+
+  firmware/filter-data.h:
+    includes:
+      stdint.h: true
+    modules:
+      filter:
+        name: filters
+        selectors:
+          - lowpass_1pole
+          - highpass_1pole
 
   firmware/main-data.h:
     includes:
@@ -125,5 +140,9 @@ output:
     modules:
       adsr:
         name: adsr
+        selectors:
+          - descriptions
+      filter:
+        name: filters
         selectors:
           - descriptions

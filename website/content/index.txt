@@ -30,6 +30,11 @@ ADSR envelope generator (time parameters from 20ms to 20s, emulating `AS3310`):
 * Linear curves
 * Exponential curves (emulating `AS3310`)
 
+First order (1 pole) filter (cutoff range from 20Hz to 20kHz):
+
+* Low pass
+* High pass
+
 Other features include:
 
 * 48kHz/10bit sample rate.

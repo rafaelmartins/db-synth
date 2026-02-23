@@ -44,3 +44,24 @@ static const char adsr_time_descriptions[128][5] = {
 };
 #define adsr_time_descriptions_rows 128
 #define adsr_time_descriptions_cols 5
+
+static const char filter_frequency_descriptions[128][8] = {
+    "20Hz    ", "45Hz    ", "70Hz    ", "96Hz    ", "123Hz   ", "151Hz   ", "179Hz   ", "208Hz   ",
+    "237Hz   ", "267Hz   ", "298Hz   ", "330Hz   ", "363Hz   ", "396Hz   ", "430Hz   ", "465Hz   ",
+    "500Hz   ", "537Hz   ", "574Hz   ", "613Hz   ", "652Hz   ", "692Hz   ", "733Hz   ", "775Hz   ",
+    "818Hz   ", "862Hz   ", "907Hz   ", "954Hz   ", "1.00kHz ", "1.05kHz ", "1.10kHz ", "1.15kHz ",
+    "1.20kHz ", "1.26kHz ", "1.31kHz ", "1.37kHz ", "1.42kHz ", "1.48kHz ", "1.54kHz ", "1.60kHz ",
+    "1.67kHz ", "1.73kHz ", "1.80kHz ", "1.86kHz ", "1.93kHz ", "2.00kHz ", "2.08kHz ", "2.15kHz ",
+    "2.23kHz ", "2.30kHz ", "2.38kHz ", "2.47kHz ", "2.55kHz ", "2.63kHz ", "2.72kHz ", "2.81kHz ",
+    "2.90kHz ", "3.00kHz ", "3.09kHz ", "3.19kHz ", "3.29kHz ", "3.40kHz ", "3.50kHz ", "3.61kHz ",
+    "3.72kHz ", "3.83kHz ", "3.95kHz ", "4.07kHz ", "4.19kHz ", "4.32kHz ", "4.44kHz ", "4.57kHz ",
+    "4.71kHz ", "4.85kHz ", "4.99kHz ", "5.13kHz ", "5.28kHz ", "5.43kHz ", "5.58kHz ", "5.74kHz ",
+    "5.90kHz ", "6.07kHz ", "6.24kHz ", "6.41kHz ", "6.59kHz ", "6.77kHz ", "6.96kHz ", "7.15kHz ",
+    "7.34kHz ", "7.54kHz ", "7.75kHz ", "7.96kHz ", "8.17kHz ", "8.39kHz ", "8.62kHz ", "8.85kHz ",
+    "9.08kHz ", "9.32kHz ", "9.57kHz ", "9.83kHz ", "10.08kHz", "10.35kHz", "10.62kHz", "10.90kHz",
+    "11.19kHz", "11.48kHz", "11.78kHz", "12.08kHz", "12.40kHz", "12.72kHz", "13.05kHz", "13.38kHz",
+    "13.73kHz", "14.08kHz", "14.44kHz", "14.81kHz", "15.19kHz", "15.58kHz", "15.97kHz", "16.38kHz",
+    "16.80kHz", "17.22kHz", "17.66kHz", "18.10kHz", "18.56kHz", "19.03kHz", "19.51kHz", "20.00kHz",
+};
+#define filter_frequency_descriptions_rows 128
+#define filter_frequency_descriptions_cols 8

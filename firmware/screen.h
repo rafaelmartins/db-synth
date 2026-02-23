@@ -11,6 +11,7 @@
 #include <stdbool.h>
 #include <stdint.h>
 #include "adsr.h"
+#include "filter.h"
 #include "oled.h"
 #include "oscillator.h"
 #include "screen-data.h"
@@ -25,6 +26,7 @@ typedef struct {
     char _line2[oled_chars_per_line + 1];
     char _line4[oled_chars_per_line + 1];
     char _line5[oled_chars_per_line + 1];
+    char _line7[oled_chars_per_line + 1];
 } screen_t;
 
 typedef enum {
@@ -42,3 +44,5 @@ bool screen_set_adsr_attack(screen_t *s, uint8_t v);
 bool screen_set_adsr_decay(screen_t *s, uint8_t v);
 bool screen_set_adsr_sustain(screen_t *s, uint8_t v);
 bool screen_set_adsr_release(screen_t *s, uint8_t v);
+bool screen_set_filter_type(screen_t *s, filter_type_t ft);
+bool screen_set_filter_cutoff(screen_t *s, uint8_t c);

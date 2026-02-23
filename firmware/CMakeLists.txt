@@ -30,6 +30,10 @@ add_executable(db-synth
     amplifier.c
     amplifier.h
 
+    filter.c
+    filter.h
+    filter-data.h
+
     midi.c
     midi.h
     midi-data.h

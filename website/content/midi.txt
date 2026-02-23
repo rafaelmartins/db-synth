@@ -115,6 +115,19 @@ TITLE: Midi Implementation Chart
             </td>
         </tr>
         <tr>
+            <td>71</td>
+            <td>×</td>
+            <td>○</td>
+            <td>
+                Filter Type
+                <ul>
+                    <li>0 - 42 (Off)</li>
+                    <li>43 - 85 (Low pass)</li>
+                    <li>86 - 127 (High pass)</li>
+                </ul>
+            </td>
+        </tr>
+        <tr>
             <td>72</td>
             <td>×</td>
             <td>○</td>
@@ -125,6 +138,12 @@ TITLE: Midi Implementation Chart
             <td>×</td>
             <td>○</td>
             <td>ADSR Envelope Attack (20ms - 20s)</td>
+        </tr>
+        <tr>
+            <td>74</td>
+            <td>×</td>
+            <td>○</td>
+            <td>Filter Cutoff (20Hz - 20kHz)</td>
         </tr>
         <tr>
             <td>75</td>
