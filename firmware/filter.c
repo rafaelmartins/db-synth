@@ -22,7 +22,8 @@ filter_init(filter_t *f)
     f->_initialized = true;
     f->_type = FILTER_TYPE_OFF;
     f->_cutoff = 0x7f;
-    f->_prev = 0;
+    f->_prev_out = 0;
+    f->_prev_in = 0;
 }
 
 
@@ -54,9 +55,9 @@ filter_get_sample(filter_t *f, int16_t in)
     if (f == NULL || !f->_initialized)
         return 0;
 
-    uint8_t a1;
-    uint8_t b0;
-    uint8_t b1;
+    int8_t a1;
+    int8_t b0;
+    int8_t b1;
 
     switch (f->_type) {
     case FILTER_TYPE_LOW_PASS:
@@ -77,10 +78,12 @@ filter_get_sample(filter_t *f, int16_t in)
     }
 
     int16_t rv;
+
+    // a1 * y[n-1] + b0 * x[n]
     asm volatile (
-        "muls %3, %B1"  "\n\t"  // $result = a1 * _prev[h] (signed * signed)
+        "muls %3, %B1"  "\n\t"  // $result = a1 * _prev_out[h] (signed * signed)
         "movw %A0, r0"  "\n\t"  // rv = $result
-        "mulsu %3, %A1" "\n\t"  // $result = a1 * _prev[l] (signed * unsigned)
+        "mulsu %3, %A1" "\n\t"  // $result = a1 * _prev_out[l] (signed * unsigned)
         "clr r0"        "\n\t"  // $r0 = 0
         "sbc %B0, r0"   "\n\t"  // rv[h] -= 0 + $carry
         "add %A0, r1"   "\n\t"  // rv[l] += $result[h]
@@ -93,10 +96,17 @@ filter_get_sample(filter_t *f, int16_t in)
         "sbc %B0, r0"   "\n\t"  // rv[h] -= 0 + $carry
         "add %A0, r1"   "\n\t"  // rv[l] += $result[h]
         "adc %B0, r0"   "\n\t"  // rv[h] += 0 + $carry
-        "muls %5, %B1"  "\n\t"  // $result = b1 * _prev[h] (signed * signed)
+        "clr r1"        "\n\t"  // $r1 = 0 (avr-libc convention)
+        : "=&d" (rv)
+        : "a" (f->_prev_out), "a" (in), "a" (a1), "a" (b0)
+    );
+
+    // + b1 * x[n-1], then >> 7
+    asm volatile (
+        "muls %1, %B2"  "\n\t"  // $result = b1 * _prev_in[h] (signed * signed)
         "add %A0, r0"   "\n\t"  // rv[l] += $result[l]
         "adc %B0, r1"   "\n\t"  // rv[h] += $result[h] + $carry
-        "mulsu %5, %A1" "\n\t"  // $result = b1 * _prev[l] (signed * unsigned)
+        "mulsu %1, %A2" "\n\t"  // $result = b1 * _prev_in[l] (signed * unsigned)
         "clr r0"        "\n\t"  // $r0 = 0
         "sbc %B0, r0"   "\n\t"  // rv[h] -= 0 + $carry
         "add %A0, r1"   "\n\t"  // rv[l] += $result[h]
@@ -104,10 +114,11 @@ filter_get_sample(filter_t *f, int16_t in)
         "lsl %A0"       "\n\t"  // rv[l] = (rv[l] << 1)
         "rol %B0"       "\n\t"  // rv[h] = (rv[h] << 1) + $carry
         "clr r1"        "\n\t"  // $r1 = 0 (avr-libc convention)
-        : "=d" (rv)
-        : "a" (f->_prev), "a" (in), "a" (a1), "a" (b0), "a" (b1)
+        : "+&d" (rv)
+        : "a" (b1), "a" (f->_prev_in)
     );
 
-    f->_prev = rv;
+    f->_prev_out = rv;
+    f->_prev_in = in;
     return rv;
 }

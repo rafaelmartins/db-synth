@@ -284,8 +284,13 @@ main(void)
             if (settings_task(&settings))
                 screen_notification(&screen, SCREEN_NOTIFICATION_PRESET_UPDATED);
 
-            DAC0.DATA = (filter_get_sample(&filter, amplifier_get_sample(oscillator_get_sample(&oscillator),
-                adsr_get_sample_level(&adsr), velocity)) + output_offset) << DAC_DATA_0_bp;
+            int16_t dac_val = filter_get_sample(&filter, amplifier_get_sample(oscillator_get_sample(&oscillator),
+                adsr_get_sample_level(&adsr), velocity)) + output_offset;
+            if (dac_val < 0)
+                dac_val = 0;
+            else if (dac_val > (output_offset << 1))
+                dac_val = output_offset << 1;
+            DAC0.DATA = dac_val << DAC_DATA_0_bp;
         }
     }
 

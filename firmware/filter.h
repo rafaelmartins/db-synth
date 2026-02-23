@@ -22,7 +22,8 @@ typedef struct {
     bool _initialized;
     filter_type_t _type;
     uint8_t _cutoff;
-    int16_t _prev;
+    int16_t _prev_out;
+    int16_t _prev_in;
 } filter_t;
 
 void filter_init(filter_t *f);
