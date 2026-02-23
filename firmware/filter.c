@@ -40,7 +40,7 @@ filter_set_type(filter_t *f, filter_type_t t)
 bool
 filter_set_cutoff(filter_t *f, uint8_t cutoff)
 {
-    if (f != NULL && f->_initialized && f->_cutoff != cutoff && cutoff < filter_lowpass_1pole_coefficients_len) {
+    if (f != NULL && f->_initialized && f->_cutoff != cutoff && cutoff < filter_lowpass_onepole_coefficients_len) {
         f->_cutoff = cutoff;
         return true;
     }
@@ -60,15 +60,15 @@ filter_get_sample(filter_t *f, int16_t in)
 
     switch (f->_type) {
     case FILTER_TYPE_LOW_PASS:
-        a1 = filter_lowpass_1pole_coefficients[f->_cutoff].a1;
-        b0 = filter_lowpass_1pole_coefficients[f->_cutoff].b0;
-        b1 = filter_lowpass_1pole_coefficients[f->_cutoff].b1;
+        a1 = filter_lowpass_onepole_coefficients[f->_cutoff].a1;
+        b0 = filter_lowpass_onepole_coefficients[f->_cutoff].b0;
+        b1 = filter_lowpass_onepole_coefficients[f->_cutoff].b1;
         break;
 
     case FILTER_TYPE_HIGH_PASS:
-        a1 = filter_highpass_1pole_coefficients[f->_cutoff].a1;
-        b0 = filter_highpass_1pole_coefficients[f->_cutoff].b0;
-        b1 = filter_highpass_1pole_coefficients[f->_cutoff].b1;
+        a1 = filter_highpass_onepole_coefficients[f->_cutoff].a1;
+        b0 = filter_highpass_onepole_coefficients[f->_cutoff].b0;
+        b1 = filter_highpass_onepole_coefficients[f->_cutoff].b1;
         break;
 
     case FILTER_TYPE_OFF:

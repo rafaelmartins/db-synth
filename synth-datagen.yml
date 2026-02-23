@@ -24,6 +24,8 @@ global_parameters:
   filters_frequency_min: 20
   filters_frequency_max: 20000
   filters_frequency_descriptions_string_width: -8
+  filters_coefficients_onepole_scalar_type: int8_t
+  filters_coefficients_onepole_fractional_bit_width: 7
 
   notes_phase_steps_scalar_type: uint32_t
   notes_phase_steps_fractional_bit_width: 16
@@ -47,14 +49,15 @@ output:
           - time_steps
 
   firmware/filter-data.h:
+    charts_output: website/charts/filter-data.html
     includes:
       stdint.h: true
     modules:
       filter:
         name: filters
         selectors:
-          - lowpass_1pole
-          - highpass_1pole
+          - lowpass_onepole
+          - highpass_onepole
 
   firmware/main-data.h:
     includes:

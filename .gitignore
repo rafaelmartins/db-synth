@@ -50,4 +50,4 @@ fp-info-cache
 *.pyo
 
 # Website
-/website/_build
+_build
