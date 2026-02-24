@@ -1,0 +1,21 @@
+---
+project-file: db-synth.kicad_pro
+pcb-render:
+  include-dnp: true
+  width: 4600
+  height: 4000
+  rotate:
+    y: -2
+  scales:
+    - 480
+    - 720
+    - 1080
+  sides:
+    - top
+    - bottom
+pcb-ibom:
+  enable: true
+pcb-gerber:
+  copy-pattern: gerber/*.zip
+sch-export-pdf:
+  enable: true
