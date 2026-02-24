@@ -5,7 +5,7 @@ on:
   - workflow_dispatch
 
 env:
-  AVR_TOOLCHAIN_TIMESTAMP: "202209132341"
+  AVR_TOOLCHAIN_TIMESTAMP: "202502151553"
 
 permissions:
   contents: write
