@@ -32,7 +32,7 @@ global_parameters:
 
 output:
   firmware/adsr-data.h:
-    charts_output: website/charts/adsr-data.html
+    charts_output: charts/adsr-data.html
     includes:
       stdint.h: true
     macros:
@@ -49,7 +49,7 @@ output:
           - time_steps
 
   firmware/filter-data.h:
-    charts_output: website/charts/filter-data.html
+    charts_output: charts/filter-data.html
     includes:
       stdint.h: true
     modules:
@@ -116,7 +116,7 @@ output:
           oled_twi_rise_time: 400e-9
 
   firmware/oscillator-data.h:
-    charts_output: website/charts/oscillator-data.html
+    charts_output: charts/oscillator-data.html
     includes:
       avr/pgmspace.h: true
       stdint.h: true
