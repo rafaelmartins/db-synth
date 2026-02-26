@@ -1,0 +1,7 @@
+@CMAKE_PROJECT_NAME@ @PACKAGE_VERSION_GIT@
+
+This is a binary firmware distribution of the @CMAKE_PROJECT_NAME@ project.
+
+For more information and build manual, please visit:
+
+    @CMAKE_PROJECT_HOMEPAGE_URL@

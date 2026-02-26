@@ -1,0 +1,127 @@
+name: Main
+
+on:
+  push:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: main
+  cancel-in-progress: true
+
+defaults:
+  run:
+    shell: bash
+
+env:
+  AVR_TOOLCHAIN_TIMESTAMP: "202502151553"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          path: db-synth
+          fetch-depth: 0
+
+      - name: Install arm-none-eabi toolchain
+        run: |
+          wget \
+            "https://github.com/rafaelmartins/avr-toolchain/releases/download/avr-toolchain-linux-amd64-${AVR_TOOLCHAIN_TIMESTAMP}/avr-toolchain-linux-amd64-${AVR_TOOLCHAIN_TIMESTAMP}.tar.xz"{,.sha512}
+
+          sha512sum \
+            --check \
+            "avr-toolchain-linux-amd64-${AVR_TOOLCHAIN_TIMESTAMP}.tar.xz.sha512"
+
+          tar \
+            --extract \
+            --verbose \
+            --file="avr-toolchain-linux-amd64-${AVR_TOOLCHAIN_TIMESTAMP}.tar.xz"
+
+          echo "${{ github.workspace }}/avr/bin" >> $GITHUB_PATH
+
+      - name: Install dependencies
+        run: |
+          sudo apt update
+          sudo apt install -y --no-install-recommends ninja-build
+
+      - name: Build
+        run: |
+          cmake \
+            -B ${{ github.workspace }}/build-source \
+            -D CMAKE_BUILD_TYPE=Release \
+            -S ${{ github.workspace }}/db-synth \
+            -G Ninja
+
+          cmake \
+            --build ${{ github.workspace }}/build-source \
+            --target package_source
+
+          for mcu in avr64db28 avr128db28; do
+            cmake \
+              -B ${{ github.workspace }}/build-${mcu} \
+              -D CMAKE_BUILD_TYPE=Release \
+              -D WITH_MCU=${mcu} \
+              -S ${{ github.workspace }}/db-synth \
+              -G Ninja
+
+            cmake \
+              --build ${{ github.workspace }}/build-${mcu} \
+              --target package
+          done
+
+          mkdir build
+          mv -v build-*/db-synth-* build
+
+      - uses: actions/upload-artifact@v6
+        with:
+          name: dist
+          path: build/db-synth-*
+
+      - uses: actions/upload-artifact@v6
+        with:
+          name: readme
+          path: build-avr128db28/cmake/cpack/files/README.txt
+
+  release:
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/')
+    needs:
+      - build
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: ${{ github.ref }}
+
+      - uses: actions/download-artifact@v7
+        with:
+          name: dist
+          path: dist
+
+      - uses: actions/download-artifact@v7
+        with:
+          name: readme
+          path: readme
+
+      - name: Get release metadata
+        id: meta
+        run: |
+          version="$(echo "${{ github.ref }}" | sed 's,refs/tags/v,,')"
+          echo "name=$(git tag -l --format="%(contents:subject)" "v${version}")" >> $GITHUB_OUTPUT
+          git tag -l --format="%(contents:body)" "v${version}" > body.md
+          echo >> body.md
+          echo "## README" >> body.md
+          echo >> body.md
+          echo "\`\`\`" >> body.md
+          cat readme/README.txt >> body.md
+          echo "\`\`\`" >> body.md
+
+      - uses: ncipollo/release-action@2c591bcc8ecdcd2db72b97d6147f871fcd833ba5
+        with:
+          name: ${{ steps.meta.outputs.name }}
+          artifacts: dist/db-synth-*
+          bodyFile: body.md
+          generateReleaseNotes: true

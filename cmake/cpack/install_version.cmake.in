@@ -1,0 +1,9 @@
+# SPDX-FileCopyrightText: 2026 Rafael G. Martins <rafael@rafaelmartins.eng.br>
+# SPDX-License-Identifier: BSD-3-Clause
+
+if(CPACK_SOURCE_INSTALLED_DIRECTORIES)
+    file(WRITE
+        "${CMAKE_INSTALL_PREFIX}/version.cmake"
+        "set(PACKAGE_VERSION_GIT \"@PACKAGE_VERSION_GIT@\")\nset(PACKAGE_VERSION_CANONICAL \"@PACKAGE_VERSION_CANONICAL@\")\n"
+    )
+endif()
