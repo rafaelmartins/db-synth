@@ -27,19 +27,19 @@ jobs:
           path: db-synth
           fetch-depth: 0
 
-      - name: Install arm-none-eabi toolchain
+      - name: Install avr toolchain
         run: |
           wget \
-            "https://github.com/rafaelmartins/avr-toolchain/releases/download/avr-toolchain-linux-amd64-${AVR_TOOLCHAIN_TIMESTAMP}/avr-toolchain-linux-amd64-${AVR_TOOLCHAIN_TIMESTAMP}.tar.xz"{,.sha512}
+            "https://github.com/rafaelmartins/avr-toolchain/releases/download/avr-toolchain-${AVR_TOOLCHAIN_TIMESTAMP}/avr-toolchain-linux-x86_64-${AVR_TOOLCHAIN_TIMESTAMP}.tar.xz"{,.sha512}
 
           sha512sum \
             --check \
-            "avr-toolchain-linux-amd64-${AVR_TOOLCHAIN_TIMESTAMP}.tar.xz.sha512"
+            "avr-toolchain-linux-x86_64-${AVR_TOOLCHAIN_TIMESTAMP}.tar.xz.sha512"
 
           tar \
             --extract \
             --verbose \
-            --file="avr-toolchain-linux-amd64-${AVR_TOOLCHAIN_TIMESTAMP}.tar.xz"
+            --file="avr-toolchain-linux-x86_64-${AVR_TOOLCHAIN_TIMESTAMP}.tar.xz"
 
           echo "${{ github.workspace }}/avr/bin" >> $GITHUB_PATH
 
