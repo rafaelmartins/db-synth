@@ -88,7 +88,6 @@ jobs:
 
   release:
     runs-on: ubuntu-latest
-    if: startsWith(github.ref, 'refs/tags/')
     needs:
       - build
     steps:
@@ -109,9 +108,16 @@ jobs:
       - name: Get release metadata
         id: meta
         run: |
-          version="$(echo "${{ github.ref }}" | sed 's,refs/tags/v,,')"
-          echo "name=$(git tag -l --format="%(contents:subject)" "v${version}")" >> $GITHUB_OUTPUT
-          git tag -l --format="%(contents:body)" "v${version}" > body.md
+          if [[ "${{ github.ref }}" == refs/tags/v* ]]; then
+            echo "name=$(git tag -l --format="%(contents:subject)" "${{ github.ref_name }}" | head -n 1)" >> $GITHUB_OUTPUT
+            echo "tag=${{ github.ref_name }}" >> $GITHUB_OUTPUT
+            git tag -l --format="%(contents:body)" "v${version}" > body.md
+          else
+            echo "name=Rolling Release" >> $GITHUB_OUTPUT
+            echo "tag=rolling" >> $GITHUB_OUTPUT
+            git show -s --format="format:%h: %s" > body.md
+          fi
+
           echo >> body.md
           echo "## README" >> body.md
           echo >> body.md
@@ -122,6 +128,11 @@ jobs:
       - uses: ncipollo/release-action@2c591bcc8ecdcd2db72b97d6147f871fcd833ba5
         with:
           name: ${{ steps.meta.outputs.name }}
+          tag: ${{ steps.meta.outputs.tag }}
           artifacts: dist/db-synth-*
           bodyFile: body.md
-          generateReleaseNotes: true
+          prerelease: ${{ steps.meta.outputs.tag == 'rolling' }}
+          allowUpdates: ${{ steps.meta.outputs.tag == 'rolling' }}
+          removeArtifacts: ${{ steps.meta.outputs.tag == 'rolling' }}
+          replacesArtifacts: ${{ steps.meta.outputs.tag == 'rolling' }}
+          generateReleaseNotes: ${{ steps.meta.outputs.tag != 'rolling' }}
