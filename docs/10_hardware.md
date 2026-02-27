@@ -58,18 +58,18 @@ The PCB schematic references the AVR64DB28, but the AVR128DB28 is pin-compatible
 
 ## Enclosure
 
-A 3D-printable enclosure designed in OpenSCAD is available. It consists of a front panel (with the OLED display cutout) and a back panel (with cutouts for the audio jack and MIDI connectors).
+A 3D-printable enclosure designed in OpenSCAD is available. It consists of a front shell with cutouts for the OLED display and side-mounted connectors, and a back cover.
 
 ![Enclosure, front](../share/images/enclosure-front.png)
-Enclosure front panel
+Enclosure front shell
 
 ![Enclosure, back](../share/images/enclosure-back.png)
-Enclosure back panel
+Enclosure back cover
 
 | Part | File |
 |------|------|
-| Front panel | `enclosure-front.stl` |
-| Back panel | `enclosure-back.stl` |
+| Front shell | `enclosure-front.stl` |
+| Back cover | `enclosure-back.stl` |
 
 Source files are available in the repository under `3d-models/`.
 
