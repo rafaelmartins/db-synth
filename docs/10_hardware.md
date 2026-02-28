@@ -1,11 +1,5 @@
 # Hardware
 
-<style>
-  .content figure {
-    max-width: 600px;
-  }
-</style>
-
 The db-synth hardware consists of a single PCB carrying an AVR DB series microcontroller in a DIP-28 package, a MIDI interface with optocoupler isolation, an analog signal output path using the on-chip DAC and opamps, and connectors for power, OLED display, and programming.
 
 ## Overview
